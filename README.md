@@ -11,6 +11,8 @@ make
 ```
 make install
 ```
+1. Uses ncurses library, compile with:
+- g++ main.cpp -o menu -lncursesw
 
 
 ### Features:
@@ -34,6 +36,7 @@ make install
 - Local database
 - Create multiple databases
 - Look at spending history
+- ALT: Use a json or txt file that is stored in shadow
 
 6. Security
 - Encrypted, locally hosted storage
