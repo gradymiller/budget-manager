@@ -30,6 +30,11 @@ make install
 4. External Data Importing
 - Track receipts and payments through email
 
-5. Security
-- Encrypted
-- Local
+5. Data Management
+- Local database
+- Create multiple databases
+- Look at spending history
+
+6. Security
+- Encrypted, locally hosted storage
+- Open source, manually compiled
