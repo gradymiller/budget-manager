@@ -4,10 +4,12 @@ This is a terminal-based budget application written in C++.
 
 ## Setup:
 
-```make
+```
+make
 ```
 
-```make install
+```
+make install
 ```
 
 
