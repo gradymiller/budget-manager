@@ -12,7 +12,19 @@ make
 make install
 ```
 1. Uses ncurses library, compile with:
-- g++ main.cpp -o menu -lncursesw
+- g++ -Isrc \
+src/core/*.cpp \
+src/cli/*.cpp \
+-o budget-cli
+
+- g++ -Isrc \
+src/core/*.cpp \
+src/tui/*.cpp \
+-lncurses \
+-o budget-tui
+
+- Use "-Isrc" because there are 2 main.cpp files to make the cli and tui
+  executable using the same core functionality
 
 
 ### Features:
