@@ -1,4 +1,5 @@
 // TODO: Save config options on machine, for default budget
+// TODO: Finish parsing everything here, keep it all to this file
 #include <iostream>
 #include <string>
 #include "commands.hpp"

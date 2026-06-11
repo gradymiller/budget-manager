@@ -4,39 +4,22 @@
 #include <fstream>
 #include <cstdlib>
 #include <stdexcept>
+#include "init.hpp"
 
 namespace fs = std::filesystem;
 
 int cmdInit() {
-	std::string budget;
-	std::cout << "Budget name (default: budget): ";
-	std::getline(std::cin, budget);
-	
-	if (budget.empty()) {
-		budget = "budget";
-	}
 
-	const char* home = std::getenv("HOME");
-	if (!home) {
-		throw std::runtime_error("HOME not set");
-	}
-
-	// Equivalent to "mkdir -p"
-	fs::path dir = fs::path(home) / ".local/share/budget-manager";
-
-	fs::create_directories(dir);
-
-	//Equivalent to "touch"
-	fs::path file = dir / (budget + ".csv");
-	std::ofstream out(file, std::ios::app);
-	if (!out) {
-		std::cerr << "Failed to create budget file\n";
+	try {
+		initBudgetManager();
+		// TODO: createBudget(); ---> Make in CORE
+		std::cout << "Budget Manager initialization complete\n";
+		return 0;
+		
+	} catch (const std::exception& e) {
+		std::cerr << "Error: " << e.what() << "\n";
 		return 1;
 	}
-
-	std::cout << "File saved at: " << file << "\n";
-
-	return 0;
 }
 
 
