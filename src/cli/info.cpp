@@ -4,23 +4,39 @@
 // TODO: Expand options, view real docs for examples
 int printHelp() {
 	std::cout <<
-R"(budget - Personal budgeting tool
+R"(bmcli - Command line personal budgeting tool
 
 Usage:
-  budget [global options] <command> [args]
+  bmcli [options] <command> [args]
 
 Commands:
-  init
-  create [-n <name> | --name <name>] <start_date> <end_date>
-  add <amount> <category> <vendor> <date>
-  edit <id> <field> <new_value>
-  delete <id>
-  show 
+  init							Setup Budget Manager	
+  status						Condensed budget overview
+  report						Full budget overview
+  current						Display active budget
+  use | switch <budget_name>	Change active budget
+
+  b | budget [--help]
+    add <name> <start_date> <end_date> <limit>
+	edit <field> <new_value>
+	delete <budget>
+	list
+	
+  t | transaction [--help]
+    add <amount> <category> [--vendor <vendor>] [--date <YYYY-MM-DD>]
+    edit <id> <field> <new_value>
+    delete <id>
+	list
+
+  c | category [--help]
+    add <category>
+	edit | rename <category> <new_value>
+	delete <category>
+	list
 
 Options:
-  -h, --help		Show help
-  -v, --version		Show version
-  -b, --budget		Specify budget
+  -h, --help				Show help
+  -v, --version				Show version
 )";
 	return 0;
 }

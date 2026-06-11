@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 	arg_idx++; // Account for first arg
 
 	std::string curr_arg = argv[arg_idx];
-	std::string budget = "default";
+	std::string mode; //budget or transaction
 
 	// Parse possible global options
 	if (curr_arg == "-h" || curr_arg == "--help") {
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 	} else if (curr_arg == "-v" || curr_arg== "--version") {
 		return printVersion();
 
-	} else if (curr_arg == "-b" || curr_arg == "--budget") {
+	} else if (curr_arg == "-b" || curr_arg == "--budget-mode") {
 		if (argc == 2) {
 			std::cout << "Invalid budget. Usage: budget --budget <name>";
 			return 1;
@@ -37,12 +37,14 @@ int main(int argc, char** argv) {
 	}
 	
 	curr_arg = argv[arg_idx];
+	arg_idx++; // first arg that should be fed into a command below
 
 	// Parse cli commands, their options are not parsed here
 	if (curr_arg == "init") {
 		return cmdInit();
 
 	} else if (curr_arg == "create") {
+		
 		return cmdCreate(argc, argv, arg_idx++, budget);
 
 	} else if (curr_arg == "add") {

@@ -1,6 +1,12 @@
-//TODO: Add validation to setters
-#include "budget.hpp"
-#include "transaction.hpp"
+// TODO: Add validation to setters
+// TODO: Load data in from a csv (to struct/class), overwrite when saving
+#include <fstream>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <utility>
+#include <chrono>
 
 class Budget {
 public:
@@ -42,7 +48,15 @@ public:
 		this->limit = l;
 	}
 
-	
+	void save() {
+		// write metadata to a file
+		// write saved data to a file
+	}
+
+	std::pair<std::unordered_map, std::vector> load() {
+		// load budget metadata in as a dictionary
+		// load csv in as vector of struct/class
+	}
 
 private:
 	std::string name;

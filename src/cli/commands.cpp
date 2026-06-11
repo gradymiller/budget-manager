@@ -5,14 +5,13 @@
 #include <cstdlib>
 #include <stdexcept>
 #include "init.hpp"
+#include "budget.hpp"
 
-namespace fs = std::filesystem;
 
 int cmdInit() {
 
 	try {
 		initBudgetManager();
-		// TODO: createBudget(); ---> Make in CORE
 		std::cout << "Budget Manager initialization complete\n";
 		return 0;
 		
@@ -22,13 +21,15 @@ int cmdInit() {
 	}
 }
 
+int cmdCreate(std::string name, std::string start_date, std::string end_date, double limit) {
+	
+	return 0;
+}
 
 int cmdAdd(int argc, char** argv, int curr_idx, std::string budget) {
 	return 0;
 }
-int cmdCreate(int argc, char** argv, int curr_idx, std::string budget) {
-	return 0;
-}
+
 int cmdEdit(int argc, char** argv, int curr_idx, std::string budget) {
 	return 0;
 }
