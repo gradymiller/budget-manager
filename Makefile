@@ -1,8 +1,8 @@
 CXX = g++
-CXXFLAGS = -Wall -O2 -std=c++26
+CXXFLAGS = -Wall -O2 -std=c++26 -Isrc/core
 
 TARGET = budget
-SRC = src/cli/main.cpp src/cli/commands.cpp src/cli/info.cpp
+SRC = src/cli/main.cpp src/cli/commands.cpp src/cli/info.cpp src/core/init.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(TARGET)
