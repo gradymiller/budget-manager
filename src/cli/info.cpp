@@ -1,3 +1,6 @@
+#include <iostream>
+
+
 // TODO: Expand options, view real docs for examples
 int printHelp() {
 	std::cout <<
@@ -24,6 +27,6 @@ Options:
 
 // TODO: have version auto update from something on github?
 int printVersion() {
-	std::cout << "budget version 1.0.0\n"
+	std::cout << "budget version 1.0.0\n";
 		return 0;
 }

@@ -1,4 +1,4 @@
 #pragma once
 
-void printHelp();
-void printVersion();
+int printHelp();
+int printVersion();

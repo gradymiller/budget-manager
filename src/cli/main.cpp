@@ -5,7 +5,7 @@
 #include "info.hpp"
 
 
-int dispatch(int argc, char** argv) {
+int main(int argc, char** argv) {
 
 	int arg_idx = 0; // Current working argument
 
@@ -14,7 +14,7 @@ int dispatch(int argc, char** argv) {
 		return printHelp();
 	}
 
-	curr_arg++; // Account for first arg
+	arg_idx++; // Account for first arg
 
 	std::string curr_arg = argv[arg_idx];
 	std::string budget = "default";
@@ -39,25 +39,25 @@ int dispatch(int argc, char** argv) {
 
 	// Parse cli commands, their options are not parsed here
 	if (curr_arg == "init") {
-		return cmdInit(argc, argv, arg_idx++);
+		return cmdInit();
 
 	} else if (curr_arg == "create") {
-		return cmdCreate(argc, argv, arg_idx++);
+		return cmdCreate(argc, argv, arg_idx++, budget);
 
 	} else if (curr_arg == "add") {
-		return cmdAdd(argc, argv, arg_idx++);
+		return cmdAdd(argc, argv, arg_idx++, budget);
 
 	} else if (curr_arg == "edit") {
-		return cmdEdit(argc, argv, arg_idx++);
+		return cmdEdit(argc, argv, arg_idx++, budget);
 
 	} else if (curr_arg == "delete") {
-		return cmdDelete(argc, argv, arg_idx++);
+		return cmdDelete(argc, argv, arg_idx++, budget);
 
 	} else if (curr_arg == "show") {
-		return cmdShow(argc, argv, arg_idx++);
+		return cmdShow(argc, argv, arg_idx++, budget);
 		
 	} else {
-		std::count << "Invalid command. Usage: budget [options] <command> [arguments]";
+		std::cout << "Invalid command. Usage: budget [options] <command> [arguments]";
 		return 1;
 	}
 
