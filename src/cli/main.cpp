@@ -16,52 +16,49 @@ int main(int argc, char** argv) {
 	}
 
 	arg_idx++; // Account for first arg
-
 	std::string curr_arg = argv[arg_idx];
-	std::string mode; //budget or transaction
 
-	// Parse possible global options
 	if (curr_arg == "-h" || curr_arg == "--help") {
 		return printHelp();
 
 	} else if (curr_arg == "-v" || curr_arg== "--version") {
 		return printVersion();
 
-	} else if (curr_arg == "-b" || curr_arg == "--budget-mode") {
-		if (argc == 2) {
-			std::cout << "Invalid budget. Usage: budget --budget <name>";
-			return 1;
-		}
-		budget = argv[2];
-		arg_idx += 2; // Account for possible global arg
-	}
-	
-	curr_arg = argv[arg_idx];
-	arg_idx++; // first arg that should be fed into a command below
-
-	// Parse cli commands, their options are not parsed here
-	if (curr_arg == "init") {
+	} else if (curr_arg == "init") {
 		return cmdInit();
 
-	} else if (curr_arg == "create") {
+	} else if (curr_arg == "current") {
+		return cmdCurrent();
+
+	} else if (curr_arg == "use" || curr_arg == "switch" || argc > 2) {
+		curr_arg = argv[arg_idx++];
+		// TODO: Check if budget is valid
+		// TODO: Set the new budget if possible
+		// return cmdSwitch();
 		
-		return cmdCreate(argc, argv, arg_idx++, budget);
+	} else if (argc == 2) {
+		// TODO: Create utilities file for this and maybe the info.cpp
+		return cmdInvalid();
+	}
+	
+	// Currently have the second arg selected and know there's at least 3 total
+	// args
 
-	} else if (curr_arg == "add") {
-		return cmdAdd(argc, argv, arg_idx++, budget);
+	if (curr_arg == "b" || curr_arg == "budget") {
+		// TODO: parse the rest of the args
+		return budgetAdd();
 
-	} else if (curr_arg == "edit") {
-		return cmdEdit(argc, argv, arg_idx++, budget);
+	} else if (curr_arg == "t" || curr_arg == "transaction") {
+		// TODO: parse the rest of the args
+		return cmdCreate();
 
-	} else if (curr_arg == "delete") {
-		return cmdDelete(argc, argv, arg_idx++, budget);
+	} else if (curr_arg == "c" || curr_arg == "category") {
+		// TODO: to be added in a later version
+		return 0;
 
-	} else if (curr_arg == "show") {
-		return cmdShow(argc, argv, arg_idx++, budget);
-		
 	} else {
-		std::cout << "Invalid command. Usage: budget [options] <command> [arguments]";
-		return 1;
+		// TODO: make it go to stderr instead of just stdout
+		return cmdInvalid();
 	}
 
 }
