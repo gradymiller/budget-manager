@@ -22,4 +22,4 @@ private:
 	std::chrono::system_clock::time_point start_date;
 	std::chrono::system_clock::time_point end_date;
 	double limit;
-}
+};

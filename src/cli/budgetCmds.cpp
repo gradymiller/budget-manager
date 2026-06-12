@@ -11,7 +11,7 @@
 int cmdInit() {
 
 	try {
-		initBudgetManager();
+		//initBudgetManager();
 		std::cout << "Budget Manager initialization complete\n";
 		return 0;
 		

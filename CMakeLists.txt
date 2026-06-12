@@ -18,9 +18,11 @@ add_compile_definitions(APPVERSION="${GIT_VERSION}")
 # Track files to be compiled
 add_executable(budget
     src/cli/main.cpp
-    src/cli/commands.cpp
-    src/cli/info.cpp
-    src/core/init.cpp
+    src/cli/budgetCmds.cpp
+    src/cli/transactionCmds.cpp
+    src/cli/categoryCmds.cpp
+    src/cli/otherCmds.cpp
+    src/cli/utilities.cpp
 )
 
 # Add INCLUDE directories
