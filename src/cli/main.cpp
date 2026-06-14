@@ -1,5 +1,4 @@
 // TODO: Save config options on machine, for default budget
-// TODO: Finish parsing everything here, keep it all to this file
 #include <string>
 #include "budgetCmds.hpp"
 #include "transactionCmds.hpp"
@@ -10,130 +9,97 @@
 
 int main(int argc, char** argv) {
 
-	int arg_idx = 0; // Current working argument
-
 	// Check if a single arg was entered
 	if (argc == 1) {
-		//return printHelp();
-		return 0;
+		return cmdHelp();
 	}
 
-	arg_idx++; // Account for first arg
-	std::string curr_arg = argv[arg_idx];
+	std::string arg1 = argv[1];
 
-	if (curr_arg == "-h" || curr_arg == "--help") {
-		//return printHelp();
-		return 0;
+	// Dispatch cmds with no extra args
+	if (arg1 == "-h" || arg1 == "--help") {
+		return cmdHelp();
 
-	} else if (curr_arg == "-v" || curr_arg== "--version") {
-		//return printVersion();
-		return 0;
+	} else if (arg1 == "-v" || arg1== "--version") {
+		return cmdVersion();
 
-	} else if (curr_arg == "init") {
-		//return cmdInit();
-		return 0;
+	} else if (arg1 == "init") {
+		return cmdInit();
 
-	} else if (curr_arg == "current") {
-		//return cmdCurrent();
-		return 0;
-
-	} else if (argc == 2) {
-		// TODO: Create utilities file for this and maybe the info.cpp
-		//return cmdInvalid(curr_arg);
-		return 0;
+	} else if (arg1 == "current") {
+		return cmdCurrent();
 
 	} 
 
-	// Parse commands that involve 3+ args
-	if (curr_arg == "use" || curr_arg == "switch") {
-		curr_arg = argv[arg_idx++];
-		// TODO: Check if budget is valid
-		// TODO: Set the new budget if possible
-		// return cmdSwitch();
-		return 0;
+	std::string arg2 = argv[2];
 
-	} else if (curr_arg == "b" || curr_arg == "budget") {
-		// TODO: parse the rest of the args
-		arg_idx++;
-		curr_arg = argv[arg_idx];
+	//Dispatch commands with at least 1 extra arg
+	if (arg1 == "use" || arg1 == "switch") {
+		return cmdSwitch(argc - 2, argv + 2);
 
-		if (curr_arg == "-h" || curr_arg == "--help") {
-			//return budgetHelp();	
-			return 0;
+	} else if (arg1 == "b" || arg1 == "budget") {
+		if (arg2 == "add") {
+			budgetAdd(argc - 3, argv + 3);
 
-		} else if (curr_arg == "add") {
-			return 0;
+		} else if (arg2 == "edit") {
+			budgetEdit(argc - 3, argv + 3);
 
-		} else if (curr_arg == "edit") {
-			return 0;
-			
-		} else if (curr_arg == "delete") {
-			return 0;
-			
-		} else if (curr_arg == "list") {
-			return 0;
-			
+		} else if (arg2 == "delete") {
+			budgetDelete(argc - 3, argv + 3);
+
+		} else if (arg2 == "list") {
+			budgetList(argc - 3, argv + 3);
+
+		} else if (arg2 == "-h" || arg2 == "--help") {
+			budgetHelp();
+
 		} else {
-			//return cmdInvalid(curr_arg);
-			return 0;
+			cmdInvalid(arg2);
 		}
 
-	} else if (curr_arg == "t" || curr_arg == "transaction") {
-		// TODO: parse the rest of the args
-		arg_idx++;
-		curr_arg = argv[arg_idx];
+	} else if (arg1 == "t" || arg1 == "transaction") {
+		if (arg2 == "add") {
+			transactionAdd(argc - 3, argv + 3);
 
-		if (curr_arg == "-h" || curr_arg == "--help") {
-			//return transactionHelp();	
-			return 0;
+		} else if (arg2 == "edit") {
+			transactionEdit(argc - 3, argv + 3);
 
-		} else if (curr_arg == "add") {
-			return 0;
+		} else if (arg2 == "delete") {
+			transactionDelete(argc - 3, argv + 3);
 
-		} else if (curr_arg == "edit") {
-			return 0;
-			
-		} else if (curr_arg == "delete") {
-			return 0;
-			
-		} else if (curr_arg == "list") {
-			return 0;
-			
+		} else if (arg2 == "list") {
+			transactionList(argc - 3, argv + 3);
+
+		} else if (arg2 == "-h" || arg2 == "--help") {
+			transactionHelp();
+
 		} else {
-			//return cmdInvalid(curr_arg);
-			return 0;
+			cmdInvalid(arg2);
 		}
 
-	} else if (curr_arg == "c" || curr_arg == "category") {
+	} else if (arg1 == "c" || arg1 == "category") {
 		// TODO: to be added in a later version
-		arg_idx++;
-		curr_arg = argv[arg_idx];
-		
-		if (curr_arg == "-h" || curr_arg == "--help") {
-			//return categoryHelp();	
-			return 0;
+		if (arg2 == "add") {
+			categoryAdd(argc - 3, argv + 3);
 
-		} else if (curr_arg == "add") {
-			return 0;
+		} else if (arg2 == "edit") {
+			categoryEdit(argc - 3, argv + 3);
 
-		} else if (curr_arg == "edit") {
-			return 0;
-			
-		} else if (curr_arg == "delete") {
-			return 0;
-			
-		} else if (curr_arg == "list") {
-			return 0;
-			
+		} else if (arg2 == "delete") {
+			categoryDelete(argc - 3, argv + 3);
+
+		} else if (arg2 == "list") {
+			categoryList(argc - 3, argv + 3);
+
+		} else if (arg2 == "-h" || arg2 == "--help") {
+			categoryHelp();
+
 		} else {
-			//return cmdInvalid(curr_arg);
-			return 0;
+			cmdInvalid(arg2);
 		}
 
 	} else {
-		// TODO: make it go to stderr instead of just stdout
-		//return cmdInvalid(curr_arg);
-		return 0;
+		return cmdInvalid(arg1);
 	}
 
 }
