@@ -8,4 +8,5 @@ int transactionHelp();
 int categoryHelp();
 
 int cmdInit();
-int cmdSwitch(char** args);
+int cmdCurrent();
+int cmdSwitch(int argc, char** argv);

@@ -1,5 +1,6 @@
 // TODO: Add docs for b/t/c
 // TODO: Setup initBudgetManager()
+// TODO: Setup cmdCurrent()
 // TODO: Setup cmdSwitch()
 #include <iostream>
 #include <version.h>
@@ -50,14 +51,17 @@ int cmdVersion() {
 
 int budgetHelp() {
 	std::cout << "ADD DOCS HERE.";
+	return 0;
 }
 
 int transactionHelp() {
 	std::cout << "ADD DOCS HERE.";
+	return 0;
 }
 
 int categoryHelp() {
 	std::cout << "ADD DOCS HERE.";
+	return 0;
 }
 
 int cmdInit() {
@@ -71,6 +75,12 @@ int cmdInit() {
 	}
 }
 
-int cmdSwitch(char** args) {
+int cmdCurrent() {
 	// Make this
+	return 0;
+}
+
+int cmdSwitch(int argc, char** argv) {
+	// Make this
+	return 0;
 }
