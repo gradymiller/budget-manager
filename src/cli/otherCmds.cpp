@@ -3,7 +3,9 @@
 // TODO: Setup cmdCurrent()
 // TODO: Setup cmdSwitch()
 #include <iostream>
+#include <filesystem>
 #include <version.h>
+#include <init.hpp>
 
 int cmdHelp() {
 	std::cout <<
@@ -66,9 +68,16 @@ int categoryHelp() {
 
 int cmdInit() {
 	try {
-		//initBudgetManager();
+		std::filesystem::path dir = setupFolder();
+		std::cout << "Data saved at: " << dir << "\n";
+
+		createConfig(dir);
+
+		// TODO: Add rest of setup functions here
+
 		std::cout << "Budget Manager setup complete.";
 		return 0;
+
 	} catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << "\n";
 		return 1;

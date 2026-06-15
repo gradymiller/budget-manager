@@ -23,6 +23,7 @@ add_executable(budget
     src/cli/categoryCmds.cpp
     src/cli/otherCmds.cpp
     src/cli/utilities.cpp
+    src/core/init.cpp
 )
 
 # Add INCLUDE directories
