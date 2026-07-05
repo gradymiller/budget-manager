@@ -4,6 +4,8 @@
 // TODO: Setup cmdSwitch()
 #include <iostream>
 #include <filesystem>
+#include <fstream>
+#include <string>
 #include <version.h>
 #include <init.hpp>
 
@@ -72,6 +74,9 @@ int cmdInit() {
 		std::cout << "Data saved at: " << dir << "\n";
 
 		createConfig(dir);
+		
+		std::ofstream file("current");
+
 
 		// TODO: Add rest of setup functions here
 
@@ -84,12 +89,29 @@ int cmdInit() {
 	}
 }
 
+// TODO: Set current to the actual config dir
 int cmdCurrent() {
-	// Make this
-	return 0;
+	try {
+		std::ifstream file("current");
+		std::string val;
+		std::getline(file, val);
+		std::cout << "Current budget: " << val << "\n";
+		return 0;
+
+	} catch (const std::exception& e) {
+		std::cerr << "Error: " << e.what() << "\n";
+		return 1;
+	}
 }
 
 int cmdSwitch(int argc, char** argv) {
-	// Make this
-	return 0;
+	try {
+		std::ofstream file("current");	
+		file << argv[0];
+		return 0;
+
+	} catch (const std::exception& e) {
+		std::cerr << "Error: " << e.what() << "\n";
+		return 1;
+	}
 }

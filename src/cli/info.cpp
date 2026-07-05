@@ -3,7 +3,7 @@
 
 
 // TODO: Expand options, view real docs for examples
-int printHelp() {
+int cmdHelp() {
 	std::cout <<
 R"(bmcli - Command line personal budgeting tool
 
@@ -43,7 +43,7 @@ Options:
 }
 
 // TODO: have version auto update from something on github?
-int printVersion() {
+int cmdVersion() {
 	std::cout << APP_VERSION << "\n";
 		return 0;
 }
