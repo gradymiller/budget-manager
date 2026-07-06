@@ -8,6 +8,7 @@
 #include <string>
 #include <version.h>
 #include <init.hpp>
+#include <path.hpp>
 
 int cmdHelp() {
 	std::cout <<
@@ -69,49 +70,29 @@ int categoryHelp() {
 }
 
 int cmdInit() {
-	try {
-		std::filesystem::path dir = setupFolder();
-		std::cout << "Data saved at: " << dir << "\n";
+	std::filesystem::path dir = setupFolder();
+	std::cout << "Data saved at: " << dir << "\n";
 
-		createConfig(dir);
-		
-		std::ofstream file("current");
+	createConfig(dir);
+	
+	std::ofstream file("current");
 
+	// TODO: Add rest of setup functions here
 
-		// TODO: Add rest of setup functions here
-
-		std::cout << "Budget Manager setup complete.";
-		return 0;
-
-	} catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << "\n";
-		return 1;
-	}
+	std::cout << "Budget Manager setup complete.";
+	return 0;
 }
 
-// TODO: Set current to the actual config dir
 int cmdCurrent() {
-	try {
-		std::ifstream file("current");
-		std::string val;
-		std::getline(file, val);
-		std::cout << "Current budget: " << val << "\n";
-		return 0;
-
-	} catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << "\n";
-		return 1;
-	}
+	std::ifstream file(PATH/"current");
+	std::string val;
+	std::getline(file, val);
+	std::cout << "Current budget: " << val << "\n";
+	return 0;
 }
 
 int cmdSwitch(int argc, char** argv) {
-	try {
-		std::ofstream file("current");	
-		file << argv[0];
-		return 0;
-
-	} catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << "\n";
-		return 1;
-	}
+	std::ofstream file("current");	
+	file << argv[0];
+	return 0;
 }
