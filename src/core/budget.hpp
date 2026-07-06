@@ -5,7 +5,7 @@
 
 class Budget {
 public:
-	Budget(const std::string& name, const std::chrono::system_clock::time_point& start_date, const			  std::chrono::system_clock::time_point& end_date, double limit);
+	Budget(const std::string& name, const std::chrono::system_clock::time_point& start_date, const std::chrono::system_clock::time_point& end_date, double limit);
 
 	const std::string& getName() const;
 	const std::string& getStartDate() const;
