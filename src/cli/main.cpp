@@ -7,7 +7,7 @@
 #include "utilities.hpp"
 
 
-int main(int argc, char** argv) {
+int dispatch(int argc, char** argv) {
 
 	// Check if a single arg was entered
 	if (argc == 1) {
@@ -39,67 +39,77 @@ int main(int argc, char** argv) {
 
 	} else if (arg1 == "b" || arg1 == "budget") {
 		if (arg2 == "add") {
-			budgetAdd(argc - 3, argv + 3);
+			return budgetAdd(argc - 3, argv + 3);
 
 		} else if (arg2 == "edit") {
-			budgetEdit(argc - 3, argv + 3);
+			return budgetEdit(argc - 3, argv + 3);
 
 		} else if (arg2 == "delete") {
-			budgetDelete(argc - 3, argv + 3);
+			return budgetDelete(argc - 3, argv + 3);
 
 		} else if (arg2 == "list") {
-			budgetList(argc - 3, argv + 3);
+			return budgetList(argc - 3, argv + 3);
 
 		} else if (arg2 == "-h" || arg2 == "--help") {
-			budgetHelp();
+			return budgetHelp();
 
 		} else {
-			cmdInvalid(arg2);
+			return cmdInvalid(arg2);
 		}
 
 	} else if (arg1 == "t" || arg1 == "transaction") {
 		if (arg2 == "add") {
-			transactionAdd(argc - 3, argv + 3);
+			return transactionAdd(argc - 3, argv + 3);
 
 		} else if (arg2 == "edit") {
-			transactionEdit(argc - 3, argv + 3);
+			return transactionEdit(argc - 3, argv + 3);
 
 		} else if (arg2 == "delete") {
-			transactionDelete(argc - 3, argv + 3);
+			return transactionDelete(argc - 3, argv + 3);
 
 		} else if (arg2 == "list") {
-			transactionList(argc - 3, argv + 3);
+			return transactionList(argc - 3, argv + 3);
 
 		} else if (arg2 == "-h" || arg2 == "--help") {
-			transactionHelp();
+			return transactionHelp();
 
 		} else {
-			cmdInvalid(arg2);
+			return cmdInvalid(arg2);
 		}
 
 	} else if (arg1 == "c" || arg1 == "category") {
 		// TODO: to be added in a later version
 		if (arg2 == "add") {
-			categoryAdd(argc - 3, argv + 3);
+			return categoryAdd(argc - 3, argv + 3);
 
 		} else if (arg2 == "edit") {
-			categoryEdit(argc - 3, argv + 3);
+			return categoryEdit(argc - 3, argv + 3);
 
 		} else if (arg2 == "delete") {
-			categoryDelete(argc - 3, argv + 3);
+			return categoryDelete(argc - 3, argv + 3);
 
 		} else if (arg2 == "list") {
-			categoryList(argc - 3, argv + 3);
+			return categoryList(argc - 3, argv + 3);
 
 		} else if (arg2 == "-h" || arg2 == "--help") {
-			categoryHelp();
+			return categoryHelp();
 
 		} else {
-			cmdInvalid(arg2);
+			return cmdInvalid(arg2);
 		}
 
 	} else {
 		return cmdInvalid(arg1);
 	}
 
+}
+
+int main(int argc, char** argv) {
+    try {
+        return dispatch(argc, argv);
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 1;
+    }
 }
