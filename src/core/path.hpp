@@ -1,5 +1,8 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
+#include <cstdlib>
 
-extern std::string PATH;
+inline std::filesystem::path PATH =
+    std::filesystem::path(std::getenv("HOME")) /
+    ".local/share/budget-manager";
