@@ -17,7 +17,7 @@ public:
     void setEndDate(std::string ed);
     void setLimit(std::string l);
 
-	std::string save();
+	void save();
     void load();
 
 private:
@@ -26,4 +26,5 @@ private:
     std::chrono::system_clock::time_point end_date;
     double limit = 0.0;
 	std::chrono::system_clock::time_point parseDate(const std::string& s);
+	std::string stringDate(const std::chrono::system_clock::time_point& tp);
 };

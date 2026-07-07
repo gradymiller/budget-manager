@@ -19,7 +19,7 @@ int budgetAdd(char** argv) {
 		budget.setLimit(argv[3]);
 		
 		// Save to csv file on user's local machine
-		std::cout << budget.save() << "\n";
+		budget.save();
 		std::cout << "Budget '" << budget.getName() << "' saved\n";
 		return 0;
 

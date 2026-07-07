@@ -84,27 +84,29 @@ void Budget::setLimit(std::string l) {
     this->limit = value;
 }
 
-std::string Budget::save() {
+void Budget::save() {
 	json metadata;	
 	std::ifstream in(PATH / "metadata.json");
 
 	if (!in.good()) {
 		throw std::runtime_error("Budget Manager has not been initialized");
 	}
-	in >> config;
+	in >> metadata;
 	in.close();
 
-	metadata["budgets"][this->name] = {
-		{"start_date", this->start_date},
-		{"end_date", this->end_date},
-		{"limit", this->limit}
-	};
+	json budget_json;
+
+	budget_json["start_date"] = stringDate(this->start_date);
+	budget_json["end_date"] = stringDate(this->end_date);
+	budget_json["limit"] = this->limit;
+	metadata["budgets"][this->name] = budget_json;
+
 	std::ofstream out(PATH / "metadata.json");
 
 	if (!out.is_open()) {
 		throw std::runtime_error("Could not save metadata");
 	}
-	out << config.dump(4);
+	out << metadata.dump(4);
 }
 
 void Budget::load() {
@@ -143,4 +145,14 @@ std::chrono::system_clock::time_point Budget::parseDate(const std::string& s) {
 	}
 
 	return std::chrono::system_clock::from_time_t(t);
+}
+
+std::string Budget::stringDate(const std::chrono::system_clock::time_point& tp) {
+    std::time_t t = std::chrono::system_clock::to_time_t(tp);
+    std::tm tm = *std::localtime(&t);
+
+    std::ostringstream ss;
+    ss << std::put_time(&tm, "%Y-%m-%d");
+
+    return ss.str();
 }
