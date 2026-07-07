@@ -1,25 +1,30 @@
 #pragma once
 
-#include <string>
 #include <chrono>
+#include <string>
 
 class Budget {
 public:
-	Budget(const std::string& name, const std::chrono::system_clock::time_point& start_date, const std::chrono::system_clock::time_point& end_date, double limit);
+    Budget() = default;
 
-	const std::string& getName() const;
-	const std::string& getStartDate() const;
-	const std::string& getEndDate() const;
-	double getLimit() const;
+    const std::string& getName() const;
+    std::chrono::system_clock::time_point getStartDate() const;
+    std::chrono::system_clock::time_point getEndDate() const;
+    double getLimit() const;
 
-	void setName(std::string name);
-	void setStartDate(std::chrono::system_clock::time_point start_date);
-	void setEndDate(std::chrono::system_clock::time_point end_date);
-	void setLimit(double limit);
+    void setName(std::string n);
+    void setStartDate(std::string sd);
+    void setEndDate(std::string ed);
+    void setLimit(std::string l);
+
+	std::string save();
+    void load();
 
 private:
-	std::string name;
-	std::chrono::system_clock::time_point start_date;
-	std::chrono::system_clock::time_point end_date;
-	double limit;
+    std::string name;
+    std::chrono::system_clock::time_point start_date;
+    std::chrono::system_clock::time_point end_date;
+    double limit = 0.0;
 };
+
+std::chrono::system_clock::time_point parseDate(const std::string& s);
