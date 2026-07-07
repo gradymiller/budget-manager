@@ -27,4 +27,3 @@ private:
     double limit = 0.0;
 	std::chrono::system_clock::time_point parseDate(const std::string& s);
 };
-

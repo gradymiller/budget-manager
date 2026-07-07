@@ -19,15 +19,39 @@ fs::path setupFolder() {
 	return dir;
 }
 
-void createConfig(fs::path dir) {
-	if (!fs::exists(dir) || !fs::is_directory(dir)) {
-		throw std::runtime_error("There is no valid directory to create aconfig file in\n");
-	}
+void createFiles(fs::path dir) {
+    if (!fs::exists(dir) || !fs::is_directory(dir)) {
+        throw std::runtime_error(
+            "There is no valid directory to create config files in\n"
+        );
+    }
 
-	fs::path file_path = dir / "config";
-	std::ofstream(file_path, std::ios::app);
+    // Create config file
+    fs::path config_path = dir / "config";
 
-	if (!fs::exists(file_path)) {
-		throw std::runtime_error("Failed to create config file\n");
-	}	
+    std::ofstream config_file(config_path, std::ios::app);
+
+    if (!config_file) {
+        throw std::runtime_error("Failed to create config file\n");
+    }
+
+    config_file.close();
+
+
+    // Create metadata.json
+    fs::path metadata_path = dir / "metadata.json";
+
+    // Only create it if it doesn't already exist
+    if (!fs::exists(metadata_path)) {
+        std::ofstream metadata_file(metadata_path);
+
+        if (!metadata_file) {
+            throw std::runtime_error("Failed to create metadata.json\n");
+        }
+
+        // Write valid empty JSON
+        metadata_file << "{}\n";
+
+        metadata_file.close();
+    }
 }

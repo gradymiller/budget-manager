@@ -11,6 +11,11 @@
 #include <cctype>
 #include <chrono>
 #include <ctime>
+#include <fstream>
+#include <nlohmann/json.hpp>
+#include "path.hpp"
+
+using json = nlohmann::json;
 
 
 const std::string& Budget::getName() const {
@@ -80,8 +85,26 @@ void Budget::setLimit(std::string l) {
 }
 
 std::string Budget::save() {
-    // TODO: Save budget data to CSV/file
-	return "TEST";
+	json metadata;	
+	std::ifstream in(PATH / "metadata.json");
+
+	if (!in.good()) {
+		throw std::runtime_error("Budget Manager has not been initialized");
+	}
+	in >> config;
+	in.close();
+
+	metadata["budgets"][this->name] = {
+		{"start_date", this->start_date},
+		{"end_date", this->end_date},
+		{"limit", this->limit}
+	};
+	std::ofstream out(PATH / "metadata.json");
+
+	if (!out.is_open()) {
+		throw std::runtime_error("Could not save metadata");
+	}
+	out << config.dump(4);
 }
 
 void Budget::load() {
