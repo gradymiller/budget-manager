@@ -36,7 +36,7 @@ int dispatch(int argc, char** argv) {
 
 	//Dispatch commands with at least 1 extra arg
 	if (arg1 == "use" || arg1 == "switch") {
-		return cmdSwitch(argc - 2, argv + 2);
+		return cmdSwitch(argv + 2);
 
 	} else if (arg1 == "b" || arg1 == "budget") {
 		if (arg2 == "add") {

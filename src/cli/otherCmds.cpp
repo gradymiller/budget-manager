@@ -91,7 +91,7 @@ int cmdCurrent() {
 	return 0;
 }
 
-int cmdSwitch(int argc, char** argv) {
+int cmdSwitch(char** argv) {
 	std::ofstream file("current");	
 	file << argv[0];
 	return 0;
