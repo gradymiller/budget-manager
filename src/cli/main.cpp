@@ -1,4 +1,5 @@
 // TODO: Save config options on machine, for default budget
+#include <iostream>
 #include <string>
 #include "budgetCmds.hpp"
 #include "transactionCmds.hpp"
@@ -39,16 +40,16 @@ int dispatch(int argc, char** argv) {
 
 	} else if (arg1 == "b" || arg1 == "budget") {
 		if (arg2 == "add") {
-			return budgetAdd(argc - 3, argv + 3);
+			return budgetAdd(argv + 3);
 
 		} else if (arg2 == "edit") {
-			return budgetEdit(argc - 3, argv + 3);
+			return budgetEdit(argv + 3);
 
 		} else if (arg2 == "delete") {
-			return budgetDelete(argc - 3, argv + 3);
+			return budgetDelete(argv + 3);
 
 		} else if (arg2 == "list") {
-			return budgetList(argc - 3, argv + 3);
+			return budgetList();
 
 		} else if (arg2 == "-h" || arg2 == "--help") {
 			return budgetHelp();

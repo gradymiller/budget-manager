@@ -1,9 +1,13 @@
 // TODO: Add catches for saving/loading budgets
 #include <iostream>
+#include <string>
+#include <filesystem>
 #include "budget.hpp"
 #include "path.hpp"
 
-int budgetAdd(int argc, char** argv) {
+namespace fs = std::filesystem;
+
+int budgetAdd(char** argv) {
 	try {
 		// Init budget from core
 		Budget budget;
@@ -15,7 +19,7 @@ int budgetAdd(int argc, char** argv) {
 		budget.setLimit(argv[3]);
 		
 		// Save to csv file on user's local machine
-		budget.save(PATH) << "\n";
+		std::cout << budget.save() << "\n";
 		std::cout << "Budget '" << budget.getName() << "' saved\n";
 		return 0;
 
@@ -25,26 +29,28 @@ int budgetAdd(int argc, char** argv) {
 	}
 }
 
-int budgetEdit(int argc, char** argv) {
+int budgetEdit(char** argv) {
 	try {
 		Budget budget;
 		// TODO: Loading needs PATH and current budget
 		budget.load();
 
-		if (argv[0] == "name") {
+		std::string arg0 = argv[0];
+
+		if (arg0 == "name") {
 			budget.setName(argv[1]);
 
-		} else if (argv[0] == "start_date") {
+		} else if (arg0 == "start_date") {
 			budget.setStartDate(argv[1]);
 
-		} else if (arv[0] == "end_date") {
+		} else if (arg0 == "end_date") {
 			budget.setEndDate(argv[1]);
 		
-		} else if (argv[0] == "limit") {
+		} else if (arg0 == "limit") {
 			budget.setLimit(argv[1]);
 
 		} else {
-			throw std::invalid_argument(argv[1]	+ " not known");
+			throw std::invalid_argument(std::string(argv[1]) + " not known");
 		}
 
 		budget.save();
@@ -57,10 +63,10 @@ int budgetEdit(int argc, char** argv) {
 	} 
 }
 
-int budgetDelete(int argc, char** argv) {
+int budgetDelete(char** argv) {
 	try {
 		if (!fs::exists(PATH / argv[0])) {
-			throw invalid_argument(argv[0] + ".csv does not exist");
+			throw std::invalid_argument(std::string(argv[0]) + ".csv does not exist");
 		} else {
 			std::filesystem::remove(PATH / argv[0]);
 		}
@@ -72,7 +78,7 @@ int budgetDelete(int argc, char** argv) {
 	} 
 }
 
-int budgetList(int argc, char** argv) {
+int budgetList() {
 	for (const auto& entry : fs::directory_iterator(PATH)) {
 		if (entry.is_regular_file() && entry.path().extension() == ".csv") {
 			std::cout << entry.path().stem().string() << '\n';
