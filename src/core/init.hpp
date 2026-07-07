@@ -3,4 +3,4 @@
 #include <filesystem>
 
 std::filesystem::path setupFolder();
-void createConfig(std::filesystem::path dir);
+void createFiles(std::filesystem::path dir);

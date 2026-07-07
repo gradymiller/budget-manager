@@ -73,7 +73,7 @@ int cmdInit() {
 	std::filesystem::path dir = setupFolder();
 	std::cout << "Data saved at: " << dir << "\n";
 
-	createConfig(dir);
+	createFiles(dir);
 	
 	std::ofstream file("current");
 
