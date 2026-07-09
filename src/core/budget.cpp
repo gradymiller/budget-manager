@@ -1,7 +1,7 @@
 // TODO: Add validation to setters
 // TODO: Load data in from a csv (to struct/class), overwrite when saving
 
-#include "budget.hpp"
+#include "core/budget.hpp"
 
 #include <iomanip>
 #include <sstream>
@@ -13,7 +13,7 @@
 #include <ctime>
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include "path.hpp"
+#include "core/path.hpp"
 
 using json = nlohmann::json;
 

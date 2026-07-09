@@ -7,8 +7,8 @@
 #include <fstream>
 #include <string>
 #include <version.h>
-#include <init.hpp>
-#include <path.hpp>
+#include <core/init.hpp>
+#include <core/path.hpp>
 
 int cmdHelp() {
 	std::cout <<

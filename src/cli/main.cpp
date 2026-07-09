@@ -1,11 +1,11 @@
 // TODO: Save config options on machine, for default budget
 #include <iostream>
 #include <string>
-#include "budgetCmds.hpp"
-#include "transactionCmds.hpp"
-#include "categoryCmds.hpp"
-#include "otherCmds.hpp"
-#include "utilities.hpp"
+#include "cli/budgetCmds.hpp"
+#include "cli/transactionCmds.hpp"
+#include "cli/categoryCmds.hpp"
+#include "cli/otherCmds.hpp"
+#include "cli/utilities.hpp"
 
 
 int dispatch(int argc, char** argv) {

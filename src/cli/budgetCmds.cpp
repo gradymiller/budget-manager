@@ -2,8 +2,8 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
-#include "budget.hpp"
-#include "path.hpp"
+#include "core/budget.hpp"
+#include "core/path.hpp"
 #include <fstream>
 #include <nlohmann/json.hpp>
 

@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.28)
 
 project(budget LANGUAGES CXX)
 
-# C++ Standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -24,10 +23,9 @@ configure_file(
 )
 
 
-# External dependencies
+# Dependencies
 include(FetchContent)
 
-# JSON Header
 FetchContent_Declare(
     nlohmann_json
     URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
@@ -36,7 +34,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(nlohmann_json)
 
 
-# GoogleTest
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
@@ -46,7 +43,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 
-# Project library
+# Core library
 add_library(budget_lib
     src/cli/budgetCmds.cpp
     src/cli/transactionCmds.cpp
@@ -60,7 +57,7 @@ add_library(budget_lib
 
 target_include_directories(budget_lib
     PUBLIC
-        src/core
+        ${CMAKE_SOURCE_DIR}/src
         ${CMAKE_BINARY_DIR}/generated
 )
 
@@ -79,19 +76,16 @@ target_compile_options(budget_lib
 )
 
 
-# Link JSON dependency to library
-# nlohmann_json is header-only, but this target provides the correct include paths
 target_link_libraries(budget_lib
     PUBLIC
         nlohmann_json::nlohmann_json
 )
 
 
-# Main executable
+# Application
 add_executable(budget
     src/cli/main.cpp
 )
-
 
 target_link_libraries(budget
     PRIVATE
@@ -99,13 +93,12 @@ target_link_libraries(budget
 )
 
 
-# Testing
+# Tests
 enable_testing()
 
 add_executable(budget_test
-    tests/cli_tests.cpp
+    tests/budgetCmds_test.cpp
 )
-
 
 target_link_libraries(budget_test
     PRIVATE
