@@ -4,7 +4,10 @@
 #include <filesystem>
 #include "budget.hpp"
 #include "path.hpp"
+#include <fstream>
+#include <nlohmann/json.hpp>
 
+using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 int budgetAdd(char** argv) {
@@ -24,7 +27,7 @@ int budgetAdd(char** argv) {
 		return 0;
 
 	} catch (const std::invalid_argument& e) {
-		std::cout << "Invalid Argument: " << e.what() << "\n";
+		std::cerr << "Invalid Argument: " << e.what() << "\n";
 		return 1;
 	}
 }
@@ -36,21 +39,22 @@ int budgetEdit(char** argv) {
 		budget.load();
 
 		std::string arg0 = argv[0];
+		std::string arg1 = argv[1];
 
 		if (arg0 == "name") {
-			budget.setName(argv[1]);
+			budget.setName(arg1);
 
 		} else if (arg0 == "start_date") {
-			budget.setStartDate(argv[1]);
+			budget.setStartDate(arg1);
 
 		} else if (arg0 == "end_date") {
-			budget.setEndDate(argv[1]);
+			budget.setEndDate(arg1);
 		
 		} else if (arg0 == "limit") {
-			budget.setLimit(argv[1]);
+			budget.setLimit(arg1);
 
 		} else {
-			throw std::invalid_argument(std::string(argv[1]) + " not known");
+			throw std::invalid_argument(std::string(arg1) + " not known");
 		}
 
 		budget.save();
@@ -58,7 +62,7 @@ int budgetEdit(char** argv) {
 		return 0;
 		
 	} catch (const std::invalid_argument& e) {
-		std::cout << "Invalid Argument: " << e.what() << "\n";
+		std::cerr << "Invalid Argument: " << e.what() << "\n";
 		return 1;
 	} 
 }
@@ -73,16 +77,33 @@ int budgetDelete(char** argv) {
 		return 0;
 
 	} catch (const std::invalid_argument& e) {
-		std::cout << "Invalid Argument: " << e.what() << "\n";
+		std::cerr << "Invalid Argument: " << e.what() << "\n";
 		return 1;
 	} 
 }
 
 int budgetList() {
-	for (const auto& entry : fs::directory_iterator(PATH)) {
-		if (entry.is_regular_file() && entry.path().extension() == ".csv") {
-			std::cout << entry.path().stem().string() << '\n';
-		}
-	}
-	return 0;
+    try {
+        std::ifstream file(PATH / "metadata.json");
+        if (!file) {
+            throw std::runtime_error("Failed to open metadata.json");
+        }
+
+        json metadata;
+        file >> metadata;
+
+        if (!metadata.contains("budgets") || !metadata["budgets"].is_object()) {
+            throw std::runtime_error("metadata.json does not contain a valid \"budgets\" object");
+        }
+
+        for (const auto& [name, _] : metadata["budgets"].items()) {
+            std::cout << name << '\n';
+        }
+
+        return 0;
+    }
+    catch (const std::runtime_error& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 1;
+    }
 }
