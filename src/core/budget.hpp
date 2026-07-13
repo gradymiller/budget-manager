@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 #include <optional>
+#include <vector>
 #include "core/transaction.hpp"
 
 class Budget {
@@ -21,8 +22,17 @@ public:
 
 	void addTransaction(Transaction txn);
 	void delTransaction(); // TODO: takes in ID
+	std::vector<Transaction> getTransactions();
+	
+	void addCategory(std::string category);
+	void delCategory(std::string category);
+	std::vectory<std::string> getCategories();
 
-	void save();
+	void saveAll();
+	void saveBudget();
+	void saveTransactions();
+	void saveCategories();
+
     void load();
 
 private:

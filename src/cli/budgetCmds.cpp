@@ -24,7 +24,7 @@ int budgetAdd(const char* const argv[]) {
         budget.setLimit(argv[3]);
 
         // Save to csv file on user's local machine
-        budget.save();
+        budget.saveBudget();
 
         std::cout << "Budget '" << budget.getName() << "' saved\n";
         return 0;
@@ -61,7 +61,7 @@ int budgetEdit(const char* const argv[]) {
             throw std::invalid_argument(field + " not known");
         }
 
-        budget.save();
+        budget.saveBudget();
 
         return 0;
 

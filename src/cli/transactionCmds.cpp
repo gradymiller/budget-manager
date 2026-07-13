@@ -36,7 +36,7 @@ int transactionAdd(int argc, char** argv) {
 		}
 
 		budget.addTransaction(txn);
-		budget.save();
+		budget.saveTransactions();
 
 	} catch (const std::invalid_argument& e) {
 		std::cerr << "Invalid Argument: " << e.what() << "\n";

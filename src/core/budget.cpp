@@ -106,8 +106,14 @@ void Budget::delTransaction() {
 
 }
 
-void Budget::save() {
+void Budget::saveAll() {
+	// Save everything
+	saveBudget();
+	saveCategories();
+	saveTransactions();
+}
 
+void Budget::saveBudget() {
 	// Save metadata
 	json metadata;	
 	std::ifstream in(PATH / "metadata.json");
@@ -132,7 +138,13 @@ void Budget::save() {
 	}
 	out << metadata.dump(4);
 	out.close(); 
+}
 
+void Budget::saveCategories() {
+	// Save categories
+}
+
+void Budget::saveTransactions() {
 	// Save transactions
 	std::ofstream csv(PATH / (this->name + ".csv"));
 
@@ -143,8 +155,10 @@ void Budget::save() {
 	// TODO: Placeholder header until transactions are implemented
 	csv << "description,amount,date\n";
 
+	// TODO: Add category saving to json
 	csv.close();	
 }
+
 
 void Budget::load() {
 	//loadMetaData;
