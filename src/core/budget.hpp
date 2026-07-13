@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <string>
+#include <optional>
 
 class Budget {
 public:
@@ -13,8 +14,8 @@ public:
     double getLimit() const;
 
     void setName(std::string n);
-    void setStartDate(std::string sd);
-    void setEndDate(std::string ed);
+    void setStartDate(const std::string& sd);
+    void setEndDate(const std::string& ed);
     void setLimit(std::string l);
 
 	void save();
@@ -22,8 +23,8 @@ public:
 
 private:
     std::string name;
-    std::chrono::system_clock::time_point start_date;
-    std::chrono::system_clock::time_point end_date;
+	std::optional<std::chrono::system_clock::time_point> start_date;
+	std::optional<std::chrono::system_clock::time_point> end_date;
     double limit = 0.0;
 	std::chrono::system_clock::time_point parseDate(const std::string& s);
 	std::string stringDate(const std::chrono::system_clock::time_point& tp);

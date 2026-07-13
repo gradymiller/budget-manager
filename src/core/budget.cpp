@@ -12,6 +12,7 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <optional>
 #include <nlohmann/json.hpp>
 #include "core/path.hpp"
 
@@ -23,11 +24,11 @@ const std::string& Budget::getName() const {
 }
 
 std::chrono::system_clock::time_point Budget::getStartDate() const {
-    return this->start_date;
+    return *this->start_date;
 }
 
 std::chrono::system_clock::time_point Budget::getEndDate() const {
-    return this->end_date;
+    return *this->end_date;
 }
 
 double Budget::getLimit() const {
@@ -59,12 +60,24 @@ void Budget::setName(std::string n) {
     this->name = std::move(n);
 }
 
-void Budget::setStartDate(std::string sd) {
-    this->start_date = parseDate(sd);
+void Budget::setStartDate(const std::string& sd) {
+	auto parsed_date = parseDate(sd);
+
+	if (this->end_date && parsed_date > *this->end_date) {
+		throw std::invalid_argument("Start Date cannot be after the End Date");
+	} 
+
+	this->start_date = parsed_date;
 }
 
-void Budget::setEndDate(std::string ed) {
-    this->end_date = parseDate(ed);
+void Budget::setEndDate(const std::string& ed) {
+    auto parsed_date = parseDate(ed);
+
+	if (this->start_date && parsed_date < *this->start_date) {
+		throw std::invalid_argument("End Date cannot be before the Start Date");
+	}
+
+	this->end_date = parsed_date;
 }
 
 void Budget::setLimit(std::string l) {
@@ -96,8 +109,8 @@ void Budget::save() {
 
 	json budget_json;
 
-	budget_json["start_date"] = stringDate(this->start_date);
-	budget_json["end_date"] = stringDate(this->end_date);
+	budget_json["start_date"] = stringDate(*this->start_date);
+	budget_json["end_date"] = stringDate(*this->end_date);
 	budget_json["limit"] = this->limit;
 	metadata["budgets"][this->name] = budget_json;
 
