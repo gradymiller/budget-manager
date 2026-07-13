@@ -2,84 +2,91 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
+#include <fstream>
+
+#include <nlohmann/json.hpp>
+
 #include "core/budget.hpp"
 #include "core/path.hpp"
-#include <fstream>
-#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
-int budgetAdd(char** argv) {
-	try {
-		// Init budget from core
-		Budget budget;
+int budgetAdd(const char* const argv[]) {
+    try {
+        // Init budget from core
+        Budget budget;
 
-		// Set basic params for the new budget
-		budget.setName(argv[0]);
-		budget.setStartDate(argv[1]);
-		budget.setEndDate(argv[2]);
-		budget.setLimit(argv[3]);
-		
-		// Save to csv file on user's local machine
-		budget.save();
-		std::cout << "Budget '" << budget.getName() << "' saved\n";
-		return 0;
+        // Set basic params for the new budget
+        budget.setName(argv[0]);
+        budget.setStartDate(argv[1]);
+        budget.setEndDate(argv[2]);
+        budget.setLimit(argv[3]);
 
-	} catch (const std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << "\n";
-		return 1;
-	}
+        // Save to csv file on user's local machine
+        budget.save();
+
+        std::cout << "Budget '" << budget.getName() << "' saved\n";
+        return 0;
+
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Invalid Argument: " << e.what() << '\n';
+        return 1;
+    }
 }
 
-int budgetEdit(char** argv) {
-	try {
-		Budget budget;
-		// TODO: Loading needs PATH and current budget
-		budget.load();
+int budgetEdit(const char* const argv[]) {
+    try {
+        Budget budget;
 
-		std::string arg0 = argv[0];
-		std::string arg1 = argv[1];
+        // TODO: Loading needs PATH and current budget
+        budget.load();
 
-		if (arg0 == "name") {
-			budget.setName(arg1);
+        std::string field = argv[0];
+        std::string value = argv[1];
 
-		} else if (arg0 == "start_date") {
-			budget.setStartDate(arg1);
+        if (field == "name") {
+            budget.setName(value);
 
-		} else if (arg0 == "end_date") {
-			budget.setEndDate(arg1);
-		
-		} else if (arg0 == "limit") {
-			budget.setLimit(arg1);
+        } else if (field == "start_date") {
+            budget.setStartDate(value);
 
-		} else {
-			throw std::invalid_argument(std::string(arg1) + " not known");
-		}
+        } else if (field == "end_date") {
+            budget.setEndDate(value);
 
-		budget.save();
+        } else if (field == "limit") {
+            budget.setLimit(value);
 
-		return 0;
-		
-	} catch (const std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << "\n";
-		return 1;
-	} 
+        } else {
+            throw std::invalid_argument(field + " not known");
+        }
+
+        budget.save();
+
+        return 0;
+
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Invalid Argument: " << e.what() << '\n';
+        return 1;
+    }
 }
 
-int budgetDelete(char** argv) {
-	try {
-		if (!fs::exists(PATH / argv[0])) {
-			throw std::invalid_argument(std::string(argv[0]) + ".csv does not exist");
-		} else {
-			std::filesystem::remove(PATH / argv[0]);
-		}
-		return 0;
+int budgetDelete(const char* const argv[]) {
+    try {
+        fs::path budgetFile = PATH / (std::string(argv[0]) + ".csv");
 
-	} catch (const std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << "\n";
-		return 1;
-	} 
+        if (!fs::exists(budgetFile)) {
+            throw std::invalid_argument(std::string(argv[0]) + ".csv does not exist");
+        }
+
+        fs::remove(budgetFile);
+
+        return 0;
+
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Invalid Argument: " << e.what() << '\n';
+        return 1;
+    }
 }
 
 int budgetList() {
@@ -101,8 +108,8 @@ int budgetList() {
         }
 
         return 0;
-    }
-    catch (const std::runtime_error& e) {
+
+    } catch (const std::runtime_error& e) {
         std::cerr << "Error: " << e.what() << '\n';
         return 1;
     }

@@ -1,6 +1,6 @@
 #pragma once
 
-int budgetAdd(char** argv);
-int budgetEdit(char** argv);
-int budgetDelete(char** argv);
+int budgetAdd(const char* const* argv);
+int budgetEdit(const char* const* argv);
+int budgetDelete(const char* const* argv);
 int budgetList();
