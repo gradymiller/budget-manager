@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <vector>
 #include <string>
-#include "budget.hpp"
+#include "core/budget.hpp"
 
 
 int categoryAdd(int argc, char** argv) {

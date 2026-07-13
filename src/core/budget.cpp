@@ -13,6 +13,7 @@
 #include <ctime>
 #include <fstream>
 #include <optional>
+#include <vector>
 #include <nlohmann/json.hpp>
 #include "core/path.hpp"
 #include "core/transaction.hpp"
@@ -98,12 +99,31 @@ void Budget::setLimit(std::string l) {
     this->limit = value;
 }
 
-void Budget::addTransaction(Transaction txn) {
+void Budget::addCategory(std::string category) {
+	// TODO: Add a category	
+}
 
+void Budget::delCategory(std::string category) {
+	// TODO: Delete a category	
+}
+
+std::vector<std::string> Budget::getCategories() {
+	std::vector<std::string> tmp;
+	return tmp;
+}
+
+void Budget::addTransaction(Transaction txn) {
+	// TODO: Add transaction struct
 }
 
 void Budget::delTransaction() {
+	// TODO: Delete a transaction struct
+}
 
+std::vector<Transaction> Budget::getTransactions() {
+	// TODO: Return all transactions in the budget
+	std::vector<Transaction> tmp;
+	return tmp;
 }
 
 void Budget::saveAll() {
@@ -141,7 +161,7 @@ void Budget::saveBudget() {
 }
 
 void Budget::saveCategories() {
-	// Save categories
+	// TODO: Save categories
 }
 
 void Budget::saveTransactions() {

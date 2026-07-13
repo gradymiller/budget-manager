@@ -20,18 +20,18 @@ public:
     void setEndDate(const std::string& ed);
     void setLimit(std::string l);
 
+	void addCategory(std::string category);
+	void delCategory(std::string category);
+	std::vector<std::string> getCategories();
+
 	void addTransaction(Transaction txn);
 	void delTransaction(); // TODO: takes in ID
 	std::vector<Transaction> getTransactions();
-	
-	void addCategory(std::string category);
-	void delCategory(std::string category);
-	std::vectory<std::string> getCategories();
 
 	void saveAll();
 	void saveBudget();
-	void saveTransactions();
 	void saveCategories();
+	void saveTransactions();
 
     void load();
 
