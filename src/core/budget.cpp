@@ -15,6 +15,7 @@
 #include <optional>
 #include <nlohmann/json.hpp>
 #include "core/path.hpp"
+#include "core/transaction.hpp"
 
 using json = nlohmann::json;
 
@@ -120,10 +121,13 @@ void Budget::save() {
 		throw std::runtime_error("Could not save metadata");
 	}
 	out << metadata.dump(4);
+
+	// Save csv data
 }
 
 void Budget::load() {
-    // TODO: Load budget data from CSV/file
+	//loadMetaData;
+	//loadTransactions;
 }
 
 std::chrono::system_clock::time_point Budget::parseDate(const std::string& s) {

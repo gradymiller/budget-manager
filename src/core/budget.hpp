@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 #include <optional>
+#include "core/transaction.hpp"
 
 class Budget {
 public:
@@ -26,6 +27,8 @@ private:
 	std::optional<std::chrono::system_clock::time_point> start_date;
 	std::optional<std::chrono::system_clock::time_point> end_date;
     double limit = 0.0;
+	std::vector<Transaction> transactions; 
+
 	std::chrono::system_clock::time_point parseDate(const std::string& s);
 	std::string stringDate(const std::chrono::system_clock::time_point& tp);
 };
