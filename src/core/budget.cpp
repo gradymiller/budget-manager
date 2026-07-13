@@ -99,6 +99,8 @@ void Budget::setLimit(std::string l) {
 }
 
 void Budget::save() {
+
+	// Save metadata
 	json metadata;	
 	std::ifstream in(PATH / "metadata.json");
 
@@ -121,8 +123,19 @@ void Budget::save() {
 		throw std::runtime_error("Could not save metadata");
 	}
 	out << metadata.dump(4);
+	out.close(); 
 
-	// Save csv data
+	// Save transactions
+	std::ofstream csv(PATH / (this->name + ".csv"));
+
+	if (!csv.is_open()) {
+		throw std::runtime_error("Could not open file to save transactions");
+	}
+
+	// TODO: Placeholder header until transactions are implemented
+	csv << "description,amount,date\n";
+
+	csv.close();	
 }
 
 void Budget::load() {
