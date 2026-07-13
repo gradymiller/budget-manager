@@ -83,11 +83,11 @@ target_link_libraries(budget_lib
 
 
 # Application
-add_executable(budget
+add_executable(bmcli
     src/cli/main.cpp
 )
 
-target_link_libraries(budget
+target_link_libraries(bmcli
     PRIVATE
         budget_lib
 )
@@ -96,11 +96,11 @@ target_link_libraries(budget
 # Tests
 enable_testing()
 
-add_executable(budget_test
+add_executable(bmcli_test
     tests/budgetCmds_test.cpp
 )
 
-target_link_libraries(budget_test
+target_link_libraries(bmcli_test
     PRIVATE
         budget_lib
         GTest::gtest_main
@@ -109,4 +109,4 @@ target_link_libraries(budget_test
 
 include(GoogleTest)
 
-gtest_discover_tests(budget_test)
+gtest_discover_tests(bmcli_test)
