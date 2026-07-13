@@ -19,6 +19,9 @@ public:
     void setEndDate(const std::string& ed);
     void setLimit(std::string l);
 
+	void addTransaction(Transaction txn);
+	void delTransaction(); // TODO: takes in ID
+
 	void save();
     void load();
 

@@ -52,6 +52,7 @@ add_library(budget_lib
     src/cli/utilities.cpp
     src/core/init.cpp
     src/core/budget.cpp
+    src/core/transaction.cpp
 )
 
 

@@ -98,6 +98,14 @@ void Budget::setLimit(std::string l) {
     this->limit = value;
 }
 
+void Budget::addTransaction(Transaction txn) {
+
+}
+
+void Budget::delTransaction() {
+
+}
+
 void Budget::save() {
 
 	// Save metadata
