@@ -50,7 +50,7 @@ Options:
 }
 
 int cmdVersion() {
-	std::cout << APP_VERSION << "\n";
+	std::cout << APPVERSION << "\n";
 	return 0;
 }
 
