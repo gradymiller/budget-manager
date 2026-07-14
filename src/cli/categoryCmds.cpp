@@ -9,25 +9,27 @@ int categoryAdd(int argc, const char* const argv[]) {
 	Budget budget;
 	budget.load();
 
-	if (argc < 1) {
+	if (argc < 3) {
 		throw std::invalid_argument("Too few arguments");
 	}
 
-	budget.addCategory(argv[0]);	
+	budget.addCategory(argv[0], argv[1], argv[2];	
+
 	budget.saveCategories();
+	return 0;
 }
 
 int categoryEdit(int argc, const char* const argv[]) {
 	Budget budget;
 	budget.load();
 
-	if (argc < 2) {
+	if (argc < 3) {
 		throw std::invalid_argument("Too few arguments");
 	}
 
-	budget.delCategory(argv[0]);
-	budget.addCategory(argv[1]);
+	budget.editCategory(argv[0], argv[1], argv[2]);
 
+	budget.saveCategories();
 	return 0;
 }
 
@@ -40,6 +42,7 @@ int categoryDelete(int argc, const char* const argv[]) {
 	}
 
 	budget.delCategory(argv[0]);	
+
 	budget.saveCategories();
 	return 0;
 }

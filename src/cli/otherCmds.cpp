@@ -37,9 +37,9 @@ Commands:
 	list
 
   c | category [--help]
-    add <category>
-	edit | rename <category> <new_value>
-	delete <category>
+    add <category_name> <type> <limit>
+	edit <category_name> <field> <new_value>
+	delete <category_name>
 	list
 
 Options:
