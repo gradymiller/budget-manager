@@ -45,6 +45,11 @@ int transactionAdd(int argc, char** argv) {
 }
 
 int transactionEdit(int argc, char** argv) {
+	if (argc < 3) {
+		throw std::invalid_argument("Too few arguments");
+	}
+
+
 	return 0;
 }
 
