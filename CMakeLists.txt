@@ -99,6 +99,7 @@ enable_testing()
 
 add_executable(bmcli_test
     tests/budgetCmds_test.cpp
+    tests/categoryCmds_test.cpp
 )
 
 target_link_libraries(bmcli_test
