@@ -18,17 +18,18 @@ protected:
     }
 
     static void TearDownTestSuite() {
-		budgetDelete({"TEST"});
+		const char* argv2[] = {"TEST"};
+		budgetDelete(argv2);
     }
 };
 
-const char* const* successHelper() {
+const char* const* categoryHelper() {
 	static const char* argv[] = {"test-category"};
 	return argv;
 }
 
 TEST_F(CategoryCmdsTest, categoryAddSuccess) {
-    const char* const* argv = successHelper();
+    const char* const* argv = categoryHelper();
 
     EXPECT_EQ(categoryAdd(1, argv), 0);
 }
@@ -46,7 +47,7 @@ TEST_F(CategoryCmdsTest, categoryAddRejectInvalidName2) {
 }
 
 TEST_F(CategoryCmdsTest, categoryEditSuccess) {
-    const char* const* argv = successHelper();
+    const char* const* argv = categoryHelper();
 	categoryAdd(1, argv);
 
 	const char* args[] = {"test-category", "groceries"};
@@ -54,7 +55,7 @@ TEST_F(CategoryCmdsTest, categoryEditSuccess) {
 }
 
 TEST_F(CategoryCmdsTest, categoryEditRejectInvalidOldCategory) {
-    const char* const* argv = successHelper();
+    const char* const* argv = categoryHelper();
 	categoryAdd(1, argv);
 
 	const char* args[] = {"invalidCategory", "groceries"};
@@ -62,7 +63,7 @@ TEST_F(CategoryCmdsTest, categoryEditRejectInvalidOldCategory) {
 }
 
 TEST_F(CategoryCmdsTest, categoryEditRejectInvalidNewCategory) {
-    const char* const* argv = successHelper();
+    const char* const* argv = categoryHelper();
 	categoryAdd(1, argv);
 
 	const char* args[] = {"test-category", "category!1-"};
@@ -70,7 +71,7 @@ TEST_F(CategoryCmdsTest, categoryEditRejectInvalidNewCategory) {
 }
 
 TEST_F(CategoryCmdsTest, categoryDeleteSuccess) {
-    const char* const* argv = successHelper();
+    const char* const* argv = categoryHelper();
 	categoryAdd(1, argv);
 
 	const char* args[] = {"test-category"};
@@ -78,7 +79,7 @@ TEST_F(CategoryCmdsTest, categoryDeleteSuccess) {
 }
 
 TEST_F(CategoryCmdsTest, categoryDeleteRejectInvalidCategory) {
-    const char* const* argv = successHelper();
+    const char* const* argv = categoryHelper();
 	categoryAdd(1, argv);
 
 	const char* args[] = {"invalid-category"};
@@ -86,7 +87,7 @@ TEST_F(CategoryCmdsTest, categoryDeleteRejectInvalidCategory) {
 }
 
 TEST_F(CategoryCmdsTest, categoryListSuccess) {
-    const char* const* argv = successHelper();
+    const char* const* argv = categoryHelper();
 	categoryAdd(1, argv);
 
     EXPECT_EQ(categoryList(), 0);

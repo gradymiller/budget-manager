@@ -10,7 +10,7 @@ protected:
     }
 };
 
-const char* const* successHelper() {
+const char* const* budgetHelper() {
     static const char* argv[] = {
         "TEST",
         "2026-01-01",
@@ -22,7 +22,7 @@ const char* const* successHelper() {
 }
 
 TEST_F(BudgetCmdsTest, BudgetAddSuccess) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
 
     EXPECT_EQ(budgetAdd(argv), 0);
     EXPECT_TRUE(std::filesystem::exists(PATH / "TEST.csv"));
@@ -106,7 +106,7 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidEndDate2) {
 }
 
 TEST_F(BudgetCmdsTest, BudgetEditSuccess) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
     budgetAdd(argv);
 
     const char* args1[] = {"name", "test"};
@@ -123,7 +123,7 @@ TEST_F(BudgetCmdsTest, BudgetEditSuccess) {
 }
 
 TEST_F(BudgetCmdsTest, BudgetEditInvalidName) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
     budgetAdd(argv);
 
     const char* args[] = {"name", "_test"};
@@ -132,7 +132,7 @@ TEST_F(BudgetCmdsTest, BudgetEditInvalidName) {
 }
 
 TEST_F(BudgetCmdsTest, BudgetEditInvalidStartDate) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
     budgetAdd(argv);
 
     const char* args[] = {"start_date", "1/1/2026"};
@@ -141,7 +141,7 @@ TEST_F(BudgetCmdsTest, BudgetEditInvalidStartDate) {
 }
 
 TEST_F(BudgetCmdsTest, BudgetEditInvalidEndDate) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
     budgetAdd(argv);
 
     const char* args[] = {"end_date", "25-25-25"};
@@ -150,7 +150,7 @@ TEST_F(BudgetCmdsTest, BudgetEditInvalidEndDate) {
 }
 
 TEST_F(BudgetCmdsTest, BudgetEditInvalidLimit) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
     budgetAdd(argv);
 
     const char* args[] = {"limit", "abc123"};
@@ -159,7 +159,7 @@ TEST_F(BudgetCmdsTest, BudgetEditInvalidLimit) {
 }
 
 TEST_F(BudgetCmdsTest, BudgetDeleteSuccess) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
     budgetAdd(argv);
 
     EXPECT_EQ(budgetDelete(argv), 0);
@@ -167,7 +167,7 @@ TEST_F(BudgetCmdsTest, BudgetDeleteSuccess) {
 }
 
 TEST_F(BudgetCmdsTest, BudgetDeleteInvalidName) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
     budgetAdd(argv);
 
     const char* args[] = {"THIS_BUDGET_SHOULD_NOT_EXIST"};
@@ -176,7 +176,7 @@ TEST_F(BudgetCmdsTest, BudgetDeleteInvalidName) {
 }
 
 TEST_F(BudgetCmdsTest, BudgetListSuccess) {
-    const char* const* argv = successHelper();
+    const char* const* argv = budgetHelper();
     budgetAdd(argv);
 
     EXPECT_EQ(budgetList(), 0);
