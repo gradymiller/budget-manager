@@ -1,6 +1,6 @@
 #pragma once
 
-int categoryAdd(int argc, char** argv);
-int categoryEdit(int argc, char** argv);
-int categoryDelete(int argc, char** argv);
-int categoryList(int argc, char** argv);
+int categoryAdd(int argc, const char* const* argv);
+int categoryEdit(int argc, const char* const* argv);
+int categoryDelete(int argc, const char* const* argv);
+int categoryList();

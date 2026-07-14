@@ -5,7 +5,7 @@
 #include "core/budget.hpp"
 
 
-int categoryAdd(int argc, char** argv) {
+int categoryAdd(int argc, const char* const argv[]) {
 	Budget budget;
 	budget.load();
 
@@ -17,7 +17,7 @@ int categoryAdd(int argc, char** argv) {
 	budget.saveCategories();
 }
 
-int categoryEdit(int argc, char** argv) {
+int categoryEdit(int argc, const char* const argv[]) {
 	Budget budget;
 	budget.load();
 
@@ -31,7 +31,7 @@ int categoryEdit(int argc, char** argv) {
 	return 0;
 }
 
-int categoryDelete(int argc, char** argv) {
+int categoryDelete(int argc, const char* const argv[]) {
 	Budget budget;
 	budget.load();
 
@@ -44,7 +44,7 @@ int categoryDelete(int argc, char** argv) {
 	return 0;
 }
 
-int categoryList(int argc, char** argv) {
+int categoryList() {
 	Budget budget;
 	budget.load();
 

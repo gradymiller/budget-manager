@@ -90,7 +90,7 @@ int dispatch(int argc, char** argv) {
 			return categoryDelete(argc - 3, argv + 3);
 
 		} else if (arg2 == "list") {
-			return categoryList(argc - 3, argv + 3);
+			return categoryList();
 
 		} else if (arg2 == "-h" || arg2 == "--help") {
 			return categoryHelp();
