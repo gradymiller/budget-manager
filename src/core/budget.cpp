@@ -14,6 +14,7 @@
 #include <fstream>
 #include <optional>
 #include <vector>
+#include <algorithm>
 #include <nlohmann/json.hpp>
 #include "core/path.hpp"
 #include "core/transaction.hpp"
@@ -100,16 +101,42 @@ void Budget::setLimit(std::string l) {
 }
 
 void Budget::addCategory(std::string category) {
-	// TODO: Add a category	
+	if (category.empty()) {
+		throw std::invalid_argument("New category cannot be empty");
+	}
+	
+	for (size_t i=0; i < category.size(); i++) {
+		char c = category[i];
+
+		if (c == '_' || c == '-') {
+			if (i == 0 || i == category.size() - 1) {
+				std::ostringstream msg;
+				msg << "'" << c << "' cannot be at the beginning or end of the category name";
+				throw std::invalid_argument(msg.str());
+			}
+
+		} else if (!std::isalnum(static_cast<unsigned char>(c))) {
+				std::ostringstream msg;
+				msg << "'" << c << "' is not a valid character";
+				throw std::invalid_argument(msg.str());
+		}
+	}
+
+    this->categories.push_back(category);
 }
 
 void Budget::delCategory(std::string category) {
-	// TODO: Delete a category	
+	for (size_t i = 0; i < this->categories.size(); i++) {
+		if (this->categories[i] == category) {
+			std::swap(this->categories[i], this->categories.back());
+			this->categories.pop_back();
+			break;
+		}
+	}
 }
 
 std::vector<std::string> Budget::getCategories() {
-	std::vector<std::string> tmp;
-	return tmp;
+	return this->categories;
 }
 
 void Budget::addTransaction(Transaction txn) {
@@ -161,7 +188,31 @@ void Budget::saveBudget() {
 }
 
 void Budget::saveCategories() {
-	// TODO: Save categories
+    json metadata;
+    std::ifstream in(PATH / "metadata.json");
+
+    if (!in.good()) {
+        throw std::runtime_error("Budget Manager has not been initialized");
+    }
+
+    in >> metadata;
+    in.close();
+
+    json categories_json = json::array();
+
+    for (const auto& category : categories) {
+        categories_json.push_back(category);
+    }
+
+    metadata["budgets"][this->name]["categories"] = categories_json;
+
+    std::ofstream out(PATH / "metadata.json");
+
+    if (!out.is_open()) {
+        throw std::runtime_error("Could not save metadata");
+    }
+
+    out << metadata.dump(4);
 }
 
 void Budget::saveTransactions() {

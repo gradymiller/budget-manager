@@ -41,6 +41,7 @@ private:
 	std::optional<std::chrono::system_clock::time_point> end_date;
     double limit = 0.0;
 	std::vector<Transaction> transactions; 
+	std::vector<std::string> categories;
 
 	std::chrono::system_clock::time_point parseDate(const std::string& s);
 	std::string stringDate(const std::chrono::system_clock::time_point& tp);
