@@ -73,7 +73,15 @@ int categoryList() {
 
 		std::vector<Category> categories = budget.getCategories();
 		for (const auto& category : categories) {
-			std::cout << category.getName() << ", Type: " << category.getType << ", Limit: " << "\n"; 	
+			std::string type;
+
+			if (category.getType() == CategoryType::Expense) {
+				type = "expense";
+			} else {
+				type = "income";
+			}
+
+			std::cout << "Name: " << category.getName() << ", Type: " << type << ", Limit: " << category.getLimit() << "\n"; 	
 		}
 
 		return 0;
