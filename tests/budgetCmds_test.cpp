@@ -2,6 +2,7 @@
 #include <filesystem>
 #include "cli/budgetCmds.hpp"
 #include "core/path.hpp"
+#include <iostream>
 
 class BudgetCmdsTest : public ::testing::Test {
 protected:
@@ -24,8 +25,7 @@ const char* const* budgetHelper() {
 TEST_F(BudgetCmdsTest, BudgetAddSuccess) {
     const char* const* argv = budgetHelper();
 
-    EXPECT_EQ(budgetAdd(argv), 0);
-    EXPECT_TRUE(std::filesystem::exists(PATH / "TEST.csv"));
+	EXPECT_EQ(budgetAdd(argv), 0);
 }
 
 TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidName1) {

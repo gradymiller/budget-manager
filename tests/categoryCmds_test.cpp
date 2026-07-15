@@ -15,64 +15,73 @@ protected:
         };
 
         budgetAdd(argv1);
+
+		const char* argv2[] {"TEST"}
+		switchCmd(argv2);
     }
 
     static void TearDownTestSuite() {
-		const char* argv2[] = {"TEST"};
-		budgetDelete(argv2);
+		const char* argv3[] = {"TEST"};
+		budgetDelete(argv3);
     }
 };
 
 const char* const* categoryHelper() {
-	static const char* argv[] = {"test-category"};
+	static const char* argv[] = {"test-category", "expense", "100"};
 	return argv;
 }
 
 TEST_F(CategoryCmdsTest, categoryAddSuccess) {
     const char* const* argv = categoryHelper();
 
-    EXPECT_EQ(categoryAdd(1, argv), 0);
+    EXPECT_EQ(categoryAdd(3, argv), 0);
 }
 
-TEST_F(CategoryCmdsTest, categoryAddRejectInvalidName1) {
-	const char* argv[] = {"-1ds"};
+TEST_F(CategoryCmdsTest, categoryAddRejectInvalidName) {
+	const char* argv[] = {"-1d@s", "expense", "100"};
 
-    EXPECT_EQ(categoryAdd(1, argv), 1);
+    EXPECT_EQ(categoryAdd(3, argv), 1);
 }
 
-TEST_F(CategoryCmdsTest, categoryAddRejectInvalidName2) {
-	const char* argv[] = {"asdf@asdf"};
+TEST_F(CategoryCmdsTest, categoryAddRejectInvalidType) {
+	const char* argv[] = {"test_category", "idk", "100"};
 
-    EXPECT_EQ(categoryAdd(1, argv), 1);
+    EXPECT_EQ(categoryAdd(3, argv), 1);
+}
+
+TEST_F(CategoryCmdsTest, categoryAddRejectInvalidLimit) {
+	const char* argv[] = {"test_category", "income", "100a"};
+
+    EXPECT_EQ(categoryAdd(3, argv), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryEditSuccess) {
     const char* const* argv = categoryHelper();
-	categoryAdd(1, argv);
+	categoryAdd(3, argv);
 
 	const char* args[] = {"test-category", "groceries"};
-    EXPECT_EQ(categoryEdit(2, argv), 0);
+    EXPECT_EQ(categoryEdit(3, argv), 0);
 }
 
 TEST_F(CategoryCmdsTest, categoryEditRejectInvalidOldCategory) {
     const char* const* argv = categoryHelper();
-	categoryAdd(1, argv);
+	categoryAdd(3, argv);
 
 	const char* args[] = {"invalidCategory", "groceries"};
-    EXPECT_EQ(categoryEdit(2, argv), 1);
+    EXPECT_EQ(categoryEdit(3, argv), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryEditRejectInvalidNewCategory) {
     const char* const* argv = categoryHelper();
-	categoryAdd(1, argv);
+	categoryAdd(3, argv);
 
 	const char* args[] = {"test-category", "category!1-"};
-    EXPECT_EQ(categoryEdit(2, argv), 1);
+    EXPECT_EQ(categoryEdit(3, argv), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryDeleteSuccess) {
     const char* const* argv = categoryHelper();
-	categoryAdd(1, argv);
+	categoryAdd(3, argv);
 
 	const char* args[] = {"test-category"};
     EXPECT_EQ(categoryDelete(1, argv), 0);
@@ -80,7 +89,7 @@ TEST_F(CategoryCmdsTest, categoryDeleteSuccess) {
 
 TEST_F(CategoryCmdsTest, categoryDeleteRejectInvalidCategory) {
     const char* const* argv = categoryHelper();
-	categoryAdd(1, argv);
+	categoryAdd(3, argv);
 
 	const char* args[] = {"invalid-category"};
     EXPECT_EQ(categoryDelete(1, argv), 1);
@@ -88,7 +97,7 @@ TEST_F(CategoryCmdsTest, categoryDeleteRejectInvalidCategory) {
 
 TEST_F(CategoryCmdsTest, categoryListSuccess) {
     const char* const* argv = categoryHelper();
-	categoryAdd(1, argv);
+	categoryAdd(3, argv);
 
     EXPECT_EQ(categoryList(), 0);
 }
