@@ -1,7 +1,6 @@
 // TODO: Add docs for b/t/c
 // TODO: Setup initBudgetManager()
 // TODO: Setup cmdCurrent()
-// TODO: Setup cmdSwitch()
 #include <iostream>
 #include <filesystem>
 #include <fstream>
@@ -9,6 +8,9 @@
 #include <version.h>
 #include <core/init.hpp>
 #include <core/path.hpp>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 int cmdHelp() {
 	std::cout <<
@@ -91,8 +93,33 @@ int cmdCurrent() {
 	return 0;
 }
 
-int cmdSwitch(char** argv) {
-	std::ofstream file("current");	
-	file << argv[0];
-	return 0;
+int cmdSwitch(int argc, const char* const* argv) {
+    if (argc < 1) {
+        throw std::invalid_argument("Too few arguments");
+    }
+
+    std::ifstream in(PATH / "metadata.json");
+
+    if (!in.good()) {
+        throw std::runtime_error("Budget Manager has not been initialized");
+    }
+
+    json metadata;
+    in >> metadata;
+
+    std::string name = argv[0];
+
+    if (!metadata["budgets"].contains(name)) {
+        throw std::invalid_argument("Budget does not exist");
+    }
+
+    std::ofstream file(PATH / "current");
+
+    if (!file.good()) {
+        throw std::runtime_error("Could not set current budget");
+    }
+
+    file << name;
+
+    return 0;
 }

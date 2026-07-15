@@ -9,4 +9,4 @@ int categoryHelp();
 
 int cmdInit();
 int cmdCurrent();
-int cmdSwitch(char** argv);
+int cmdSwitch(int argc, const char* const* argv);

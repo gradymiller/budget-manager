@@ -2,6 +2,7 @@
 
 #include "cli/budgetCmds.hpp"
 #include "cli/categoryCmds.hpp"
+#include "cli/otherCmds.hpp"
 
 class CategoryCmdsTest : public ::testing::Test {
 protected:
@@ -16,8 +17,8 @@ protected:
 
         budgetAdd(argv1);
 
-		const char* argv2[] {"TEST"}
-		switchCmd(argv2);
+		const char* argv2[] = {"TEST"};
+		cmdSwitch(1, argv2);
     }
 
     static void TearDownTestSuite() {
