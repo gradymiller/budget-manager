@@ -274,8 +274,57 @@ void Budget::saveTransactions() {
 
 
 void Budget::load() {
-	//loadMetaData;
-	//loadTransactions;
+    std::ifstream currentFile(PATH / "current");
+
+    if (!currentFile.is_open()) {
+        throw std::runtime_error("No current budget selected");
+    }
+
+    std::getline(currentFile, name);
+    currentFile.close();
+
+    json metadata;
+
+    std::ifstream in(PATH / "metadata.json");
+
+    if (!in.is_open()) {
+        throw std::runtime_error("Budget Manager has not been initialized");
+    }
+
+    in >> metadata;
+    in.close();
+
+
+    if (!metadata["budgets"].contains(name)) {
+        throw std::invalid_argument("Budget does not exist");
+    }
+
+
+    json budget = metadata["budgets"][name];
+
+
+    // Load budget metadata
+    setStartDate(budget["start_date"].get<std::string>());
+    setEndDate(budget["end_date"].get<std::string>());
+
+    limit = budget["limit"].get<double>();
+
+
+    // Load categories
+    categories.clear();
+
+    for (const auto& category_json : budget["categories"]) {
+        Category category;
+
+        category.setName(category_json["name"].get<std::string>());
+        category.setType(category_json["type"].get<std::string>());
+
+        category.setLimit(
+            std::to_string(category_json["limit"].get<double>())
+        );
+
+        categories.push_back(category);
+    }
 }
 
 std::chrono::system_clock::time_point Budget::parseDate(const std::string& s) {
