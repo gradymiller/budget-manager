@@ -1,3 +1,4 @@
+// TODO: Make load() and these should all pass
 #include <gtest/gtest.h>
 
 #include "cli/budgetCmds.hpp"
@@ -60,24 +61,24 @@ TEST_F(CategoryCmdsTest, categoryEditSuccess) {
     const char* const* argv = categoryHelper();
 	categoryAdd(3, argv);
 
-	const char* args[] = {"test-category", "groceries"};
-    EXPECT_EQ(categoryEdit(3, argv), 0);
+	const char* args[] = {"test-category", "name", "groceries"};
+    EXPECT_EQ(categoryEdit(3, args), 0);
 }
 
-TEST_F(CategoryCmdsTest, categoryEditRejectInvalidOldCategory) {
+TEST_F(CategoryCmdsTest, categoryEditRejectInvalidCategoryName) {
     const char* const* argv = categoryHelper();
 	categoryAdd(3, argv);
 
-	const char* args[] = {"invalidCategory", "groceries"};
-    EXPECT_EQ(categoryEdit(3, argv), 1);
+	const char* args[] = {"invalidCategory", "name", "@@@a"};
+    EXPECT_EQ(categoryEdit(3, args), 1);
 }
 
-TEST_F(CategoryCmdsTest, categoryEditRejectInvalidNewCategory) {
+TEST_F(CategoryCmdsTest, categoryEditRejectInvalidCategoryType) {
     const char* const* argv = categoryHelper();
 	categoryAdd(3, argv);
 
-	const char* args[] = {"test-category", "category!1-"};
-    EXPECT_EQ(categoryEdit(3, argv), 1);
+	const char* args[] = {"test-category", "type", "failure"};
+    EXPECT_EQ(categoryEdit(3, args), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryDeleteSuccess) {
@@ -85,7 +86,7 @@ TEST_F(CategoryCmdsTest, categoryDeleteSuccess) {
 	categoryAdd(3, argv);
 
 	const char* args[] = {"test-category"};
-    EXPECT_EQ(categoryDelete(1, argv), 0);
+    EXPECT_EQ(categoryDelete(1, args), 0);
 }
 
 TEST_F(CategoryCmdsTest, categoryDeleteRejectInvalidCategory) {
@@ -93,7 +94,7 @@ TEST_F(CategoryCmdsTest, categoryDeleteRejectInvalidCategory) {
 	categoryAdd(3, argv);
 
 	const char* args[] = {"invalid-category"};
-    EXPECT_EQ(categoryDelete(1, argv), 1);
+    EXPECT_EQ(categoryDelete(1, args), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryListSuccess) {
