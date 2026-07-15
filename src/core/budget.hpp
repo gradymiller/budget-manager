@@ -5,6 +5,7 @@
 #include <optional>
 #include <vector>
 #include "core/transaction.hpp"
+#include "core/category.hpp"
 
 class Budget {
 public:
@@ -14,19 +15,25 @@ public:
     std::chrono::system_clock::time_point getStartDate() const;
     std::chrono::system_clock::time_point getEndDate() const;
     double getLimit() const;
+	std::vector<Category> getCategories();
+	std::vector<Transaction> getTransactions();
 
     void setName(std::string n);
     void setStartDate(const std::string& sd);
     void setEndDate(const std::string& ed);
     void setLimit(std::string l);
 
-	void addCategory(std::string category);
-	void delCategory(std::string category);
-	std::vector<std::string> getCategories();
+	void addCategory(const std::string& name,
+					 const std::string& type,
+					 const std::string& limit);
+	void editCategory(const std::string& category,
+					  const std::string& field,
+					  const std::string& value);
+	void delCategory(const std::string& category);
+	int findCategory(const std::string& category);
 
 	void addTransaction(Transaction txn);
 	void delTransaction(); // TODO: takes in ID
-	std::vector<Transaction> getTransactions();
 
 	void saveAll();
 	void saveBudget();
@@ -40,8 +47,8 @@ private:
 	std::optional<std::chrono::system_clock::time_point> start_date;
 	std::optional<std::chrono::system_clock::time_point> end_date;
     double limit = 0.0;
+	std::vector<Category> categories;
 	std::vector<Transaction> transactions; 
-	std::vector<std::string> categories;
 
 	std::chrono::system_clock::time_point parseDate(const std::string& s);
 	std::string stringDate(const std::chrono::system_clock::time_point& tp);

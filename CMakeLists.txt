@@ -53,6 +53,7 @@ add_library(budget_lib
     src/core/init.cpp
     src/core/budget.cpp
     src/core/transaction.cpp
+    src/core/category.cpp
 )
 
 

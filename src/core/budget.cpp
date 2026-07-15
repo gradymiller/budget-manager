@@ -100,43 +100,62 @@ void Budget::setLimit(std::string l) {
     this->limit = value;
 }
 
-void Budget::addCategory(std::string category) {
-	if (category.empty()) {
-		throw std::invalid_argument("New category cannot be empty");
+void Budget::addCategory(const std::string& name, const std::string& type, const std::string& limit) {
+	if (name.empty() || type.empty() || limit.empty()) {
+		throw std::invalid_argument("New categories require a non-empty name, type and limit");
 	}
-	
-	for (size_t i=0; i < category.size(); i++) {
-		char c = category[i];
 
-		if (c == '_' || c == '-') {
-			if (i == 0 || i == category.size() - 1) {
-				std::ostringstream msg;
-				msg << "'" << c << "' cannot be at the beginning or end of the category name";
-				throw std::invalid_argument(msg.str());
-			}
-
-		} else if (!std::isalnum(static_cast<unsigned char>(c))) {
-				std::ostringstream msg;
-				msg << "'" << c << "' is not a valid character";
-				throw std::invalid_argument(msg.str());
-		}
-	}
+	Category category;
+	category.setName(name);
+	category.setType(type);
+	category.setLimit(limit);
 
     this->categories.push_back(category);
 }
 
-void Budget::delCategory(std::string category) {
-	for (size_t i = 0; i < this->categories.size(); i++) {
-		if (this->categories[i] == category) {
-			std::swap(this->categories[i], this->categories.back());
-			this->categories.pop_back();
-			break;
-		}
+void Budget::editCategory(const std::string& category, const std::string& field, const std::string& value) {
+	int index = findCategory(category);
+
+	if (index == -1) {
+		throw std::runtime_error("Category not previously saved");
 	}
+
+	if (field = "name") {
+		categories[index].setName(value);
+
+	} else if (field == "type") {
+		categories[index].setType(value);
+
+	} else if (field == "limit") {
+		categories[index].setLimit(value);
+
+	} else {
+		throw invalid_argument("Invalid field. Cannot edit")
+	}
+}
+
+void Budget::delCategory(const std::string& category) {
+	int index = findCategory(category);
+
+	if (index == -1) {
+		throw std::runtime_error("Category not previously saved");
+	}
+
+	std::swap(categories[index], categories.back());
+	this->categories.pop_back();
 }
 
 std::vector<std::string> Budget::getCategories() {
 	return this->categories;
+}
+
+int Budget::findCategory(std::string category) {
+	for (int i = 0; i < categories.size(); i++) {
+		if (categories[i].getName() == category) {
+			return i;
+		}	
+	}
+	return -1;
 }
 
 void Budget::addTransaction(Transaction txn) {
