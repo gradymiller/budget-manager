@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "core/budget.hpp"
+#include "core/category.hpp"
 
 
 int categoryAdd(int argc, const char* const argv[]) {
@@ -13,7 +14,7 @@ int categoryAdd(int argc, const char* const argv[]) {
 		throw std::invalid_argument("Too few arguments");
 	}
 
-	budget.addCategory(argv[0], argv[1], argv[2];	
+	budget.addCategory(argv[0], argv[1], argv[2]);	
 
 	budget.saveCategories();
 	return 0;
@@ -51,9 +52,9 @@ int categoryList() {
 	Budget budget;
 	budget.load();
 
-	std::vector<std::string> categories = budget.getCategories();
-	for (std::string category : categories) {
-		std::cout << category << "\n"; 	
+	std::vector<Category> categories = budget.getCategories();
+	for (const auto& category : categories) {
+		std::cout << category.getName() << "\n"; 	
 	}
 
 	return 0;

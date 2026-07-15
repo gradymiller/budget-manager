@@ -178,35 +178,8 @@ void Budget::saveAll() {
 	saveCategories();
 	saveTransactions();
 }
-
-void Budget::saveBudget() {
-	// Save metadata
-	json metadata;	
-	std::ifstream in(PATH / "metadata.json");
-
-	if (!in.good()) {
-		throw std::runtime_error("Budget Manager has not been initialized");
-	}
-	in >> metadata;
-	in.close();
-
-	json budget_json;
-
-	budget_json["start_date"] = stringDate(*this->start_date);
-	budget_json["end_date"] = stringDate(*this->end_date);
-	budget_json["limit"] = this->limit;
-	metadata["budgets"][this->name] = budget_json;
-
-	std::ofstream out(PATH / "metadata.json");
-
-	if (!out.is_open()) {
-		throw std::runtime_error("Could not save metadata");
-	}
-	out << metadata.dump(4);
-	out.close(); 
-}
-
-void Budget::saveCategories() {
+void Budget::saveBudget()
+{
     json metadata;
     std::ifstream in(PATH / "metadata.json");
 
@@ -217,13 +190,10 @@ void Budget::saveCategories() {
     in >> metadata;
     in.close();
 
-    json categories_json = json::array();
-
-    for (const auto& category : categories) {
-        categories_json.push_back(category);
-    }
-
-    metadata["budgets"][this->name]["categories"] = categories_json;
+    // Update only the budget fields
+    metadata["budgets"][this->name]["start_date"] = stringDate(*this->start_date);
+    metadata["budgets"][this->name]["end_date"] = stringDate(*this->end_date);
+    metadata["budgets"][this->name]["limit"] = this->limit;
 
     std::ofstream out(PATH / "metadata.json");
 
@@ -232,6 +202,59 @@ void Budget::saveCategories() {
     }
 
     out << metadata.dump(4);
+    out.close();
+}
+
+void Budget::saveCategories() {
+    // Read the current budget name
+    std::ifstream currentFile(PATH / "current");
+
+    if (!currentFile.is_open()) {
+        throw std::runtime_error("No current budget selected");
+    }
+
+    std::string currentBudget;
+    std::getline(currentFile, currentBudget);
+    currentFile.close();
+
+
+    // Load metadata.json
+    json metadata;
+    std::ifstream in(PATH / "metadata.json");
+
+    if (!in.good()) {
+        throw std::runtime_error("Budget Manager has not been initialized");
+    }
+
+    in >> metadata;
+    in.close();
+
+
+    // Convert categories to JSON
+    json categories_json = json::array();
+
+    for (const auto& category : categories) {
+        categories_json.push_back({
+            {"name", category.getName()},
+            {"type", category.getType() == CategoryType::Expense ? "expense" : "income"},
+            {"limit", category.getLimit()}
+        });
+    }
+
+
+    // Save categories to the current budget
+    metadata["budgets"][currentBudget]["categories"] = categories_json;
+
+
+    // Write metadata back
+    std::ofstream out(PATH / "metadata.json");
+
+    if (!out.is_open()) {
+        throw std::runtime_error("Could not save metadata");
+    }
+
+    out << metadata.dump(4);
+    out.close();
 }
 
 void Budget::saveTransactions() {

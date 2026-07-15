@@ -21,6 +21,6 @@ public:
 
 private:
 	std::string name;
-	CategoryTYpe type = CategoryType::Expense;
+	CategoryType type = CategoryType::Expense;
 	double limit = 0.0;
-}
+};
