@@ -1,5 +1,7 @@
 // TODO: Implement all these
-#include "Category.h"
+#include "category.hpp"
+#include <stdexcept>
+#include <sstream>
 
 const std::string& Category::getName() const {
 	return name;

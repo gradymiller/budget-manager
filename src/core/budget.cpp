@@ -120,7 +120,7 @@ void Budget::editCategory(const std::string& category, const std::string& field,
 		throw std::runtime_error("Category not previously saved");
 	}
 
-	if (field = "name") {
+	if (field == "name") {
 		categories[index].setName(value);
 
 	} else if (field == "type") {
@@ -130,7 +130,7 @@ void Budget::editCategory(const std::string& category, const std::string& field,
 		categories[index].setLimit(value);
 
 	} else {
-		throw invalid_argument("Invalid field. Cannot edit")
+		throw std::invalid_argument("Invalid field. Cannot edit");
 	}
 }
 
@@ -145,11 +145,11 @@ void Budget::delCategory(const std::string& category) {
 	this->categories.pop_back();
 }
 
-std::vector<std::string> Budget::getCategories() {
+std::vector<Category> Budget::getCategories() {
 	return this->categories;
 }
 
-int Budget::findCategory(std::string category) {
+int Budget::findCategory(const std::string& category) {
 	for (int i = 0; i < categories.size(); i++) {
 		if (categories[i].getName() == category) {
 			return i;

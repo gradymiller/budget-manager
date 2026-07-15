@@ -4,8 +4,8 @@
 #include "core/transaction.hpp"
 
 
-int transactionAdd(int argc, char** argv) {
-	try {
+int transactionAdd(int argc, const char* const*) {
+	/*try {
 		if (argc < 2) {
 			throw std::invalid_argument("Too few arguments entered");
 		}
@@ -41,10 +41,11 @@ int transactionAdd(int argc, char** argv) {
 	} catch (const std::invalid_argument& e) {
 		std::cerr << "Invalid Argument: " << e.what() << "\n";
 		return 1;
-	}
+	}*/
+	return 0;
 }
 
-int transactionEdit(int argc, char** argv) {
+int transactionEdit(int argc, const char* const*) {
 	if (argc < 3) {
 		throw std::invalid_argument("Too few arguments");
 	}
@@ -53,10 +54,10 @@ int transactionEdit(int argc, char** argv) {
 	return 0;
 }
 
-int transactionDelete(int argc, char** argv) {
+int transactionDelete(int argc, const char* const*) {
 	return 0;
 }
 
-int transactionList(int argc, char** argv) {
+int transactionList() {
 	return 0;
 }

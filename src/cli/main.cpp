@@ -69,7 +69,7 @@ int dispatch(int argc, char** argv) {
 			return transactionDelete(argc - 3, argv + 3);
 
 		} else if (arg2 == "list") {
-			return transactionList(argc - 3, argv + 3);
+			return transactionList();
 
 		} else if (arg2 == "-h" || arg2 == "--help") {
 			return transactionHelp();
