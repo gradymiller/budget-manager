@@ -15,6 +15,7 @@
 #include <optional>
 #include <vector>
 #include <algorithm>
+#include <map>
 #include <nlohmann/json.hpp>
 #include "core/path.hpp"
 #include "core/transaction.hpp"
@@ -158,26 +159,55 @@ int Budget::findCategory(const std::string& category) {
 	return -1;
 }
 
-void Budget::addTransaction(Transaction txn) {
-	// TODO: Add transaction struct
+void Budget::addTransaction(const std::string& amount,
+							const std::string& category,
+							const std::string& type,
+							const std::string& date,
+							const std::string& vendor) {
+
+	Transaction txn;
+	txn.setAmount(amount);
+	txn.setCategory(category);
+	txn.setType(type);
+	txn.setDate(date);
+	txn.setvendor(vendor);
+
+	transactions.emplace(next_id, std::move(txn));				
+	next_id++;
 }
 
-void Budget::delTransaction() {
-	// TODO: Delete a transaction struct
+void Budget::editTransaction(const std::string& id,
+							 const std::string& field,
+							 const std::string& value) {
+
+	if (field == "amount") {
+		transactions[id].setAmount(value);
+
+	} else if (field == "category") {
+		transactions[id].setCategory(value);
+
+	} else if (field == "type") {
+		transactions[id].setType(value);
+
+	} else if (field == "date") {
+		transactions[id].setDate(value);
+
+	} else if (field == "vendor") {
+		transactions[id].setVendor(value);
+
+	} else {
+		throw std::invalid_argument("Invalid field inputted");
+	}
+}
+
+void Budget::delTransaction(int id) {
+	transactions.erase(id);
 }
 
 std::vector<Transaction> Budget::getTransactions() {
-	// TODO: Return all transactions in the budget
-	std::vector<Transaction> tmp;
-	return tmp;
+	return transactions;
 }
 
-void Budget::saveAll() {
-	// Save everything
-	saveBudget();
-	saveCategories();
-	saveTransactions();
-}
 void Budget::saveBudget()
 {
     json metadata;
