@@ -32,8 +32,15 @@ public:
 	void delCategory(const std::string& category);
 	int findCategory(const std::string& category);
 
-	void addTransaction(Transaction txn);
-	void delTransaction(); // TODO: takes in ID
+	void addTransaction(const std::string& amount,
+						const std::string& category,
+						const std::string& type,
+						const std::string& date,
+						const std::string& vendor);
+	void editTransaction(const std::string& id,
+						const std::string& field,
+						const std::string& value);
+	void delTransaction(const std::string& id);
 
 	void saveAll();
 	void saveBudget();
