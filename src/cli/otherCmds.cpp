@@ -1,6 +1,5 @@
 // TODO: Add docs for b/t/c
 // TODO: Setup initBudgetManager()
-// TODO: Setup cmdCurrent()
 #include <iostream>
 #include <filesystem>
 #include <fstream>
@@ -77,7 +76,7 @@ int cmdInit() {
 
 	createFiles(dir);
 	
-	std::ofstream file("current");
+	std::ofstream file(PATH / "current");
 
 	// TODO: Add rest of setup functions here
 
@@ -86,7 +85,7 @@ int cmdInit() {
 }
 
 int cmdCurrent() {
-	std::ifstream file(PATH/"current");
+	std::ifstream file(PATH / "current");
 	std::string val;
 	std::getline(file, val);
 	std::cout << "Current budget: " << val << "\n";

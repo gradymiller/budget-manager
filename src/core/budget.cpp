@@ -207,15 +207,15 @@ void Budget::saveBudget()
 
 void Budget::saveCategories() {
     // Read the current budget name
-    std::ifstream currentFile(PATH / "current");
+    std::ifstream current(PATH / "current");
 
-    if (!currentFile.is_open()) {
+    if (!current.is_open()) {
         throw std::runtime_error("No current budget selected");
     }
 
     std::string currentBudget;
-    std::getline(currentFile, currentBudget);
-    currentFile.close();
+    std::getline(current, currentBudget);
+    current.close();
 
 
     // Load metadata.json
@@ -274,14 +274,14 @@ void Budget::saveTransactions() {
 
 
 void Budget::load() {
-    std::ifstream currentFile(PATH / "current");
+    std::ifstream current(PATH / "current");
 
-    if (!currentFile.is_open()) {
+    if (!current.is_open()) {
         throw std::runtime_error("No current budget selected");
     }
 
-    std::getline(currentFile, name);
-    currentFile.close();
+    std::getline(current, name);
+    current.close();
 
     json metadata;
 
