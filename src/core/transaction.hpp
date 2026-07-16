@@ -2,6 +2,7 @@
 
 #include <string>
 #include <chrono>
+#include <optional>
 
 enum class TransactionType { Expense, Income };
 
@@ -12,8 +13,9 @@ public:
     double getAmount() const;
     const std::string& getCategory() const;
     TransactionType getType() const;
-    std::chrono::system_clock::time_point getDate() const;
-    const std::string& getVendor() const;
+
+	std::optional<std::chrono::system_clock::time_point> getDate() const;
+    const std::optional<std::string>& getVendor() const;
 
     void setAmount(const std::string& amount);
     void setCategory(const std::string& category);
@@ -25,6 +27,7 @@ private:
     double amount = 0.0;
     std::string category;
     TransactionType type = TransactionType::Expense;
-    std::chrono::system_clock::time_point date{};
-    std::string vendor;
+
+	std::optional<std::chrono::system_clock::time_point> date{};
+	std::optional<std::string> vendor;
 };

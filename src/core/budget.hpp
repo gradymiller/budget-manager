@@ -4,6 +4,7 @@
 #include <string>
 #include <optional>
 #include <vector>
+#include <unordered_map>
 #include "core/transaction.hpp"
 #include "core/category.hpp"
 
@@ -57,7 +58,4 @@ private:
 	std::vector<Category> categories;
 	std::unordered_map<Transaction> transactions; 
 	int next_id;
-
-	std::chrono::system_clock::time_point parseDate(const std::string& s);
-	std::string stringDate(const std::chrono::system_clock::time_point& tp);
 };
