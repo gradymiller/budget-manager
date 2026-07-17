@@ -410,3 +410,4 @@ void Budget::load() {
 
 		transactions.emplace(std::stoi(id), std::move(txn));
 	}
+}
