@@ -7,7 +7,11 @@
 
 class BudgetCmdsTest : public ::testing::Test {
 protected:
-    static void SetUpTestSuite() {
+    void SetUp() override {
+        // Remove leftover budget from previous failed test runs
+        const char* cleanupArgs[] = {"TEST"};
+        budgetDelete(cleanupArgs);
+
         const char* argv[] = {
             "TEST",
             "2026-01-01",
@@ -15,10 +19,10 @@ protected:
             "1000"
         };
 
-        budgetAdd(argv);
+        ASSERT_EQ(budgetAdd(argv), 0);
     }
 
-    static void TearDownTestSuite() {
+    void TearDown() override {
         const char* argv[] = {"TEST"};
         budgetDelete(argv);
     }

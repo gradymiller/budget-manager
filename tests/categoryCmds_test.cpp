@@ -6,7 +6,13 @@
 
 class CategoryCmdsTest : public ::testing::Test {
 protected:
-    static void SetUpTestSuite() {
+    void SetUp() override {
+		try {
+			const char* cleanup[] = {"TEST"};
+			budgetDelete(cleanup);
+
+		} catch (...) {}
+		
         const char* argv1[] = {
             "TEST",
             "2026-01-01",
@@ -20,7 +26,7 @@ protected:
         cmdSwitch(1, argv2);
     }
 
-    static void TearDownTestSuite() {
+    void TearDown() override {
         const char* argv[] = {"TEST"};
         budgetDelete(argv);
     }

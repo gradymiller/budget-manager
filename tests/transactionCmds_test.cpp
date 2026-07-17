@@ -1,5 +1,3 @@
-// TODO: For commented tests, find a way to verify ID of transaction instead of
-// hardcoding the one that it should be to check with
 #include <gtest/gtest.h>
 
 #include "cli/budgetCmds.hpp"
@@ -9,8 +7,11 @@
 
 class TransactionCmdsTest : public ::testing::Test {
 protected:
-    static void SetUpTestSuite() {
-        // Create test budget
+    void SetUp() override {
+		const char* cleanup[] = {"TEST"};
+		budgetDelete(cleanup);
+
+        // Create fresh test budget
         const char* argv1[] = {
             "TEST",
             "2026-01-01",
@@ -18,10 +19,10 @@ protected:
             "1000"
         };
 
-        budgetAdd(argv1);
+		ASSERT_EQ(budgetAdd(argv1), 0);
 
         const char* argv2[] = {"TEST"};
-        cmdSwitch(1, argv2);
+        ASSERT_EQ(cmdSwitch(1, argv2), 0);
 
         // Add category needed for transactions
         const char* categoryArgs[] = {
@@ -30,12 +31,12 @@ protected:
             "100"
         };
 
-        categoryAdd(3, categoryArgs);
+        ASSERT_EQ(categoryAdd(3, categoryArgs), 0);
     }
 
-    static void TearDownTestSuite() {
-        const char* argv3[] = {"TEST"};
-        budgetDelete(argv3);
+    void TearDown() override {
+        const char* argv[] = {"TEST"};
+        budgetDelete(argv);
     }
 };
 
@@ -109,19 +110,19 @@ TEST_F(TransactionCmdsTest, transactionAddRejectInvalidType) {
     EXPECT_EQ(transactionAdd(3, argv), 1);
 }
 
-/*TEST_F(TransactionCmdsTest, transactionEditSuccess) {
+TEST_F(TransactionCmdsTest, transactionEditSuccess) {
     const char* const* argv = transactionHelper();
 
-    int id = transactionAdd(3, argv);
+    EXPECT_EQ(transactionAdd(3, argv), 0);
 
     const char* args[] = {
-        id,
+        "0",
         "amount",
         "100"
     };
 
     EXPECT_EQ(transactionEdit(3, args), 0);
-}*/
+}
 
 TEST_F(TransactionCmdsTest, transactionEditRejectInvalidID) {
     const char* args[] = {
@@ -136,10 +137,10 @@ TEST_F(TransactionCmdsTest, transactionEditRejectInvalidID) {
 TEST_F(TransactionCmdsTest, transactionEditRejectInvalidField) {
     const char* const* argv = transactionHelper();
 
-    transactionAdd(3, argv);
+    EXPECT_EQ(transactionAdd(3, argv), 0);
 
     const char* args[] = {
-        "1",
+        "0",
         "invalid",
         "100"
     };
@@ -150,10 +151,10 @@ TEST_F(TransactionCmdsTest, transactionEditRejectInvalidField) {
 TEST_F(TransactionCmdsTest, transactionEditRejectInvalidValue) {
     const char* const* argv = transactionHelper();
 
-    transactionAdd(3, argv);
+    EXPECT_EQ(transactionAdd(3, argv), 0);
 
     const char* args[] = {
-        "1",
+        "0",
         "amount",
         "abc"
     };
@@ -161,18 +162,22 @@ TEST_F(TransactionCmdsTest, transactionEditRejectInvalidValue) {
     EXPECT_EQ(transactionEdit(3, args), 1);
 }
 
-/*TEST_F(TransactionCmdsTest, transactionDeleteSuccess) {
+TEST_F(TransactionCmdsTest, transactionDeleteSuccess) {
     const char* const* argv = transactionHelper();
 
-    transactionAdd(3, argv);
+    EXPECT_EQ(transactionAdd(3, argv), 0);
 
-    const char* args[] = {"1"};
+    const char* args[] = {
+        "0"
+    };
 
     EXPECT_EQ(transactionDelete(1, args), 0);
-}*/
+}
 
 TEST_F(TransactionCmdsTest, transactionDeleteRejectInvalidTransaction) {
-    const char* args[] = {"999"};
+    const char* args[] = {
+        "999"
+    };
 
     EXPECT_EQ(transactionDelete(1, args), 1);
 }
@@ -180,7 +185,7 @@ TEST_F(TransactionCmdsTest, transactionDeleteRejectInvalidTransaction) {
 TEST_F(TransactionCmdsTest, transactionListSuccess) {
     const char* const* argv = transactionHelper();
 
-    transactionAdd(3, argv);
+    EXPECT_EQ(transactionAdd(3, argv), 0);
 
     EXPECT_EQ(transactionList(), 0);
 }
