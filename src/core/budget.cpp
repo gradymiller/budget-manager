@@ -321,6 +321,7 @@ void Budget::saveTransactions() {
 
 
 void Budget::load() {
+	// Budget
     std::ifstream current(PATH / "current");
 
     if (!current.is_open()) {
@@ -350,14 +351,14 @@ void Budget::load() {
     json budget = metadata["budgets"][name];
 
 
-    // Load budget metadata
+    // Metadata
     setStartDate(budget["start_date"].get<std::string>());
     setEndDate(budget["end_date"].get<std::string>());
 
     limit = budget["limit"].get<double>();
 
 
-    // Load categories
+    // Categories
     categories.clear();
 
     for (const auto& category_json : budget["categories"]) {
@@ -372,4 +373,40 @@ void Budget::load() {
 
         categories.push_back(category);
     }
-}
+
+	// Transactions
+	std::ifstream csv(PATH / (name + ".csv"));
+
+	std::string line;
+	std::getline(csv, line);
+
+	while (std::getline(csv, line)) {
+		std::stringstream ss(line);
+
+		std::string id;
+		std::string amount;
+		std::string category;
+		std::string type;
+		std::string date;
+		std::string vendor;
+
+		std::getline(ss, id, ',');
+		std::getline(ss, amount, ',');
+		std::getline(ss, category, ',');
+		std::getline(ss, type, ',');
+		std::getline(ss, date, ',');
+		std::getline(ss, vendor);
+
+		Transaction txn;
+		txn.setAmount(amount);
+		txn.setCategory(category);
+		txn.setType(type);
+
+		if (!date.empty())
+			txn.setDate(date);
+
+		if (!vendor.empty())
+			txn.setVendor(vendor);
+
+		transactions.emplace(std::stoi(id), std::move(txn));
+	}
