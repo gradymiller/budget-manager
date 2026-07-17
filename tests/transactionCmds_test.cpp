@@ -9,7 +9,7 @@ class TransactionCmdsTest : public ::testing::Test {
 protected:
     void SetUp() override {
 		const char* cleanup[] = {"TEST"};
-		budgetDelete(cleanup);
+		budgetDelete(1, cleanup);
 
         // Create fresh test budget
         const char* argv1[] = {
@@ -19,7 +19,7 @@ protected:
             "1000"
         };
 
-		ASSERT_EQ(budgetAdd(argv1), 0);
+		ASSERT_EQ(budgetAdd(4, argv1), 0);
 
         const char* argv2[] = {"TEST"};
         ASSERT_EQ(cmdSwitch(1, argv2), 0);
@@ -36,7 +36,7 @@ protected:
 
     void TearDown() override {
         const char* argv[] = {"TEST"};
-        budgetDelete(argv);
+        budgetDelete(1, argv);
     }
 };
 

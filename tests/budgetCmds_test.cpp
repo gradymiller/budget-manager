@@ -10,7 +10,7 @@ protected:
     void SetUp() override {
         // Remove leftover budget from previous failed test runs
         const char* cleanupArgs[] = {"TEST"};
-        budgetDelete(cleanupArgs);
+        budgetDelete(1, cleanupArgs);
 
         const char* argv[] = {
             "TEST",
@@ -19,12 +19,12 @@ protected:
             "1000"
         };
 
-        ASSERT_EQ(budgetAdd(argv), 0);
+        ASSERT_EQ(budgetAdd(4, argv), 0);
     }
 
     void TearDown() override {
         const char* argv[] = {"TEST"};
-        budgetDelete(argv);
+        budgetDelete(1, argv);
     }
 };
 
@@ -37,7 +37,7 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidName1) {
         "1000"
     };
 
-    EXPECT_EQ(budgetAdd(argv), 1);
+    EXPECT_EQ(budgetAdd(4, argv), 1);
 }
 
 
@@ -49,7 +49,7 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidName2) {
         "1000"
     };
 
-    EXPECT_EQ(budgetAdd(argv), 1);
+    EXPECT_EQ(budgetAdd(4, argv), 1);
 }
 
 
@@ -61,7 +61,7 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidLimit) {
         "abc"
     };
 
-    EXPECT_EQ(budgetAdd(argv), 1);
+    EXPECT_EQ(budgetAdd(4, argv), 1);
 }
 
 
@@ -73,7 +73,7 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidStartDate1) {
         "1000"
     };
 
-    EXPECT_EQ(budgetAdd(argv), 1);
+    EXPECT_EQ(budgetAdd(4, argv), 1);
 }
 
 
@@ -85,7 +85,7 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidStartDate2) {
         "1000"
     };
 
-    EXPECT_EQ(budgetAdd(argv), 1);
+    EXPECT_EQ(budgetAdd(4, argv), 1);
 }
 
 
@@ -97,7 +97,7 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidEndDate1) {
         "1000"
     };
 
-    EXPECT_EQ(budgetAdd(argv), 1);
+    EXPECT_EQ(budgetAdd(4, argv), 1);
 }
 
 
@@ -109,7 +109,7 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidEndDate2) {
         "1000"
     };
 
-    EXPECT_EQ(budgetAdd(argv), 1);
+    EXPECT_EQ(budgetAdd(4, argv), 1);
 }
 
 
@@ -119,7 +119,7 @@ TEST_F(BudgetCmdsTest, BudgetEditSuccess) {
         "2025-01-21"
     };
 
-    EXPECT_EQ(budgetEdit(args1), 0);
+    EXPECT_EQ(budgetEdit(2, args1), 0);
 
 
     const char* args2[] = {
@@ -127,7 +127,7 @@ TEST_F(BudgetCmdsTest, BudgetEditSuccess) {
         "2027-04-04"
     };
 
-    EXPECT_EQ(budgetEdit(args2), 0);
+    EXPECT_EQ(budgetEdit(2, args2), 0);
 
 
     const char* args3[] = {
@@ -135,7 +135,7 @@ TEST_F(BudgetCmdsTest, BudgetEditSuccess) {
         "12345.55"
     };
 
-    EXPECT_EQ(budgetEdit(args3), 0);
+    EXPECT_EQ(budgetEdit(2, args3), 0);
 }
 
 
@@ -145,7 +145,7 @@ TEST_F(BudgetCmdsTest, BudgetEditInvalidName) {
         "_test"
     };
 
-    EXPECT_EQ(budgetEdit(args), 1);
+    EXPECT_EQ(budgetEdit(2, args), 1);
 }
 
 
@@ -155,7 +155,7 @@ TEST_F(BudgetCmdsTest, BudgetEditInvalidStartDate) {
         "1/1/2026"
     };
 
-    EXPECT_EQ(budgetEdit(args), 1);
+    EXPECT_EQ(budgetEdit(2, args), 1);
 }
 
 
@@ -165,7 +165,7 @@ TEST_F(BudgetCmdsTest, BudgetEditInvalidEndDate) {
         "25-25-25"
     };
 
-    EXPECT_EQ(budgetEdit(args), 1);
+    EXPECT_EQ(budgetEdit(2, args), 1);
 }
 
 
@@ -175,7 +175,7 @@ TEST_F(BudgetCmdsTest, BudgetEditInvalidLimit) {
         "abc123"
     };
 
-    EXPECT_EQ(budgetEdit(args), 1);
+    EXPECT_EQ(budgetEdit(2, args), 1);
 }
 
 

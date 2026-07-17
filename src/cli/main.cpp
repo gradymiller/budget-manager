@@ -40,13 +40,13 @@ int dispatch(int argc, char** argv) {
 
 	} else if (arg1 == "b" || arg1 == "budget") {
 		if (arg2 == "add") {
-			return budgetAdd(argv + 3);
+			return budgetAdd(argc - 3, argv + 3);
 
 		} else if (arg2 == "edit") {
-			return budgetEdit(argv + 3);
+			return budgetEdit(argc - 3, argv + 3);
 
 		} else if (arg2 == "delete") {
-			return budgetDelete(argv + 3);
+			return budgetDelete(argc - 3, argv + 3);
 
 		} else if (arg2 == "list") {
 			return budgetList();

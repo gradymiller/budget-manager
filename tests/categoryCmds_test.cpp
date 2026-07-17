@@ -9,7 +9,7 @@ protected:
     void SetUp() override {
 		try {
 			const char* cleanup[] = {"TEST"};
-			budgetDelete(cleanup);
+			budgetDelete(1, cleanup);
 
 		} catch (...) {}
 		
@@ -20,7 +20,7 @@ protected:
             "1000"
         };
 
-        budgetAdd(argv1);
+        budgetAdd(4, argv1);
 
         const char* argv2[] = {"TEST"};
         cmdSwitch(1, argv2);
@@ -28,7 +28,7 @@ protected:
 
     void TearDown() override {
         const char* argv[] = {"TEST"};
-        budgetDelete(argv);
+        budgetDelete(1, argv);
     }
 };
 

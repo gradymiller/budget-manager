@@ -12,8 +12,12 @@
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
-int budgetAdd(const char* const argv[]) {
+int budgetAdd(int argc, const char* const argv[]) {
     return runCommand([&]() {
+		if (argc < 3) {
+			throw std::invalid_argument("Too few arguments");
+		}
+
         Budget budget;
 
         budget.setName(argv[0]);
@@ -27,8 +31,11 @@ int budgetAdd(const char* const argv[]) {
     });
 }
 
-int budgetEdit(const char* const argv[]) {
+int budgetEdit(int argc, const char* const argv[]) {
     return runCommand([&]() {
+		if (argc < 2) {
+			throw std::invalid_argument("Too few arguments");
+		}
         Budget budget;
 
         budget.load();
@@ -56,8 +63,11 @@ int budgetEdit(const char* const argv[]) {
     });
 }
 
-int budgetDelete(const char* const argv[]) {
+int budgetDelete(int argc, const char* const argv[]) {
     return runCommand([&]() {
+		if (argc < 1) {
+			throw std::invalid_argument("Too few arguments");
+		}
         std::string name = argv[0];
 
         fs::path budgetFile = PATH / (name + ".csv");
