@@ -108,6 +108,10 @@ void Budget::addCategory(const std::string& name, const std::string& type, const
 		throw std::invalid_argument("New categories require a non-empty name, type and limit");
 	}
 
+	if (findCategory(name) != -1) {
+		throw std::runtime_error("Cannot create categories with the same name");
+	}
+
 	Category category;
 	category.setName(name);
 	category.setType(type);

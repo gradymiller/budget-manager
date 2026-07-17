@@ -51,11 +51,11 @@ public:
     void load();
 
 private:
+	int next_id = 0;
     std::string name;
 	std::optional<std::chrono::system_clock::time_point> start_date;
 	std::optional<std::chrono::system_clock::time_point> end_date;
     double limit = 0.0;
 	std::vector<Category> categories;
 	std::unordered_map<int, Transaction> transactions; 
-	int next_id;
 };
