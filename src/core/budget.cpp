@@ -176,8 +176,14 @@ void Budget::addTransaction(const std::string& amount,
 
 	txn.setCategory(category);
 	txn.setType(type);
-	txn.setDate(date);
-	txn.setVendor(vendor);
+
+	if (!date.empty()) {
+		txn.setDate(date);
+	}
+
+	if (!vendor.empty()) {
+		txn.setVendor(vendor);
+	}
 
 	transactions.emplace(next_id, std::move(txn));				
 	next_id++;
@@ -188,6 +194,11 @@ void Budget::editTransaction(const std::string& id,
 							 const std::string& value) {
 
 	int new_id = std::stoi(id);
+
+	auto it = transactions.find(new_id);
+	if (it == transactions.end()) {
+		throw std::invalid_argument("Transaction not found");
+	}
 
 	if (field == "amount") {
 		transactions[new_id].setAmount(value);
@@ -211,7 +222,12 @@ void Budget::editTransaction(const std::string& id,
 
 void Budget::delTransaction(const std::string& id) {
 	int new_id = std::stoi(id);
-	transactions.erase(new_id);
+
+	auto removed = transactions.erase(new_id);
+	
+	if (removed == 0) {
+		throw std::invalid_argument("Transaction not found");
+	}
 }
 
 std::unordered_map<int, Transaction> Budget::getTransactions() {
