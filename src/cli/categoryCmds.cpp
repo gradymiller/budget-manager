@@ -1,13 +1,14 @@
 #include <iostream>
-#include <stdexcept>
 #include <vector>
 #include <string>
+
 #include "core/budget.hpp"
 #include "core/category.hpp"
+#include "cli/cmdTemplate.hpp"
 
 
 int categoryAdd(int argc, const char* const argv[]) {
-	try {
+	return runCommand([&]() {
 		Budget budget;
 		budget.load();
 
@@ -15,19 +16,14 @@ int categoryAdd(int argc, const char* const argv[]) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		budget.addCategory(argv[0], argv[1], argv[2]);	
-
+		budget.addCategory(argv[0], argv[1], argv[2]);
 		budget.saveCategories();
-		return 0;
-
-	} catch (std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << '\n';
-		return 1;
-	}
+	});
 }
 
+
 int categoryEdit(int argc, const char* const argv[]) {
-	try {
+	return runCommand([&]() {
 		Budget budget;
 		budget.load();
 
@@ -36,18 +32,13 @@ int categoryEdit(int argc, const char* const argv[]) {
 		}
 
 		budget.editCategory(argv[0], argv[1], argv[2]);
-
 		budget.saveCategories();
-		return 0;
-
-	} catch (std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << '\n';
-		return 1;
-	}
+	});
 }
 
+
 int categoryDelete(int argc, const char* const argv[]) {
-	try {
+	return runCommand([&]() {
 		Budget budget;
 		budget.load();
 
@@ -55,39 +46,25 @@ int categoryDelete(int argc, const char* const argv[]) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		budget.delCategory(argv[0]);	
-
+		budget.delCategory(argv[0]);
 		budget.saveCategories();
-		return 0;
-
-	} catch (std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << '\n';
-		return 1;
-	}
+	});
 }
 
+
 int categoryList() {
-	try {
+	return runCommand([&]() {
 		Budget budget;
 		budget.load();
 
 		std::vector<Category> categories = budget.getCategories();
+
 		for (const auto& category : categories) {
-			std::string type;
-
-			if (category.getType() == CategoryType::Expense) {
-				type = "expense";
-			} else {
-				type = "income";
-			}
-
-			std::cout << "Name: " << category.getName() << ", Type: " << type << ", Limit: " << category.getLimit() << "\n"; 	
+			std::cout
+				<< "Name: " << category.getName()
+				<< ", Type: " << category.getType()
+				<< ", Limit: " << category.getLimit()
+				<< '\n';
 		}
-
-		return 0;
-
-	} catch (std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << '\n';
-		return 1;
-	}
+	});
 }

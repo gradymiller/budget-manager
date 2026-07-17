@@ -1,12 +1,14 @@
 #include <iostream>
-#include <stdexcept>
+#include <string>
+
 #include "core/budget.hpp"
 #include "core/transaction.hpp"
 #include "core/utils.hpp"
+#include "cli/cmdTemplate.hpp"
 
 
 int transactionAdd(int argc, const char* const* argv) {
-	try {
+	return runCommand([&]() {
 		if (argc < 3) {
 			throw std::invalid_argument("Too few arguments entered");
 		}
@@ -18,15 +20,17 @@ int transactionAdd(int argc, const char* const* argv) {
 			std::string arg = argv[i];
 
 			if (arg == "--date") {
-				if (i + 1 > argc) {
+				if (i + 1 >= argc) {
 					throw std::invalid_argument("The --date flag requires an argument after it");
 				}
+
 				date = argv[++i];
 
 			} else if (arg == "--vendor") {
-				if (i + 1 > argc) {
+				if (i + 1 >= argc) {
 					throw std::invalid_argument("The --vendor flag requires an argument after it");
 				}
+
 				vendor = argv[++i];
 			}
 		}
@@ -34,18 +38,21 @@ int transactionAdd(int argc, const char* const* argv) {
 		Budget budget;
 		budget.load();
 
-		budget.addTransaction(argv[0], argv[1], argv[2], date, vendor);
-		budget.saveTransactions();
-		return 0;
+		budget.addTransaction(
+			argv[0],
+			argv[1],
+			argv[2],
+			date,
+			vendor
+		);
 
-	} catch (const std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << '\n';
-		return 1;
-	}
+		budget.saveTransactions();
+	});
 }
 
+
 int transactionEdit(int argc, const char* const* argv) {
-	try {
+	return runCommand([&]() {
 		if (argc < 3) {
 			throw std::invalid_argument("Too few arguments");
 		}
@@ -54,17 +61,14 @@ int transactionEdit(int argc, const char* const* argv) {
 		budget.load();
 
 		budget.editTransaction(argv[0], argv[1], argv[2]);
-		budget.saveTransactions();
-		return 0;
 
-	} catch (std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << '\n';
-		return 1;
-	}
+		budget.saveTransactions();
+	});
 }
 
+
 int transactionDelete(int argc, const char* const* argv) {
-	try {
+	return runCommand([&]() {
 		if (argc < 1) {
 			throw std::invalid_argument("Too few arguments");
 		}
@@ -73,31 +77,31 @@ int transactionDelete(int argc, const char* const* argv) {
 		budget.load();
 
 		budget.delTransaction(argv[0]);
-		budget.saveTransactions();
-		return 0;
 
-	} catch (const std::invalid_argument& e) {
-		std::cerr << "Invalid Argument: " << e.what() << '\n';
-		return 1;
-	}
+		budget.saveTransactions();
+	});
 }
 
+
 int transactionList() {
-	Budget budget;
-	budget.load();
+	return runCommand([&]() {
+		Budget budget;
+		budget.load();
 
-	auto transactions = budget.getTransactions();
-	
-	std::cout << "ID, Amount, Category, Type, Date, Vendor\n";
+		auto transactions = budget.getTransactions();
 
-	for (const auto& [id, txn] : transactions) {
-		std::cout << id << ", "
-				  << txn.getAmount() << ", "
-				  << txn.getCategory() << ", "
-				  << txn.getType() << ", "
-				  << formatDate(*txn.getDate()) << ", "
-				  << *txn.getVendor()
-				  << '\n';
-	}
-	return 0;
+		std::cout << "ID, Amount, Category, Type, Date, Vendor\n";
+
+		for (const auto& [id, txn] : transactions) {
+			std::cout
+				<< id << ", "
+				<< txn.getAmount() << ", "
+				<< txn.getCategory() << ", "
+				<< txn.getType() << ", "
+				<< (txn.getDate() ? formatDate(*txn.getDate()) : "")
+				<< ", "
+				<< txn.getVendor().value_or("")
+				<< '\n';
+		}
+	});
 }
