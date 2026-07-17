@@ -8,6 +8,8 @@
 
 
 std::chrono::system_clock::time_point parseDate(const std::string& s) {
+
+	std::cerr << "parseDate called with: [" << s << "]\n";
 	std::tm tm = {};
 
 	std::istringstream ss(s);
@@ -54,10 +56,12 @@ std::string stringDate(const std::chrono::system_clock::time_point& tp) {
 std::string formatDate(std::chrono::system_clock::time_point date) {
     auto time = std::chrono::system_clock::to_time_t(date);
 
-    std::string result = std::ctime(&time);
-    result.pop_back();
+	std::tm tm = *std::localtime(&time);
 
-    return result;
+	std::ostringstream ss;
+	ss << std::put_time(&tm, "%Y-%m-%d");
+
+	return ss.str();
 }
 
 int cmdInvalid(std::string cmd) {
