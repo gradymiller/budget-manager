@@ -94,7 +94,7 @@ int transactionList() {
 		std::cout << id << ", "
 				  << txn.getAmount() << ", "
 				  << txn.getCategory() << ", "
-				  << typeToString(txn.getType()) << ", "
+				  << txn.getType() << ", "
 				  << formatDate(*txn.getDate()) << ", "
 				  << *txn.getVendor()
 				  << '\n';

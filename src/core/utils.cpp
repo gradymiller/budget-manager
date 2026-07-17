@@ -60,18 +60,6 @@ std::string formatDate(std::chrono::system_clock::time_point date) {
     return result;
 }
 
-std::string typeToString(TransactionType type) {
-    switch (type)
-    {
-        case TransactionType::Expense:
-            return "Expense";
-        case TransactionType::Income:
-            return "Income";
-    }
-
-    throw std::invalid_argument("Transaction type must be `income` or `expense`");
-}
-
 int cmdInvalid(std::string cmd) {
 	std::cerr << "Error: argument '" << cmd << "' not understood. Try passing --help instead";
 	return 1;

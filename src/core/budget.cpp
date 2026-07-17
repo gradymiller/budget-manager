@@ -276,7 +276,7 @@ void Budget::saveCategories() {
     for (const auto& category : categories) {
         categories_json.push_back({
             {"name", category.getName()},
-            {"type", category.getType() == CategoryType::Expense ? "expense" : "income"},
+            {"type", category.getType()},
             {"limit", category.getLimit()}
         });
     }
@@ -311,7 +311,7 @@ void Budget::saveTransactions() {
 		csv << id << ","
 			<< txn.getAmount() << ","
 			<< txn.getCategory() << ","
-			<< typeToString(txn.getType()) << ","
+			<< txn.getType() << ","
 			<< (txn.getDate() ? formatDate(*txn.getDate()) : "") << ","
 			<< txn.getVendor().value_or("") << '\n';
 	}

@@ -2,6 +2,8 @@
 
 #include <string>
 #include <stdexcept>
+#include <algorithm>
+#include <cctype>
 #include "core/utils.hpp"
 
 double Transaction::getAmount() const {
@@ -12,7 +14,7 @@ const std::string& Transaction::getCategory() const {
     return category;
 }
 
-TransactionType Transaction::getType() const {
+const std::string& Transaction::getType() const {
     return type;
 }
 
@@ -45,15 +47,17 @@ void Transaction::setCategory(const std::string& category) {
 	this->category = category;
 }
 
-void Transaction::setType(const std::string& type) {
-	if (type == "income") {
-		this->type = TransactionType::Income;
-
-	} else if (type == "expense") {
-		this->type = TransactionType::Expense;
+void Transaction::setType(std::string type) {
+	std::transform(type.begin(), type.end(), type.begin(),
+               [](unsigned char c) {
+                   return std::tolower(c);
+               });
+	
+	if (type != "income" && type != "expense") {
+		throw std::invalid_argument("Transaction type must be `income` or `expense`");
 
 	} else {
-		throw std::invalid_argument("Transaction type must be `income` or `expense`");
+		this->type = type;
 	}
 }
 
