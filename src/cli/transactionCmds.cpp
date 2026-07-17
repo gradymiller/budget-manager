@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include "core/budget.hpp"
 #include "core/transaction.hpp"
-#include "cli/utilities.hpp"
+#include "core/utils.hpp"
 
 
 int transactionAdd(int argc, const char* const* argv) {
@@ -73,6 +73,7 @@ int transactionDelete(int argc, const char* const* argv) {
 		budget.load();
 
 		budget.delTransaction(argv[0]);
+		budget.saveTransactions();
 		return 0;
 
 	} catch (const std::invalid_argument& e) {

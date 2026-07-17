@@ -1,8 +1,10 @@
+#include <iostream>
 #include <string>
 #include <chrono>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
+#include "core/transaction.hpp"
 
 
 std::chrono::system_clock::time_point parseDate(const std::string& s) {
@@ -47,4 +49,30 @@ std::string stringDate(const std::chrono::system_clock::time_point& tp) {
     ss << std::put_time(&tm, "%Y-%m-%d");
 
     return ss.str();
+}
+
+std::string formatDate(std::chrono::system_clock::time_point date) {
+    auto time = std::chrono::system_clock::to_time_t(date);
+
+    std::string result = std::ctime(&time);
+    result.pop_back();
+
+    return result;
+}
+
+std::string typeToString(TransactionType type) {
+    switch (type)
+    {
+        case TransactionType::Expense:
+            return "Expense";
+        case TransactionType::Income:
+            return "Income";
+    }
+
+    throw std::invalid_argument("Transaction type must be `income` or `expense`");
+}
+
+int cmdInvalid(std::string cmd) {
+	std::cerr << "Error: argument '" << cmd << "' not understood. Try passing --help instead";
+	return 1;
 }

@@ -5,7 +5,7 @@
 #include "cli/transactionCmds.hpp"
 #include "cli/categoryCmds.hpp"
 #include "cli/otherCmds.hpp"
-#include "cli/utilities.hpp"
+#include "core/utils.hpp"
 
 
 int dispatch(int argc, char** argv) {

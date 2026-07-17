@@ -305,10 +305,17 @@ void Budget::saveTransactions() {
 		throw std::runtime_error("Could not open file to save transactions");
 	}
 
-	// TODO: Placeholder header until transactions are implemented
-	csv << "description,amount,date\n";
+	csv << "ID,Amount,Category,Type,Date,Vendor\n";
 
-	// TODO: Add category saving to json
+	for (const auto& [id, txn] : transactions) {
+		csv << id << ","
+			<< txn.getAmount() << ","
+			<< txn.getCategory() << ","
+			<< typeToString(txn.getType()) << ","
+			<< (txn.getDate() ? formatDate(*txn.getDate()) : "") << ","
+			<< txn.getVendor().value_or("") << '\n';
+	}
+
 	csv.close();	
 }
 
