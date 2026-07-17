@@ -9,7 +9,6 @@
 
 std::chrono::system_clock::time_point parseDate(const std::string& s) {
 
-	std::cerr << "parseDate called with: [" << s << "]\n";
 	std::tm tm = {};
 
 	std::istringstream ss(s);

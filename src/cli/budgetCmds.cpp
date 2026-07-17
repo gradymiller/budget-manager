@@ -58,13 +58,43 @@ int budgetEdit(const char* const argv[]) {
 
 int budgetDelete(const char* const argv[]) {
     return runCommand([&]() {
-        fs::path budgetFile = PATH / (std::string(argv[0]) + ".csv");
+        std::string name = argv[0];
 
-        if (!fs::exists(budgetFile)) {
-            throw std::invalid_argument(std::string(argv[0]) + ".csv does not exist");
+        fs::path budgetFile = PATH / (name + ".csv");
+        fs::path metadataFile = PATH / "metadata.json";
+
+        // Remove budget CSV if it exists
+        if (fs::exists(budgetFile)) {
+            fs::remove(budgetFile);
         }
 
-        fs::remove(budgetFile);
+        // Update metadata
+        if (fs::exists(metadataFile)) {
+            std::ifstream in(metadataFile);
+
+            if (!in.is_open()) {
+                throw std::runtime_error("Failed to open metadata.json");
+            }
+
+            json metadata;
+            in >> metadata;
+            in.close();
+
+            if (metadata.contains("budgets") &&
+                metadata["budgets"].is_object()) {
+
+                metadata["budgets"].erase(name);
+            }
+
+            std::ofstream out(metadataFile);
+
+            if (!out.is_open()) {
+                throw std::runtime_error("Failed to save metadata.json");
+            }
+
+            out << metadata.dump(4);
+            out.close();
+        }
     });
 }
 
