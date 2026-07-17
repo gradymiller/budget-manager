@@ -17,7 +17,7 @@ public:
     std::chrono::system_clock::time_point getEndDate() const;
     double getLimit() const;
 	std::vector<Category> getCategories();
-	std::vector<Transaction> getTransactions();
+	std::unordered_map<int, Transaction> getTransactions();
 
     void setName(std::string n);
     void setStartDate(const std::string& sd);
@@ -56,6 +56,6 @@ private:
 	std::optional<std::chrono::system_clock::time_point> end_date;
     double limit = 0.0;
 	std::vector<Category> categories;
-	std::unordered_map<Transaction> transactions; 
+	std::unordered_map<int, Transaction> transactions; 
 	int next_id;
 };

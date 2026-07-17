@@ -14,6 +14,7 @@
 #include <fstream>
 #include <optional>
 #include <vector>
+#include <unordered_map>
 #include <algorithm>
 #include <nlohmann/json.hpp>
 #include "core/path.hpp"
@@ -152,7 +153,7 @@ std::vector<Category> Budget::getCategories() {
 }
 
 int Budget::findCategory(const std::string& category) {
-	for (int i = 0; i < categories.size(); i++) {
+	for (size_t i = 0; i < categories.size(); i++) {
 		if (categories[i].getName() == category) {
 			return i;
 		}	
@@ -168,10 +169,15 @@ void Budget::addTransaction(const std::string& amount,
 
 	Transaction txn;
 	txn.setAmount(amount);
+
+	if (findCategory(category) == -1) {
+		throw std::invalid_argument("Category not found");
+	}
+
 	txn.setCategory(category);
 	txn.setType(type);
 	txn.setDate(date);
-	txn.setvendor(vendor);
+	txn.setVendor(vendor);
 
 	transactions.emplace(next_id, std::move(txn));				
 	next_id++;
@@ -181,31 +187,34 @@ void Budget::editTransaction(const std::string& id,
 							 const std::string& field,
 							 const std::string& value) {
 
+	int new_id = std::stoi(id);
+
 	if (field == "amount") {
-		transactions[id].setAmount(value);
+		transactions[new_id].setAmount(value);
 
 	} else if (field == "category") {
-		transactions[id].setCategory(value);
+		transactions[new_id].setCategory(value);
 
 	} else if (field == "type") {
-		transactions[id].setType(value);
+		transactions[new_id].setType(value);
 
 	} else if (field == "date") {
-		transactions[id].setDate(value);
+		transactions[new_id].setDate(value);
 
 	} else if (field == "vendor") {
-		transactions[id].setVendor(value);
+		transactions[new_id].setVendor(value);
 
 	} else {
 		throw std::invalid_argument("Invalid field inputted");
 	}
 }
 
-void Budget::delTransaction(int id) {
-	transactions.erase(id);
+void Budget::delTransaction(const std::string& id) {
+	int new_id = std::stoi(id);
+	transactions.erase(new_id);
 }
 
-std::vector<Transaction> Budget::getTransactions() {
+std::unordered_map<int, Transaction> Budget::getTransactions() {
 	return transactions;
 }
 

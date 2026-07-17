@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include "core/budget.hpp"
 #include "core/transaction.hpp"
+#include "cli/utilities.hpp"
 
 
 int transactionAdd(int argc, const char* const* argv) {
@@ -10,6 +11,9 @@ int transactionAdd(int argc, const char* const* argv) {
 			throw std::invalid_argument("Too few arguments entered");
 		}
 
+		std::string date = "";
+		std::string vendor = "";
+
 		for (int i = 3; i < argc; ++i) {
 			std::string arg = argv[i];
 
@@ -17,13 +21,13 @@ int transactionAdd(int argc, const char* const* argv) {
 				if (i + 1 > argc) {
 					throw std::invalid_argument("The --date flag requires an argument after it");
 				}
-				vendor = argv[++i];
+				date = argv[++i];
 
 			} else if (arg == "--vendor") {
 				if (i + 1 > argc) {
 					throw std::invalid_argument("The --vendor flag requires an argument after it");
 				}
-				std::string date = argv[++i];
+				vendor = argv[++i];
 			}
 		}
 
@@ -54,7 +58,7 @@ int transactionEdit(int argc, const char* const* argv) {
 		return 0;
 
 	} catch (std::invalid_argument& e) {
-		throw std::cerr << "Invalid Argument: " << e.what() << '\n';
+		std::cerr << "Invalid Argument: " << e.what() << '\n';
 		return 1;
 	}
 }
@@ -65,14 +69,14 @@ int transactionDelete(int argc, const char* const* argv) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		Budget.budget;
+		Budget budget;
 		budget.load();
 
 		budget.delTransaction(argv[0]);
 		return 0;
 
 	} catch (const std::invalid_argument& e) {
-		throw std::cerr << "Invalid Argument: " << e.what() << '\n';
+		std::cerr << "Invalid Argument: " << e.what() << '\n';
 		return 1;
 	}
 }
@@ -85,9 +89,14 @@ int transactionList() {
 	
 	std::cout << "ID, Amount, Category, Type, Date, Vendor\n";
 
-	for (Transaction txn : transactions) {
-		std::cout << txn.getID() << ", " << txn.getAmount() << ", " << txn.getCategory() << ", " << txn.getType() << ", " << txn.getDate() << ", " << txn.getVendor() << '\n';
+	for (const auto& [id, txn] : transactions) {
+		std::cout << id << ", "
+				  << txn.getAmount() << ", "
+				  << txn.getCategory() << ", "
+				  << typeToString(txn.getType()) << ", "
+				  << formatDate(*txn.getDate()) << ", "
+				  << *txn.getVendor()
+				  << '\n';
 	}
-
 	return 0;
 }
