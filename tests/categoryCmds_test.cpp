@@ -1,4 +1,3 @@
-// TODO: Make load() and these should all pass
 #include <gtest/gtest.h>
 
 #include "cli/budgetCmds.hpp"
@@ -8,7 +7,6 @@
 class CategoryCmdsTest : public ::testing::Test {
 protected:
     static void SetUpTestSuite() {
-        // Create a test budget
         const char* argv1[] = {
             "TEST",
             "2026-01-01",
@@ -18,88 +16,160 @@ protected:
 
         budgetAdd(argv1);
 
-		const char* argv2[] = {"TEST"};
-		cmdSwitch(1, argv2);
+        const char* argv2[] = {"TEST"};
+        cmdSwitch(1, argv2);
     }
 
     static void TearDownTestSuite() {
-		const char* argv3[] = {"TEST"};
-		budgetDelete(argv3);
+        const char* argv[] = {"TEST"};
+        budgetDelete(argv);
     }
 };
 
 const char* const* categoryHelper() {
-	static const char* argv[] = {"test-category", "expense", "100"};
-	return argv;
+    static const char* argv[] = {
+        "test-category",
+        "expense",
+        "100"
+    };
+
+    return argv;
 }
 
 TEST_F(CategoryCmdsTest, categoryAddSuccess) {
-    const char* const* argv = categoryHelper();
+    const char* argv[] = {
+        "add-success-category",
+        "expense",
+        "100"
+    };
 
     EXPECT_EQ(categoryAdd(3, argv), 0);
 }
 
 TEST_F(CategoryCmdsTest, categoryAddRejectInvalidName) {
-	const char* argv[] = {"-1d@s", "expense", "100"};
+    const char* argv[] = {
+        "-invalid-category",
+        "expense",
+        "100"
+    };
 
     EXPECT_EQ(categoryAdd(3, argv), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryAddRejectInvalidType) {
-	const char* argv[] = {"test_category", "idk", "100"};
+    const char* argv[] = {
+        "invalid-type-category",
+        "idk",
+        "100"
+    };
 
     EXPECT_EQ(categoryAdd(3, argv), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryAddRejectInvalidLimit) {
-	const char* argv[] = {"test_category", "income", "100a"};
+    const char* argv[] = {
+        "invalid-limit-category",
+        "expense",
+        "100a"
+    };
 
     EXPECT_EQ(categoryAdd(3, argv), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryEditSuccess) {
-    const char* const* argv = categoryHelper();
-	categoryAdd(3, argv);
+    const char* argv[] = {
+        "edit-success-category",
+        "expense",
+        "100"
+    };
 
-	const char* args[] = {"test-category", "name", "groceries"};
+    EXPECT_EQ(categoryAdd(3, argv), 0);
+
+    const char* args[] = {
+        "edit-success-category",
+        "name",
+        "edited-category"
+    };
+
     EXPECT_EQ(categoryEdit(3, args), 0);
 }
 
 TEST_F(CategoryCmdsTest, categoryEditRejectInvalidCategoryName) {
-    const char* const* argv = categoryHelper();
-	categoryAdd(3, argv);
+    const char* argv[] = {
+        "invalid-edit-category",
+        "expense",
+        "100"
+    };
 
-	const char* args[] = {"invalidCategory", "name", "@@@a"};
+    EXPECT_EQ(categoryAdd(3, argv), 0);
+
+    const char* args[] = {
+        "invalid-edit-category",
+        "name",
+        "@@@a"
+    };
+
     EXPECT_EQ(categoryEdit(3, args), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryEditRejectInvalidCategoryType) {
-    const char* const* argv = categoryHelper();
-	categoryAdd(3, argv);
+    const char* argv[] = {
+        "invalid-type-edit-category",
+        "expense",
+        "100"
+    };
 
-	const char* args[] = {"test-category", "type", "failure"};
+    EXPECT_EQ(categoryAdd(3, argv), 0);
+
+    const char* args[] = {
+        "invalid-type-edit-category",
+        "type",
+        "failure"
+    };
+
     EXPECT_EQ(categoryEdit(3, args), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryDeleteSuccess) {
-    const char* const* argv = categoryHelper();
-	categoryAdd(3, argv);
+    const char* argv[] = {
+        "delete-success-category",
+        "expense",
+        "100"
+    };
 
-	const char* args[] = {"test-category"};
+    EXPECT_EQ(categoryAdd(3, argv), 0);
+
+    const char* args[] = {
+        "delete-success-category"
+    };
+
     EXPECT_EQ(categoryDelete(1, args), 0);
 }
 
 TEST_F(CategoryCmdsTest, categoryDeleteRejectInvalidCategory) {
-    const char* const* argv = categoryHelper();
-	categoryAdd(3, argv);
+    const char* argv[] = {
+        "delete-invalid-category",
+        "expense",
+        "100"
+    };
 
-	const char* args[] = {"invalid-category"};
+    EXPECT_EQ(categoryAdd(3, argv), 0);
+
+    const char* args[] = {
+        "category-does-not-exist"
+    };
+
     EXPECT_EQ(categoryDelete(1, args), 1);
 }
 
 TEST_F(CategoryCmdsTest, categoryListSuccess) {
-    const char* const* argv = categoryHelper();
-	categoryAdd(3, argv);
+    const char* argv[] = {
+        "list-category",
+        "expense",
+        "100"
+    };
+
+    EXPECT_EQ(categoryAdd(3, argv), 0);
 
     EXPECT_EQ(categoryList(), 0);
 }

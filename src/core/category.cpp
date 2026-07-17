@@ -1,5 +1,6 @@
 // TODO: Implement all these
 #include "category.hpp"
+
 #include <stdexcept>
 #include <sstream>
 
@@ -7,7 +8,7 @@ const std::string& Category::getName() const {
 	return name;
 }
 
-CategoryType Category::getType() const {
+const std::string& Category::getType() const {
 	return type;
 }
 
@@ -35,15 +36,17 @@ void Category::setName(const std::string& name) {
 	this->name = name;
 }
 
-void Category::setType(const std::string& type) {
-	if (type == "income") {
-		this->type = CategoryType::Income;
+void Category::setType(std::string type) {
+	std::transform(type.begin(), type.end(), type.begin(),
+		[](unsigned char c) {
+			return std::tolower(c);
+	});
 
-	} else if (type == "expense") {
-		this->type = CategoryType::Expense;
+	if (type != "income" && type != "expense") {
+		throw std::invalid_argument("Transaction type must be `income` or `expense`");
 
 	} else {
-		throw std::invalid_argument("Category type must be `income` or `expense`");
+		this->type = type;
 	}
 }
 
