@@ -66,3 +66,11 @@ void Category::setLimit(const std::string& limit) {
 
 	this->limit = value;
 }
+
+void Category::setLimit(double limit) {
+	if (limit <= 0) {
+		throw std::invalid_argument("Category limit must be greater than 0");
+	}
+
+	this->limit = limit;
+}

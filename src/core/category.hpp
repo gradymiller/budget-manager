@@ -13,6 +13,7 @@ public:
 	void setName(const std::string& name);
 	void setType(std::string type);
 	void setLimit(const std::string& limit);
+	void setLimit(double limit);
 
 private:
 	std::string name;
