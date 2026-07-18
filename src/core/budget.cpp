@@ -3,6 +3,7 @@
 
 #include "core/budget.hpp"
 
+#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -175,7 +176,7 @@ void Budget::addTransaction(const std::string& amount,
 	txn.setAmount(amount);
 
 	if (findCategory(category) == -1) {
-		throw std::invalid_argument("Category not found");
+		throw std::invalid_argument("Invalid category for the transaction");
 	}
 
 	txn.setCategory(category);
@@ -189,7 +190,8 @@ void Budget::addTransaction(const std::string& amount,
 		txn.setVendor(vendor);
 	}
 
-	transactions.emplace(next_id, std::move(txn));				
+	transactions.emplace(next_id, std::move(txn));	
+	std::cout << next_id << '\n';
 	next_id++;
 }
 
@@ -254,6 +256,7 @@ void Budget::saveBudget()
     metadata["budgets"][this->name]["start_date"] = stringDate(*this->start_date);
     metadata["budgets"][this->name]["end_date"] = stringDate(*this->end_date);
     metadata["budgets"][this->name]["limit"] = this->limit;
+	metadata["budgets"][this->name]["next_id"] = this->next_id;
 
     std::ofstream out(PATH / "metadata.json");
 
@@ -374,8 +377,8 @@ void Budget::load() {
     // Metadata
     setStartDate(budget["start_date"].get<std::string>());
     setEndDate(budget["end_date"].get<std::string>());
-
     limit = budget["limit"].get<double>();
+	next_id = budget["next_id"].get<int>();
 
 
     // Categories

@@ -38,9 +38,6 @@ int transactionAdd(int argc, const char* const* argv) {
 		Budget budget;
 		budget.load();
 		
-		std::cout << "date=[" << date << "]\n";
-		std::cout << "vendor=[" << vendor << "]\n";
-
 		budget.addTransaction(
 			argv[0],
 			argv[1],
@@ -49,6 +46,7 @@ int transactionAdd(int argc, const char* const* argv) {
 			vendor
 		);
 
+		budget.saveBudget();
 		budget.saveTransactions();
 	});
 }

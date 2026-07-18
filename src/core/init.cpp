@@ -26,18 +26,6 @@ void createFiles(fs::path dir) {
         );
     }
 
-    // Create config file
-    fs::path config_path = dir / "config";
-
-    std::ofstream config_file(config_path, std::ios::app);
-
-    if (!config_file) {
-        throw std::runtime_error("Failed to create config file\n");
-    }
-
-    config_file.close();
-
-
     // Create metadata.json
     fs::path metadata_path = dir / "metadata.json";
 
