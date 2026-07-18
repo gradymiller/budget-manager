@@ -9,10 +9,12 @@
 class BudgetCmdsTest : public ::testing::Test {
 protected:
     void SetUp() override {
-		cmdInit();
-        // Remove leftover budget from previous failed test runs
-        const char* cleanupArgs[] = {"TEST"};
-        budgetDelete(1, cleanupArgs);
+		try {
+			cmdInit();
+			const char* cleanupArgs[] = {"TEST"};
+			budgetDelete(1, cleanupArgs);
+
+		} catch (...) {}
 
         const char* argv[] = {
             "TEST",
@@ -22,6 +24,7 @@ protected:
         };
 
         ASSERT_EQ(budgetAdd(4, argv), 0);
+		ASSERT_EQ(cmdSwitch(4, argv), 0);
     }
 
     void TearDown() override {
