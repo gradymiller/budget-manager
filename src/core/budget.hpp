@@ -52,6 +52,7 @@ public:
 
 private:
 	int next_id = 0;
+	double allocated = 0;
     std::string name;
 	std::optional<std::chrono::system_clock::time_point> start_date;
 	std::optional<std::chrono::system_clock::time_point> end_date;

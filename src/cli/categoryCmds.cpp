@@ -18,6 +18,7 @@ int categoryAdd(int argc, const char* const argv[]) {
 
 		budget.addCategory(argv[0], argv[1], argv[2]);
 		budget.saveCategories();
+		budget.saveBudget();
 	});
 }
 
@@ -33,6 +34,7 @@ int categoryEdit(int argc, const char* const argv[]) {
 
 		budget.editCategory(argv[0], argv[1], argv[2]);
 		budget.saveCategories();
+		budget.saveBudget();
 	});
 }
 
@@ -48,6 +50,7 @@ int categoryDelete(int argc, const char* const argv[]) {
 
 		budget.delCategory(argv[0]);
 		budget.saveCategories();
+		budget.saveBudget();
 	});
 }
 

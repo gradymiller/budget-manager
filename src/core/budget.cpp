@@ -118,7 +118,12 @@ void Budget::addCategory(const std::string& name, const std::string& type, const
 	category.setType(type);
 	category.setLimit(limit);
 
+	if ((allocated + category.getLimit()) > getLimit()) {
+		throw std::invalid_argument("Category limit goes over the remaining amount of the budget limit");	
+	}
+
     this->categories.push_back(category);
+	allocated += category.getLimit();
 }
 
 void Budget::editCategory(const std::string& category, const std::string& field, const std::string& value) {
@@ -135,7 +140,18 @@ void Budget::editCategory(const std::string& category, const std::string& field,
 		categories[index].setType(value);
 
 	} else if (field == "limit") {
+		double old_limit = categories[index].getLimit();
+
 		categories[index].setLimit(value);
+		double new_limit = categories[index].getLimit();
+		
+		if ((allocated + (new_limit - old_limit)) > this->getLimit()) {
+			categories[index].setLimit(old_limit);
+			throw std::invalid_argument("New category limit exceeds remaining amount of the budget limit");		
+		}
+
+		allocated += categories[index].getLimit();
+
 
 	} else {
 		throw std::invalid_argument("Invalid field. Cannot edit");
@@ -150,6 +166,7 @@ void Budget::delCategory(const std::string& category) {
 	}
 
 	std::swap(categories[index], categories.back());
+	allocated -= categories.back().getLimit();
 	this->categories.pop_back();
 }
 
@@ -191,7 +208,6 @@ void Budget::addTransaction(const std::string& amount,
 	}
 
 	transactions.emplace(next_id, std::move(txn));	
-	std::cout << next_id << '\n';
 	next_id++;
 }
 
@@ -257,6 +273,7 @@ void Budget::saveBudget()
     metadata["budgets"][this->name]["end_date"] = stringDate(*this->end_date);
     metadata["budgets"][this->name]["limit"] = this->limit;
 	metadata["budgets"][this->name]["next_id"] = this->next_id;
+	metadata["budgets"][this->name]["allocated"] = this->allocated;
 
     std::ofstream out(PATH / "metadata.json");
 
@@ -379,6 +396,7 @@ void Budget::load() {
     setEndDate(budget["end_date"].get<std::string>());
     limit = budget["limit"].get<double>();
 	next_id = budget["next_id"].get<int>();
+	allocated = budget["allocated"].get<double>();
 
 
     // Categories
