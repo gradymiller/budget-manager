@@ -51,7 +51,7 @@ Options:
 }
 
 int cmdVersion() {
-	std::cout << APPVERSION << "\n";
+	std::cout << APPVERSION << '\n';
 	return 0;
 }
 
@@ -80,7 +80,7 @@ int cmdInit() {
 
 	// TODO: Add rest of setup functions here
 
-	std::cout << "Budget Manager setup complete.";
+	std::cout << "Budget Manager setup complete." << '\n';
 	return 0;
 }
 
@@ -88,7 +88,7 @@ int cmdCurrent() {
 	std::ifstream file(PATH / "current");
 	std::string val;
 	std::getline(file, val);
-	std::cout << "Current budget: " << val << "\n";
+	std::cout << "Current budget: " << val << '\n';
 	return 0;
 }
 

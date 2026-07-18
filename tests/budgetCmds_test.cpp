@@ -3,11 +3,13 @@
 
 #include "cli/budgetCmds.hpp"
 #include "core/path.hpp"
+#include "cli/otherCmds.hpp"
 
 
 class BudgetCmdsTest : public ::testing::Test {
 protected:
     void SetUp() override {
+		cmdInit();
         // Remove leftover budget from previous failed test runs
         const char* cleanupArgs[] = {"TEST"};
         budgetDelete(1, cleanupArgs);

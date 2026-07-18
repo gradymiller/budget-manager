@@ -8,6 +8,7 @@ class CategoryCmdsTest : public ::testing::Test {
 protected:
     void SetUp() override {
 		try {
+			cmdInit();
 			const char* cleanup[] = {"TEST"};
 			budgetDelete(1, cleanup);
 

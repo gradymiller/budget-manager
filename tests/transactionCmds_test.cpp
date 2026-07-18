@@ -8,6 +8,7 @@
 class TransactionCmdsTest : public ::testing::Test {
 protected:
     void SetUp() override {
+		cmdInit();
 		const char* cleanup[] = {"TEST"};
 		budgetDelete(1, cleanup);
 
