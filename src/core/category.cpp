@@ -12,8 +12,12 @@ const std::string& Category::getType() const {
 	return type;
 }
 
-double Category::getLimit() const {
+double Category::getLimit() {
 	return limit;
+}
+
+double Category::getUsage() {
+	return usage;
 }
 
 void Category::setName(const std::string& name) {
@@ -73,4 +77,18 @@ void Category::setLimit(double limit) {
 	}
 
 	this->limit = limit;
+}
+
+void Category::addUsage(double amt) {
+	usage += amt;
+}
+
+void Category::delUsage(double amt) {
+	double del = usage - amt;
+
+	if (del < 0) {
+		throw std::invalid_argument("Usage cannot be less than 0");	
+	}
+
+	usage = del;
 }
