@@ -24,29 +24,29 @@ Options:
   -v, --version		Show version
 
 Commands:
-  init							Setup Budget Manager	
-  status						Condensed budget overview
-  report						Full budget overview
-  current						Display active budget
-  use | switch <budget_name>	Change active budget
+  init                          Setup Budget Manager	
+  status                        Condensed budget overview
+  report                        Full budget overview
+  current                       Display active budget
+  use | switch <budget_name>    Change active budget
 
   b[udget]
     add <name> <start_date> <end_date> <limit>
-	edit <field> <new_value>
-	delete <budget>
-	list
+    edit <field> <new_value>
+    delete <budget>
+    list
 	
   t[ransaction]
     add <amount> <category> <type> [--date <YYYY-MM-DD>] [--vendor <vendor>]
     edit <id> <field> <new_value>
     delete <id>
-	list
+    list
 
   c[ategory]
     add <category_name> <type> <limit>
-	edit <category_name> <field> <new_value>
-	delete <category_name>
-	list
+    edit <category_name> <field> <new_value>
+    delete <category_name>
+    list
 
 )";
 	return 0;
