@@ -166,6 +166,12 @@ void Budget::delCategory(const std::string& category) {
 		throw std::runtime_error("Category not previously saved");
 	}
 
+	for (const auto& [id, txn] : transactions) {
+		if (txn.getCategory() == category) {
+			throw std::runtime_error("Cannot delete category that has transactions assigned to it. Change transaction categories first before removing the category");
+		}
+	}
+
 	std::swap(categories[index], categories.back());
 	allocated -= categories.back().getLimit();
 	this->categories.pop_back();
