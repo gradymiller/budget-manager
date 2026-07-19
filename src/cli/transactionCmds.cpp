@@ -48,6 +48,7 @@ int transactionAdd(int argc, const char* const* argv) {
 
 		budget.saveTransactions();
 		budget.saveBudget();
+		budget.saveCategories();
 	});
 }
 
@@ -65,6 +66,7 @@ int transactionEdit(int argc, const char* const* argv) {
 
 		budget.saveTransactions();
 		budget.saveBudget();
+		budget.saveCategories();
 	});
 }
 
@@ -82,6 +84,7 @@ int transactionDelete(int argc, const char* const* argv) {
 
 		budget.saveTransactions();
 		budget.saveBudget();
+		budget.saveCategories();
 	});
 }
 

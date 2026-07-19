@@ -1,6 +1,7 @@
 // TODO: Implement all these
 #include "category.hpp"
 
+#include <iostream>
 #include <stdexcept>
 #include <sstream>
 
@@ -12,11 +13,11 @@ const std::string& Category::getType() const {
 	return type;
 }
 
-double Category::getLimit() {
+double Category::getLimit() const {
 	return limit;
 }
 
-double Category::getUsage() {
+double Category::getUsage() const {
 	return usage;
 }
 
@@ -86,6 +87,7 @@ void Category::addUsage(double amt) {
 void Category::delUsage(double amt) {
 	double del = usage - amt;
 
+	std::cout << usage << ", " << amt << '\n';
 	if (del < 0) {
 		throw std::invalid_argument("Usage cannot be less than 0");	
 	}

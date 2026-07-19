@@ -52,10 +52,12 @@ public:
 
 private:
 	int next_id = 0;
-	double allocated = 0;
+	double spent = 0;
+	double earned = 0;
     std::string name;
 	std::optional<std::chrono::system_clock::time_point> start_date;
 	std::optional<std::chrono::system_clock::time_point> end_date;
+	double allocated = 0;
     double limit = 0.0;
 	std::vector<Category> categories;
 	std::unordered_map<int, Transaction> transactions; 

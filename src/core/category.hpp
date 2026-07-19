@@ -9,7 +9,7 @@ public:
 	const std::string& getName() const;
 	const std::string& getType() const;
 	double getLimit() const;
-	double getUsed() const;
+	double getUsage() const;
 
 	void setName(const std::string& name);
 	void setType(std::string type);

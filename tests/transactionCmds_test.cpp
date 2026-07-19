@@ -17,7 +17,7 @@ protected:
             "TEST",
             "2026-01-01",
             "2026-08-02",
-            "1000"
+            "100000"
         };
 
 		ASSERT_EQ(budgetAdd(4, argv1), 0);
@@ -29,7 +29,7 @@ protected:
         const char* categoryArgs[] = {
             "test-category",
             "expense",
-            "100"
+            "10000"
         };
 
         ASSERT_EQ(categoryAdd(3, categoryArgs), 0);

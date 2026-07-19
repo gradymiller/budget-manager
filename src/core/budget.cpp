@@ -1,9 +1,10 @@
 // TODO: Add validation to setters
 // TODO: Load data in from a csv (to struct/class), overwrite when saving
+// TODO: Continue changing transaction functions to update category usage, not
+// budget spent
 
 #include "core/budget.hpp"
 
-#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -192,8 +193,9 @@ void Budget::addTransaction(const std::string& amount,
 	Transaction txn;
 	txn.setAmount(amount);
 
-	if (findCategory(category) == -1) {
-		throw std::invalid_argument("Invalid category for the transaction");
+	int c_index = findCategory(category);
+	if (c_index == -1) {
+		throw std::invalid_argument("Transaction category cannot be found");
 	}
 
 	txn.setCategory(category);
@@ -207,8 +209,11 @@ void Budget::addTransaction(const std::string& amount,
 		txn.setVendor(vendor);
 	}
 
+	categories[c_index].addUsage(txn.getAmount()); 
+
 	transactions.emplace(next_id, std::move(txn));	
 	next_id++;
+
 }
 
 void Budget::editTransaction(const std::string& id,
@@ -220,6 +225,13 @@ void Budget::editTransaction(const std::string& id,
 	auto it = transactions.find(new_id);
 	if (it == transactions.end()) {
 		throw std::invalid_argument("Transaction not found");
+	}
+
+	double old_amt = transactions[new_id].getAmount();	
+
+	int c_index = findCategory(transactions[new_id].getCategory());
+	if (c_index == -1) {
+		throw std::runtime_error("Transaction category not found, could not delete");
 	}
 
 	if (field == "amount") {
@@ -240,16 +252,30 @@ void Budget::editTransaction(const std::string& id,
 	} else {
 		throw std::invalid_argument("Invalid field inputted");
 	}
+
+	double new_amt = transactions[new_id].getAmount();
+
+	categories[c_index].delUsage(old_amt);
+	categories[c_index].addUsage(new_amt);
 }
 
 void Budget::delTransaction(const std::string& id) {
 	int new_id = std::stoi(id);
+
+	double amt = transactions[new_id].getAmount();
+
+	int c_index = findCategory(transactions[new_id].getCategory());
+	if (c_index == -1) {
+		throw std::runtime_error("Transaction category not found, could not be deleted");
+	}
 
 	auto removed = transactions.erase(new_id);
 	
 	if (removed == 0) {
 		throw std::invalid_argument("Transaction not found");
 	}
+	
+	categories[c_index].delUsage(amt);	
 }
 
 std::unordered_map<int, Transaction> Budget::getTransactions() {
@@ -317,7 +343,8 @@ void Budget::saveCategories() {
         categories_json.push_back({
             {"name", category.getName()},
             {"type", category.getType()},
-            {"limit", category.getLimit()}
+            {"limit", category.getLimit()},
+			{"usage", category.getUsage()}
         });
     }
 
@@ -407,10 +434,8 @@ void Budget::load() {
 
         category.setName(category_json["name"].get<std::string>());
         category.setType(category_json["type"].get<std::string>());
-
-        category.setLimit(
-            std::to_string(category_json["limit"].get<double>())
-        );
+        category.setLimit(std::to_string(category_json["limit"].get<double>()));
+		category.addUsage(category_json["usage"].get<double>());
 
         categories.push_back(category);
     }
