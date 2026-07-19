@@ -51,9 +51,6 @@ int dispatch(int argc, char** argv) {
 		} else if (arg2 == "list") {
 			return budgetList();
 
-		} else if (arg2 == "-h" || arg2 == "--help") {
-			return budgetHelp();
-
 		} else {
 			return cmdInvalid(arg2);
 		}
@@ -70,9 +67,6 @@ int dispatch(int argc, char** argv) {
 
 		} else if (arg2 == "list") {
 			return transactionList();
-
-		} else if (arg2 == "-h" || arg2 == "--help") {
-			return transactionHelp();
 
 		} else {
 			return cmdInvalid(arg2);
@@ -91,9 +85,6 @@ int dispatch(int argc, char** argv) {
 
 		} else if (arg2 == "list") {
 			return categoryList();
-
-		} else if (arg2 == "-h" || arg2 == "--help") {
-			return categoryHelp();
 
 		} else {
 			return cmdInvalid(arg2);

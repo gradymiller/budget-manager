@@ -13,60 +13,47 @@ using json = nlohmann::json;
 
 int cmdHelp() {
 	std::cout <<
-R"(bmcli - Command line personal budgeting tool
+R"(
+bmcli - Command line personal budgeting tool
 
 Usage:
   bmcli [options] <command> [args]
 
-Commands:
-  init (1.0.0)							Setup Budget Manager	
-  status								Condensed budget overview
-  report								Full budget overview
-  current (1.0.0)						Display active budget
-  use | switch <budget_name> (1.0.0)	Change active budget
+Options:
+  -h, --help		Show help
+  -v, --version		Show version
 
-  b | budget [--help] (1.0.0 all sub)
+Commands:
+  init							Setup Budget Manager	
+  status						Condensed budget overview
+  report						Full budget overview
+  current						Display active budget
+  use | switch <budget_name>	Change active budget
+
+  b[udget]
     add <name> <start_date> <end_date> <limit>
 	edit <field> <new_value>
 	delete <budget>
 	list
 	
-  t | transaction [--help] (1.0.0 all sub)
-    add <amount> <category> [--vendor <vendor>] [--date <YYYY-MM-DD>]
+  t[ransaction]
+    add <amount> <category> <type> [--date <YYYY-MM-DD>] [--vendor <vendor>]
     edit <id> <field> <new_value>
     delete <id>
 	list
 
-  c | category [--help]
+  c[ategory]
     add <category_name> <type> <limit>
 	edit <category_name> <field> <new_value>
 	delete <category_name>
 	list
 
-Options:
-  -h, --help (1.0.0)		Show help
-  -v, --version (1.0.0)		Show version
 )";
 	return 0;
 }
 
 int cmdVersion() {
-	std::cout << APPVERSION << '\n';
-	return 0;
-}
-
-int budgetHelp() {
-	std::cout << "ADD DOCS HERE.";
-	return 0;
-}
-
-int transactionHelp() {
-	std::cout << "ADD DOCS HERE.";
-	return 0;
-}
-
-int categoryHelp() {
-	std::cout << "ADD DOCS HERE.";
+	std::cout << "bmcli - budget manager command line tool\nVersion: " << APPVERSION << '\n';
 	return 0;
 }
 
