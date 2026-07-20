@@ -1,6 +1,7 @@
 // TODO: Expand this with database, encryption, etc.
-#include <filesystem>
+// TODO: Use PATH so the default folder location can be configurable
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <stdexcept>
 
@@ -26,7 +27,7 @@ void createFiles(fs::path dir) {
         );
     }
 
-    // Create metadata.json
+    // Create a file to store budget metadata and state
     fs::path metadata_path = dir / "metadata.json";
 
     // Only create it if it doesn't already exist
