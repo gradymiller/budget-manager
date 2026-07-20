@@ -1,40 +1,40 @@
-// TODO: Add validation to setters
-// TODO: Load data in from a csv (to struct/class), overwrite when saving
-// TODO: Continue changing transaction functions to update category usage, not
-// budget spent
-
 #include "core/budget.hpp"
 
-#include <iomanip>
-#include <sstream>
-#include <stdexcept>
-#include <utility>
-#include <string>
+#include <algorithm>
 #include <cctype>
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <iomanip>
 #include <optional>
-#include <vector>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 #include <unordered_map>
-#include <algorithm>
+#include <utility>
+#include <vector>
+
 #include <nlohmann/json.hpp>
+
+#include "core/category.hpp"
 #include "core/path.hpp"
 #include "core/transaction.hpp"
-#include "core/category.hpp"
 #include "core/utils.hpp"
 
 using json = nlohmann::json;
-
 
 const std::string& Budget::getName() const {
     return this->name;
 }
 
+// The budget guarantees the start date has been initialized before this
+// accessor is called.
 std::chrono::system_clock::time_point Budget::getStartDate() const {
     return *this->start_date;
 }
 
+// The budget guarantees the start date has been initialized before this
+// accessor is called.
 std::chrono::system_clock::time_point Budget::getEndDate() const {
     return *this->end_date;
 }
@@ -43,6 +43,8 @@ double Budget::getLimit() const {
     return this->limit;
 }
 
+// Budget names may contain only alphanumeric characters, underscores,
+// and hyphens. Separators are not allowed at the beginning or end.
 void Budget::setName(std::string n) {
 	if (n.empty()) {
 		throw std::invalid_argument("Name cannot be empty");
@@ -68,6 +70,7 @@ void Budget::setName(std::string n) {
     this->name = std::move(n);
 }
 
+// Enforces a valid start date when an end date has been previously set.
 void Budget::setStartDate(const std::string& sd) {
 	auto parsed_date = parseDate(sd);
 
@@ -78,6 +81,7 @@ void Budget::setStartDate(const std::string& sd) {
 	this->start_date = parsed_date;
 }
 
+// Enforces a valid end date when a start date has been previously set.
 void Budget::setEndDate(const std::string& ed) {
     auto parsed_date = parseDate(ed);
 
@@ -105,7 +109,10 @@ void Budget::setLimit(std::string l) {
     this->limit = value;
 }
 
-void Budget::addCategory(const std::string& name, const std::string& type, const std::string& limit) {
+void Budget::addCategory(const std::string& name,
+						 const std::string& type,
+						 const std::string& limit) {
+
 	if (name.empty() || type.empty() || limit.empty()) {
 		throw std::invalid_argument("New categories require a non-empty name, type and limit");
 	}
@@ -119,6 +126,7 @@ void Budget::addCategory(const std::string& name, const std::string& type, const
 	category.setType(type);
 	category.setLimit(limit);
 
+	// Prevent category allocations from exceeding the overall budget limit.
 	if ((allocated + category.getLimit()) > getLimit()) {
 		throw std::invalid_argument("Category limit goes over the remaining amount of the budget limit");	
 	}
@@ -127,7 +135,10 @@ void Budget::addCategory(const std::string& name, const std::string& type, const
 	allocated += category.getLimit();
 }
 
-void Budget::editCategory(const std::string& category, const std::string& field, const std::string& value) {
+void Budget::editCategory(const std::string& category,
+						  const std::string& field,
+						  const std::string& value) {
+	
 	int index = findCategory(category);
 
 	if (index == -1) {
@@ -146,6 +157,8 @@ void Budget::editCategory(const std::string& category, const std::string& field,
 		categories[index].setLimit(value);
 		double new_limit = categories[index].getLimit();
 		
+		// Verify the new limit does not exceed the overall budget limit before
+		// updating.
 		if ((allocated + (new_limit - old_limit)) > this->getLimit()) {
 			categories[index].setLimit(old_limit);
 			throw std::invalid_argument("New category limit exceeds remaining amount of the budget limit");		
@@ -166,21 +179,25 @@ void Budget::delCategory(const std::string& category) {
 		throw std::runtime_error("Category not previously saved");
 	}
 
+	// Transactions must be updated to new categories before a category can be
+	// deleted from the budget
 	for (const auto& [id, txn] : transactions) {
 		if (txn.getCategory() == category) {
 			throw std::runtime_error("Cannot delete category that has transactions assigned to it. Change transaction categories first before removing the category");
 		}
 	}
 
+	// Uses swap and pop_back to prevent O(n) deletion due to shifting.
 	std::swap(categories[index], categories.back());
 	allocated -= categories.back().getLimit();
 	this->categories.pop_back();
 }
 
-std::vector<Category> Budget::getCategories() {
+std::vector<Category> Budget::getCategories() const {
 	return this->categories;
 }
 
+// Primarily used within the budget class
 int Budget::findCategory(const std::string& category) {
 	for (size_t i = 0; i < categories.size(); i++) {
 		if (categories[i].getName() == category) {
@@ -207,10 +224,12 @@ void Budget::addTransaction(const std::string& amount,
 	txn.setCategory(category);
 	txn.setType(type);
 
+	// Optional input
 	if (!date.empty()) {
 		txn.setDate(date);
 	}
 
+	//Optional input
 	if (!vendor.empty()) {
 		txn.setVendor(vendor);
 	}
@@ -218,6 +237,8 @@ void Budget::addTransaction(const std::string& amount,
 	categories[c_index].addUsage(txn.getAmount()); 
 
 	transactions.emplace(next_id, std::move(txn));	
+
+	// This is the only place that next_id is updated
 	next_id++;
 
 }
@@ -243,6 +264,12 @@ void Budget::editTransaction(const std::string& id,
 	if (field == "amount") {
 		transactions[new_id].setAmount(value);
 
+		double new_amt = transactions[new_id].getAmount();
+		
+		// Recalculate new category amount when transaction amount changes
+		categories[c_index].delUsage(old_amt);
+		categories[c_index].addUsage(new_amt);
+
 	} else if (field == "category") {
 		transactions[new_id].setCategory(value);
 
@@ -259,10 +286,6 @@ void Budget::editTransaction(const std::string& id,
 		throw std::invalid_argument("Invalid field inputted");
 	}
 
-	double new_amt = transactions[new_id].getAmount();
-
-	categories[c_index].delUsage(old_amt);
-	categories[c_index].addUsage(new_amt);
 }
 
 void Budget::delTransaction(const std::string& id) {
@@ -284,12 +307,16 @@ void Budget::delTransaction(const std::string& id) {
 	categories[c_index].delUsage(amt);	
 }
 
-std::unordered_map<int, Transaction> Budget::getTransactions() {
+std::unordered_map<int, Transaction> Budget::getTransactions() const {
 	return transactions;
 }
 
-void Budget::saveBudget()
-{
+// Preserve the current budget's fields. This does not update categories
+// to the json file even though the categories are nested within the
+// budget as a field.
+void Budget::saveBudget() {
+	
+	// Import the metadata.json file
     json metadata;
     std::ifstream in(PATH / "metadata.json");
 
@@ -300,13 +327,16 @@ void Budget::saveBudget()
     in >> metadata;
     in.close();
 
-    // Update only the budget fields
+	// Update the budget's fields here. When adding new fields to track, all
+	// that needs to be done for saving is to add a new entry like the ones
+	// below. The rest of the save function does not need to be touched.
     metadata["budgets"][this->name]["start_date"] = stringDate(*this->start_date);
     metadata["budgets"][this->name]["end_date"] = stringDate(*this->end_date);
     metadata["budgets"][this->name]["limit"] = this->limit;
 	metadata["budgets"][this->name]["next_id"] = this->next_id;
 	metadata["budgets"][this->name]["allocated"] = this->allocated;
 
+	// Write back to the json file
     std::ofstream out(PATH / "metadata.json");
 
     if (!out.is_open()) {
@@ -317,8 +347,8 @@ void Budget::saveBudget()
     out.close();
 }
 
+// Only saves the state of the current budget's categories
 void Budget::saveCategories() {
-    // Read the current budget name
     std::ifstream current(PATH / "current");
 
     if (!current.is_open()) {
@@ -343,6 +373,7 @@ void Budget::saveCategories() {
 
 
     // Convert categories to JSON
+	// To add new category metadata just add a new entry to push_back()
     json categories_json = json::array();
 
     for (const auto& category : categories) {
@@ -370,6 +401,7 @@ void Budget::saveCategories() {
     out.close();
 }
 
+// Only saves the state of transactions for the current budget.
 void Budget::saveTransactions() {
 	// Save transactions
 	std::ofstream csv(PATH / (this->name + ".csv"));
@@ -378,8 +410,10 @@ void Budget::saveTransactions() {
 		throw std::runtime_error("Could not open file to save transactions");
 	}
 
+	// Write a header. This can be changed if new data is to be saved.
 	csv << "ID,Amount,Category,Type,Date,Vendor\n";
 
+	// Write each transaction to the csv file
 	for (const auto& [id, txn] : transactions) {
 		csv << id << ","
 			<< txn.getAmount() << ","
@@ -394,7 +428,8 @@ void Budget::saveTransactions() {
 
 
 void Budget::load() {
-	// Budget
+	
+	// Find and load the current budget
     std::ifstream current(PATH / "current");
 
     if (!current.is_open()) {
@@ -424,7 +459,7 @@ void Budget::load() {
     json budget = metadata["budgets"][name];
 
 
-    // Metadata
+    // Load in the budget's metadata
     setStartDate(budget["start_date"].get<std::string>());
     setEndDate(budget["end_date"].get<std::string>());
     limit = budget["limit"].get<double>();
@@ -432,7 +467,7 @@ void Budget::load() {
 	allocated = budget["allocated"].get<double>();
 
 
-    // Categories
+    // Load in the budget's categories and their fields
     categories.clear();
 
     for (const auto& category_json : budget["categories"]) {
@@ -446,7 +481,7 @@ void Budget::load() {
         categories.push_back(category);
     }
 
-	// Transactions
+	// Load in the budget's transactions from the separate csv
 	std::ifstream csv(PATH / (name + ".csv"));
 
 	std::string line;
