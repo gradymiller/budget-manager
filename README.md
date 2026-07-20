@@ -4,28 +4,24 @@ This is a terminal-based budget application written in C++.
 
 ## Setup:
 
+First, clone the repository to your local machine.
+
+Run the bash script to set up and compile the budget manager tool to your
+system.
 ```
-make
+cd budget-manager
+./setup.sh
 ```
 
-```
-make install
-```
-1. Uses ncurses library, compile with:
-- g++ -Isrc \
-src/core/*.cpp \
-src/cli/*.cpp \
--o budget-cli
+Once the compilation is finished there will be 2 executables located in
+"./build".
 
-- g++ -Isrc \
-src/core/*.cpp \
-src/tui/*.cpp \
--lncurses \
--o budget-tui
+The bmcli executable is to run the tool and the bmcli_test runs the unit tests.
+The main executable can be run as is or can be added to your path for ease of
+use.
 
-- Use "-Isrc" because there are 2 main.cpp files to make the cli and tui
-  executable using the same core functionality
-
+#### Note:
+The tool will leave it's files in ~/.local/share/budget-manager
 
 ### Features:
 
