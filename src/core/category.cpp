@@ -1,9 +1,9 @@
 // TODO: Implement all these
 #include "category.hpp"
 
-#include <iostream>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
+#include <string>
 
 const std::string& Category::getName() const {
 	return name;
@@ -21,6 +21,8 @@ double Category::getUsage() const {
 	return usage;
 }
 
+// Category names may contain only alphanumeric characters, underscores,
+// and hyphens. Separators are not allowed at the beginning or end.
 void Category::setName(const std::string& name) {
 	for (size_t i=0; i < name.size(); i++) {
 		char c = name[i];
@@ -42,11 +44,14 @@ void Category::setName(const std::string& name) {
 }
 
 void Category::setType(std::string type) {
+
+	// Converts the inputted type to lowercase
 	std::transform(type.begin(), type.end(), type.begin(),
 		[](unsigned char c) {
 			return std::tolower(c);
 	});
 
+	// Income and Expense are the only two valid category types
 	if (type != "income" && type != "expense") {
 		throw std::invalid_argument("Transaction type must be `income` or `expense`");
 
@@ -72,6 +77,7 @@ void Category::setLimit(const std::string& limit) {
 	this->limit = value;
 }
 
+// Alternative version that can take in a different type
 void Category::setLimit(double limit) {
 	if (limit <= 0) {
 		throw std::invalid_argument("Category limit must be greater than 0");
@@ -87,7 +93,6 @@ void Category::addUsage(double amt) {
 void Category::delUsage(double amt) {
 	double del = usage - amt;
 
-	std::cout << usage << ", " << amt << '\n';
 	if (del < 0) {
 		throw std::invalid_argument("Usage cannot be less than 0");	
 	}

@@ -43,6 +43,14 @@ double Budget::getLimit() const {
     return this->limit;
 }
 
+std::vector<Category> Budget::getCategories() const {
+	return this->categories;
+}
+
+std::unordered_map<int, Transaction> Budget::getTransactions() const {
+	return transactions;
+}
+
 // Budget names may contain only alphanumeric characters, underscores,
 // and hyphens. Separators are not allowed at the beginning or end.
 void Budget::setName(std::string n) {
@@ -193,10 +201,6 @@ void Budget::delCategory(const std::string& category) {
 	this->categories.pop_back();
 }
 
-std::vector<Category> Budget::getCategories() const {
-	return this->categories;
-}
-
 // Primarily used within the budget class
 int Budget::findCategory(const std::string& category) {
 	for (size_t i = 0; i < categories.size(); i++) {
@@ -305,10 +309,6 @@ void Budget::delTransaction(const std::string& id) {
 	}
 	
 	categories[c_index].delUsage(amt);	
-}
-
-std::unordered_map<int, Transaction> Budget::getTransactions() const {
-	return transactions;
 }
 
 // Preserve the current budget's fields. This does not update categories
