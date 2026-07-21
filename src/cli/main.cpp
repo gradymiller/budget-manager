@@ -1,13 +1,16 @@
 // TODO: Save config options on machine, for default budget
+
 #include <iostream>
 #include <string>
+
 #include "cli/budgetCmds.hpp"
-#include "cli/transactionCmds.hpp"
 #include "cli/categoryCmds.hpp"
 #include "cli/otherCmds.hpp"
+#include "cli/transactionCmds.hpp"
 #include "core/utils.hpp"
 
-
+// Only the first two args are handled here. Everything else is dispatched to
+// their respective function
 int dispatch(int argc, char** argv) {
 
 	// Check if a single arg was entered
@@ -34,7 +37,7 @@ int dispatch(int argc, char** argv) {
 
 	std::string arg2 = argv[2];
 
-	//Dispatch commands with at least 1 extra arg
+	//Dispatch commands with at least one extra arg
 	if (arg1 == "use" || arg1 == "switch") {
 		return cmdSwitch(argc - 2, argv + 2);
 
@@ -73,7 +76,6 @@ int dispatch(int argc, char** argv) {
 		}
 
 	} else if (arg1 == "c" || arg1 == "category") {
-		// TODO: to be added in a later version
 		if (arg2 == "add") {
 			return categoryAdd(argc - 3, argv + 3);
 
@@ -96,6 +98,8 @@ int dispatch(int argc, char** argv) {
 
 }
 
+// Entry point of the budget-manager cli tool
+// Catches all errors that aren't specifically caught in lower levels
 int main(int argc, char** argv) {
     try {
         return dispatch(argc, argv);
