@@ -1,9 +1,10 @@
 #include "transaction.hpp"
 
-#include <string>
-#include <stdexcept>
 #include <algorithm>
 #include <cctype>
+#include <stdexcept>
+#include <string>
+
 #include "core/utils.hpp"
 
 double Transaction::getAmount() const {
@@ -48,6 +49,8 @@ void Transaction::setCategory(const std::string& category) {
 }
 
 void Transaction::setType(std::string type) {
+	
+	// Convert to lowercase.
 	std::transform(type.begin(), type.end(), type.begin(),
                [](unsigned char c) {
                    return std::tolower(c);
@@ -62,10 +65,14 @@ void Transaction::setType(std::string type) {
 }
 
 void Transaction::setDate(const std::string& date) {
+	
+	// Helper from utilities file
 	auto parsed_date = strToDate(date);
 	this->date = parsed_date;
 }
 
+// Contrains to alphanumeric characters. Hyphens and dashes are allowed as long
+// as they are not at the beginning or end of the string.
 void Transaction::setVendor(const std::string& vendor) {
 	if (vendor.empty()) {
 		throw std::invalid_argument("Vendor name cannot be empty");
