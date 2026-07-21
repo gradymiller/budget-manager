@@ -80,7 +80,7 @@ void Budget::setName(std::string n) {
 
 // Enforces a valid start date when an end date has been previously set.
 void Budget::setStartDate(const std::string& sd) {
-	auto parsed_date = parseDate(sd);
+	auto parsed_date = strToDate(sd);
 
 	if (this->end_date && parsed_date > *this->end_date) {
 		throw std::invalid_argument("Start Date cannot be after the End Date");
@@ -91,7 +91,7 @@ void Budget::setStartDate(const std::string& sd) {
 
 // Enforces a valid end date when a start date has been previously set.
 void Budget::setEndDate(const std::string& ed) {
-    auto parsed_date = parseDate(ed);
+    auto parsed_date = strToDate(ed);
 
 	if (this->start_date && parsed_date < *this->start_date) {
 		throw std::invalid_argument("End Date cannot be before the Start Date");
@@ -330,8 +330,8 @@ void Budget::saveBudget() {
 	// Update the budget's fields here. When adding new fields to track, all
 	// that needs to be done for saving is to add a new entry like the ones
 	// below. The rest of the save function does not need to be touched.
-    metadata["budgets"][this->name]["start_date"] = stringDate(*this->start_date);
-    metadata["budgets"][this->name]["end_date"] = stringDate(*this->end_date);
+    metadata["budgets"][this->name]["start_date"] = dateToStr(*this->start_date);
+    metadata["budgets"][this->name]["end_date"] = dateToStr(*this->end_date);
     metadata["budgets"][this->name]["limit"] = this->limit;
 	metadata["budgets"][this->name]["next_id"] = this->next_id;
 	metadata["budgets"][this->name]["allocated"] = this->allocated;
@@ -419,7 +419,7 @@ void Budget::saveTransactions() {
 			<< txn.getAmount() << ","
 			<< txn.getCategory() << ","
 			<< txn.getType() << ","
-			<< (txn.getDate() ? formatDate(*txn.getDate()) : "") << ","
+			<< (txn.getDate() ? dateToStr(*txn.getDate()) : "") << ","
 			<< txn.getVendor().value_or("") << '\n';
 	}
 

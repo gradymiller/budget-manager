@@ -62,7 +62,7 @@ void Transaction::setType(std::string type) {
 }
 
 void Transaction::setDate(const std::string& date) {
-	auto parsed_date = parseDate(date);
+	auto parsed_date = strToDate(date);
 	this->date = parsed_date;
 }
 

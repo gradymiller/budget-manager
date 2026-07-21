@@ -1,13 +1,17 @@
+// TODO: Change the std::cerr in the cmdInvalid so iostream can be removed
+
 #include <iostream>
-#include <string>
+
 #include <chrono>
 #include <iomanip>
+#include <string>
 #include <sstream>
 #include <stdexcept>
+
 #include "core/transaction.hpp"
 
-
-std::chrono::system_clock::time_point parseDate(const std::string& s) {
+// Validates the following date format: YYYY-MM-DD
+std::chrono::system_clock::time_point strToDate(const std::string& s) {
 
 	std::tm tm = {};
 
@@ -42,7 +46,8 @@ std::chrono::system_clock::time_point parseDate(const std::string& s) {
 	return std::chrono::system_clock::from_time_t(t);
 }
 
-std::string stringDate(const std::chrono::system_clock::time_point& tp) {
+// Makes valid time_points into strings
+std::string dateToStr(const std::chrono::system_clock::time_point& tp) {
     std::time_t t = std::chrono::system_clock::to_time_t(tp);
     std::tm tm = *std::localtime(&t);
 
@@ -50,17 +55,6 @@ std::string stringDate(const std::chrono::system_clock::time_point& tp) {
     ss << std::put_time(&tm, "%Y-%m-%d");
 
     return ss.str();
-}
-
-std::string formatDate(std::chrono::system_clock::time_point date) {
-    auto time = std::chrono::system_clock::to_time_t(date);
-
-	std::tm tm = *std::localtime(&time);
-
-	std::ostringstream ss;
-	ss << std::put_time(&tm, "%Y-%m-%d");
-
-	return ss.str();
 }
 
 int cmdInvalid(std::string cmd) {

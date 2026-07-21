@@ -104,7 +104,7 @@ int transactionList() {
 				<< txn.getAmount() << ", "
 				<< txn.getCategory() << ", "
 				<< txn.getType() << ", "
-				<< (txn.getDate() ? formatDate(*txn.getDate()) : "")
+				<< (txn.getDate() ? dateToStr(*txn.getDate()) : "")
 				<< ", "
 				<< txn.getVendor().value_or("")
 				<< '\n';
