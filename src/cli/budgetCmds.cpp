@@ -17,7 +17,7 @@ int budgetAdd(int argc, const char* const argv[]) {
 
 	// This is a template runner
     return runCommand([&]() {
-		if (argc < 3) {
+		if (argc < 4) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
