@@ -33,11 +33,11 @@ public:
 
     // Returns all budget categories. Specific category elements are accessed
 	// through the respective category class.
-    std::vector<Category> getCategories();
+    std::vector<Category> getCategories() const;
 
     // Returns all recorded transactions indexed by transaction ID. These are
 	// not in any specfic order even though the IDs increment as more are added
-    std::unordered_map<int, Transaction> getTransactions();
+    std::unordered_map<int, Transaction> getTransactions() const;
 
     // Updates the budget's name.
     void setName(std::string n);

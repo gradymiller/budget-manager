@@ -67,8 +67,7 @@ protected:
 // ---------------------------------------------------------
 
 
-TEST_F(EdgeCaseTest, BudgetAddRejectMissingLimit)
-{
+TEST_F(EdgeCaseTest, BudgetAddRejectMissingLimit) {
     const char* args[] = {
         "TEST2",
         "2026-01-01",
@@ -79,8 +78,7 @@ TEST_F(EdgeCaseTest, BudgetAddRejectMissingLimit)
 }
 
 
-TEST_F(EdgeCaseTest, BudgetAddRejectNegativeLimit)
-{
+TEST_F(EdgeCaseTest, BudgetAddRejectNegativeLimit) {
     const char* args[] = {
         "TEST2",
         "2026-01-01",
@@ -92,8 +90,7 @@ TEST_F(EdgeCaseTest, BudgetAddRejectNegativeLimit)
 }
 
 
-TEST_F(EdgeCaseTest, BudgetAddAcceptZeroLimit)
-{
+TEST_F(EdgeCaseTest, BudgetAddAcceptZeroLimit) {
     const char* args[] = {
         "ZERO",
         "2026-01-01",
@@ -105,8 +102,7 @@ TEST_F(EdgeCaseTest, BudgetAddAcceptZeroLimit)
 }
 
 
-TEST_F(EdgeCaseTest, BudgetAddRejectInvalidCalendarDate)
-{
+TEST_F(EdgeCaseTest, BudgetAddRejectInvalidCalendarDate) {
     const char* args[] = {
         "TEST2",
         "2026-02-31",
@@ -118,8 +114,7 @@ TEST_F(EdgeCaseTest, BudgetAddRejectInvalidCalendarDate)
 }
 
 
-TEST_F(EdgeCaseTest, BudgetDeleteRemovesCSV)
-{
+TEST_F(EdgeCaseTest, BudgetDeleteRemovesCSV) {
     std::filesystem::path csv = PATH / "TEST.csv";
 
     ASSERT_TRUE(std::filesystem::exists(csv));
@@ -140,8 +135,7 @@ TEST_F(EdgeCaseTest, BudgetDeleteRemovesCSV)
 // ---------------------------------------------------------
 
 
-TEST_F(EdgeCaseTest, CategoryRejectEmptyName)
-{
+TEST_F(EdgeCaseTest, CategoryRejectEmptyName) {
     const char* args[] = {
         "",
         "expense",
@@ -152,8 +146,7 @@ TEST_F(EdgeCaseTest, CategoryRejectEmptyName)
 }
 
 
-TEST_F(EdgeCaseTest, CategoryRejectNegativeLimit)
-{
+TEST_F(EdgeCaseTest, CategoryRejectNegativeLimit) {
     const char* args[] = {
         "Negative",
         "expense",
@@ -164,8 +157,7 @@ TEST_F(EdgeCaseTest, CategoryRejectNegativeLimit)
 }
 
 
-TEST_F(EdgeCaseTest, CategoryDuplicateBehavior)
-{
+TEST_F(EdgeCaseTest, CategoryDuplicateBehavior) {
     const char* args[] = {
         "Food",
         "expense",
@@ -176,8 +168,7 @@ TEST_F(EdgeCaseTest, CategoryDuplicateBehavior)
 }
 
 
-TEST_F(EdgeCaseTest, CategoryEditRejectUnknownField)
-{
+TEST_F(EdgeCaseTest, CategoryEditRejectUnknownField) {
     const char* args[] = {
         "Food",
         "unknown",
@@ -193,8 +184,7 @@ TEST_F(EdgeCaseTest, CategoryEditRejectUnknownField)
 // ---------------------------------------------------------
 
 
-TEST_F(EdgeCaseTest, TransactionRejectNegativeAmount)
-{
+TEST_F(EdgeCaseTest, TransactionRejectNegativeAmount) {
     const char* args[] = {
         "-50",
         "Food",
@@ -205,8 +195,7 @@ TEST_F(EdgeCaseTest, TransactionRejectNegativeAmount)
 }
 
 
-TEST_F(EdgeCaseTest, TransactionAcceptZeroAmount)
-{
+TEST_F(EdgeCaseTest, TransactionAcceptZeroAmount) {
     const char* args[] = {
         "0",
         "Food",
@@ -217,8 +206,7 @@ TEST_F(EdgeCaseTest, TransactionAcceptZeroAmount)
 }
 
 
-TEST_F(EdgeCaseTest, TransactionRejectMissingDateValue)
-{
+TEST_F(EdgeCaseTest, TransactionRejectMissingDateValue) {
     const char* args[] = {
         "50",
         "Food",
@@ -230,8 +218,7 @@ TEST_F(EdgeCaseTest, TransactionRejectMissingDateValue)
 }
 
 
-TEST_F(EdgeCaseTest, TransactionRejectMissingVendorValue)
-{
+TEST_F(EdgeCaseTest, TransactionRejectMissingVendorValue) {
     const char* args[] = {
         "50",
         "Food",
@@ -243,8 +230,7 @@ TEST_F(EdgeCaseTest, TransactionRejectMissingVendorValue)
 }
 
 
-TEST_F(EdgeCaseTest, TransactionRejectInvalidID)
-{
+TEST_F(EdgeCaseTest, TransactionRejectInvalidID) {
     const char* args[] = {
         "-1",
         "amount",
@@ -255,8 +241,7 @@ TEST_F(EdgeCaseTest, TransactionRejectInvalidID)
 }
 
 
-TEST_F(EdgeCaseTest, TransactionEditCategory)
-{
+TEST_F(EdgeCaseTest, TransactionEditCategory) {
     const char* add[] = {
         "50",
         "Food",
@@ -282,8 +267,7 @@ TEST_F(EdgeCaseTest, TransactionEditCategory)
 // ---------------------------------------------------------
 
 
-TEST_F(EdgeCaseTest, MultipleBudgetsCanExist)
-{
+TEST_F(EdgeCaseTest, MultipleBudgetsCanExist) {
     const char* args[] = {
         "SECOND",
         "2026-01-01",
@@ -295,8 +279,7 @@ TEST_F(EdgeCaseTest, MultipleBudgetsCanExist)
 }
 
 
-TEST_F(EdgeCaseTest, SwitchRejectsMissingBudget)
-{
+TEST_F(EdgeCaseTest, SwitchRejectsMissingBudget) {
     const char* args[] = {
         "DOES_NOT_EXIST"
     };
@@ -305,8 +288,7 @@ TEST_F(EdgeCaseTest, SwitchRejectsMissingBudget)
 }
 
 
-TEST_F(EdgeCaseTest, DeletingMissingBudgetDoesNotCrash)
-{
+TEST_F(EdgeCaseTest, DeletingMissingBudgetDoesNotCrash) {
     const char* args[] = {
         "NOT_REAL"
     };
@@ -321,8 +303,7 @@ TEST_F(EdgeCaseTest, DeletingMissingBudgetDoesNotCrash)
 // ---------------------------------------------------------
 
 
-TEST_F(EdgeCaseTest, MissingMetadataCausesFailure)
-{
+TEST_F(EdgeCaseTest, MissingMetadataCausesFailure) {
     std::filesystem::remove(PATH / "metadata.json");
 
     const char* args[] = {
@@ -333,7 +314,6 @@ TEST_F(EdgeCaseTest, MissingMetadataCausesFailure)
 }
 
 
-TEST_F(EdgeCaseTest, CurrentFileCanBeReadAfterSwitch)
-{
+TEST_F(EdgeCaseTest, CurrentFileCanBeReadAfterSwitch) {
     std::ifstream file(PATH / "current");
-
+}
