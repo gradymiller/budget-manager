@@ -1,18 +1,21 @@
-#include <iostream>
-#include <string>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <string>
 
 #include <nlohmann/json.hpp>
 
+#include "cli/cmdTemplate.hpp"
 #include "core/budget.hpp"
 #include "core/path.hpp"
-#include "cli/cmdTemplate.hpp"
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
+// Create a new budget
 int budgetAdd(int argc, const char* const argv[]) {
+
+	// This is a template runner
     return runCommand([&]() {
 		if (argc < 3) {
 			throw std::invalid_argument("Too few arguments");
@@ -32,6 +35,8 @@ int budgetAdd(int argc, const char* const argv[]) {
 }
 
 int budgetEdit(int argc, const char* const argv[]) {
+
+	// This is a template runner
     return runCommand([&]() {
 		if (argc < 2) {
 			throw std::invalid_argument("Too few arguments");
@@ -64,6 +69,8 @@ int budgetEdit(int argc, const char* const argv[]) {
 }
 
 int budgetDelete(int argc, const char* const argv[]) {
+
+	// This is a template runner
     return runCommand([&]() {
 		if (argc < 1) {
 			throw std::invalid_argument("Too few arguments");
@@ -108,7 +115,10 @@ int budgetDelete(int argc, const char* const argv[]) {
     });
 }
 
+// TODO: Print out the budget metadata along with the names
 int budgetList() {
+
+	// This is a template runner
     return runCommand([&]() {
         std::ifstream file(PATH / "metadata.json");
 
