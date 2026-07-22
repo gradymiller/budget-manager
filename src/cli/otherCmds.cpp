@@ -8,8 +8,9 @@
 
 #include <nlohmann/json.hpp>
 
-#include <core/init.hpp>
-#include <core/path.hpp>
+#include "cli/cmdTemplate.hpp"
+#include "core/init.hpp"
+#include "core/path.hpp"
 
 using json = nlohmann::json;
 
@@ -60,56 +61,58 @@ int cmdVersion() {
 }
 
 int cmdInit() {
-	std::filesystem::path dir = setupFolder();
-	std::cout << "Data saved at: " << dir << "\n";
+	return runCommand([&]() {
+		std::filesystem::path dir = setupFolder();
+		std::cout << "Data saved at: " << dir << "\n";
 
-	// Utility function
-	createFiles(dir);
-	
-	std::ofstream file(PATH / "current");
+		// Utility function
+		createFiles(dir);
+		
+		std::ofstream file(PATH / "current");
 
-	// TODO: Add rest of setup functions here
+		// TODO: Add rest of setup functions here
 
-	std::cout << "Budget Manager setup complete." << '\n';
-	return 0;
+		std::cout << "Budget Manager setup complete." << '\n';
+	});
 }
 
 int cmdCurrent() {
-	std::ifstream file(PATH / "current");
-	std::string val;
-	std::getline(file, val);
-	std::cout << "Current budget: " << val << '\n';
-	return 0;
+	return runCommand([&]() {
+		std::ifstream file(PATH / "current");
+		std::string val;
+		std::getline(file, val);
+		std::cout << "Current budget: " << val << '\n';
+	});
 }
 
 int cmdSwitch(int argc, const char* const* argv) {
-    if (argc < 1) {
-        throw std::invalid_argument("Too few arguments");
-    }
+	return runCommand([&]() {
+		if (argc < 1) {
+			throw std::invalid_argument("Too few arguments");
+		}
 
-    std::ifstream in(PATH / "metadata.json");
+		std::ifstream in(PATH / "metadata.json");
 
-    if (!in.good()) {
-        throw std::runtime_error("Budget Manager has not been initialized");
-    }
+		if (!in.good()) {
+			throw std::runtime_error("Budget Manager has not been initialized");
+		}
 
-    json metadata;
-    in >> metadata;
+		json metadata;
+		in >> metadata;
 
-    std::string name = argv[0];
+		std::string name = argv[0];
 
-	// Metadata file is source of truth
-    if (!metadata["budgets"].contains(name)) {
-        throw std::invalid_argument("Budget does not exist");
-    }
+		// Metadata file is source of truth
+		if (!metadata["budgets"].contains(name)) {
+			throw std::invalid_argument("Budget does not exist");
+		}
 
-    std::ofstream file(PATH / "current");
+		std::ofstream file(PATH / "current");
 
-    if (!file.good()) {
-        throw std::runtime_error("Could not set current budget");
-    }
+		if (!file.good()) {
+			throw std::runtime_error("Could not set current budget");
+		}
 
-    file << name;
-
-    return 0;
+		file << name;
+	});
 }

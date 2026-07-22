@@ -90,7 +90,7 @@ TEST_F(EdgeCaseTest, BudgetAddRejectNegativeLimit) {
 }
 
 
-TEST_F(EdgeCaseTest, BudgetAddAcceptZeroLimit) {
+TEST_F(EdgeCaseTest, BudgetAddRejectZeroLimit) {
     const char* args[] = {
         "ZERO",
         "2026-01-01",
@@ -98,7 +98,7 @@ TEST_F(EdgeCaseTest, BudgetAddAcceptZeroLimit) {
         "0"
     };
 
-    EXPECT_EQ(budgetAdd(4, args), 0);
+    EXPECT_EQ(budgetAdd(4, args), 1);
 }
 
 
@@ -113,8 +113,16 @@ TEST_F(EdgeCaseTest, BudgetAddRejectInvalidCalendarDate) {
     EXPECT_EQ(budgetAdd(4, args), 1);
 }
 
+TEST_F(EdgeCaseTest, BudgetDeleteRemovesCSV)
+{
+    const char* txn[] = {
+        "50",
+        "Food",
+        "expense"
+    };
 
-TEST_F(EdgeCaseTest, BudgetDeleteRemovesCSV) {
+    ASSERT_EQ(transactionAdd(3, txn), 0);
+
     std::filesystem::path csv = PATH / "TEST.csv";
 
     ASSERT_TRUE(std::filesystem::exists(csv));
@@ -127,7 +135,6 @@ TEST_F(EdgeCaseTest, BudgetDeleteRemovesCSV) {
 
     EXPECT_FALSE(std::filesystem::exists(csv));
 }
-
 
 
 // ---------------------------------------------------------
@@ -195,14 +202,14 @@ TEST_F(EdgeCaseTest, TransactionRejectNegativeAmount) {
 }
 
 
-TEST_F(EdgeCaseTest, TransactionAcceptZeroAmount) {
+TEST_F(EdgeCaseTest, TransactionRejectZeroAmount) {
     const char* args[] = {
         "0",
         "Food",
         "expense"
     };
 
-    EXPECT_EQ(transactionAdd(3, args), 0);
+    EXPECT_EQ(transactionAdd(3, args), 1);
 }
 
 
