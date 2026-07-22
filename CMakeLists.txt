@@ -102,6 +102,7 @@ add_executable(bmcli_test
     tests/budgetCmds_test.cpp
     tests/categoryCmds_test.cpp
     tests/transactionCmds_test.cpp
+    tests/edgeCases_test.cpp
 )
 
 target_link_libraries(bmcli_test
