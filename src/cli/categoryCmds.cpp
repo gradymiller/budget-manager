@@ -1,11 +1,10 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
+#include "cli/cmdTemplate.hpp"
 #include "core/budget.hpp"
 #include "core/category.hpp"
-#include "cli/cmdTemplate.hpp"
-
 
 int categoryAdd(int argc, const char* const argv[]) {
 	return runCommand([&]() {
@@ -62,6 +61,7 @@ int categoryList() {
 
 		std::vector<Category> categories = budget.getCategories();
 
+		// Outputs a table-like format to stdout
 		for (const auto& category : categories) {
 			std::cout
 				<< "Name: " << category.getName()
