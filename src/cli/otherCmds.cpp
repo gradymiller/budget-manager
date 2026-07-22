@@ -1,13 +1,15 @@
-// TODO: Add docs for b/t/c
-// TODO: Setup initBudgetManager()
-#include <iostream>
+// TODO: finish setting um cmdInit()
+
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <version.h>
+
+#include <nlohmann/json.hpp>
+
 #include <core/init.hpp>
 #include <core/path.hpp>
-#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
@@ -61,6 +63,7 @@ int cmdInit() {
 	std::filesystem::path dir = setupFolder();
 	std::cout << "Data saved at: " << dir << "\n";
 
+	// Utility function
 	createFiles(dir);
 	
 	std::ofstream file(PATH / "current");
@@ -95,6 +98,7 @@ int cmdSwitch(int argc, const char* const* argv) {
 
     std::string name = argv[0];
 
+	// Metadata file is source of truth
     if (!metadata["budgets"].contains(name)) {
         throw std::invalid_argument("Budget does not exist");
     }
