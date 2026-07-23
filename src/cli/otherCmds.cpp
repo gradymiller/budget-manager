@@ -1,5 +1,3 @@
-// TODO: finish setting um cmdInit()
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>

@@ -1,5 +1,3 @@
-// TODO: Change the std::cerr in the cmdInvalid so iostream can be removed
-
 #include <iostream>
 
 #include <chrono>

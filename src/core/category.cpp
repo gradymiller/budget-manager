@@ -1,4 +1,3 @@
-// TODO: Implement all these
 #include "category.hpp"
 
 #include <sstream>
