@@ -71,8 +71,6 @@ int cmdInit() {
 		std::ofstream file(PATH / "current");
 
 		// TODO: Add rest of setup functions here
-
-		std::cout << "Budget Manager setup complete." << '\n';
 	});
 }
 

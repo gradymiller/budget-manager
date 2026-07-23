@@ -29,7 +29,6 @@ int budgetAdd(int argc, const char* const argv[]) {
         budget.setLimit(argv[3]);
 
         budget.saveBudget();
-        std::cout << "Budget '" << budget.getName() << "' saved\n";
     });
 }
 
