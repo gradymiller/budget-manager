@@ -29,7 +29,6 @@ int budgetAdd(int argc, const char* const argv[]) {
         budget.setLimit(argv[3]);
 
         budget.saveBudget();
-
         std::cout << "Budget '" << budget.getName() << "' saved\n";
     });
 }
@@ -49,7 +48,18 @@ int budgetEdit(int argc, const char* const argv[]) {
         std::string value = argv[1];
 
         if (field == "name") {
+			fs::path source = PATH / (budget.getName() + ".csv");
+
             budget.setName(value);
+
+			// This is after the setName incase there is a validation error.
+			fs::path destination = PATH / (value + ".csv");
+
+			// Rename not necessary if transactions have not been saved before.
+			// There will be no csv to rename.
+			if (fs::exists(source)) {
+				fs::rename(source, destination);
+			}
 
         } else if (field == "start_date") {
             budget.setStartDate(value);
