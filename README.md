@@ -4,6 +4,11 @@ This is a terminal-based budget application written in C++.
 
 ## Setup:
 
+Prerequisites:
+1. gcc
+2. sqlite
+3. sqlite-devel
+
 First, clone the repository to your local machine.
 
 Run the bash script to set up and compile the budget manager tool to your
@@ -33,6 +38,7 @@ The tool will leave it's files in ~/.local/share/budget-manager
 - Change monthly expense amounts
 - Add custom categories to keep track of where the money goes
 
+#### Future Features:
 3. View analytics
 - See spending stats based on the month, year, or category
 - Predict spending amounts based on spending history

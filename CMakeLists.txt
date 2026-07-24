@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-
 # Get version from Git
 execute_process(
     COMMAND git describe --tags --always --dirty
@@ -15,13 +14,11 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-
 # Generate version header
 configure_file(
     ${CMAKE_SOURCE_DIR}/version.h.in
     ${CMAKE_BINARY_DIR}/generated/version.h
 )
-
 
 # Dependencies
 include(FetchContent)
@@ -33,7 +30,6 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(nlohmann_json)
 
-
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
@@ -42,6 +38,8 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 
+# SQLite
+find_package(SQLite3 REQUIRED)
 
 # Core library
 add_library(budget_lib
@@ -56,19 +54,16 @@ add_library(budget_lib
     src/core/category.cpp
 )
 
-
 target_include_directories(budget_lib
     PUBLIC
         ${CMAKE_SOURCE_DIR}/src
         ${CMAKE_BINARY_DIR}/generated
 )
 
-
 target_compile_definitions(budget_lib
     PUBLIC
         APPVERSION="${GIT_VERSION}"
 )
-
 
 target_compile_options(budget_lib
     PRIVATE
@@ -77,12 +72,11 @@ target_compile_options(budget_lib
         -O2
 )
 
-
 target_link_libraries(budget_lib
     PUBLIC
         nlohmann_json::nlohmann_json
+        SQLite::SQLite3
 )
-
 
 # Application
 add_executable(bmcli
@@ -93,7 +87,6 @@ target_link_libraries(bmcli
     PRIVATE
         budget_lib
 )
-
 
 # Tests
 enable_testing()
@@ -112,7 +105,7 @@ target_link_libraries(bmcli_test
         GTest::gtest_main
 )
 
-
 include(GoogleTest)
 
 gtest_discover_tests(bmcli_test)
+
