@@ -52,6 +52,7 @@ add_library(budget_lib
     src/core/budget.cpp
     src/core/transaction.cpp
     src/core/category.cpp
+    src/core/database.cpp
 )
 
 target_include_directories(budget_lib
@@ -75,7 +76,7 @@ target_compile_options(budget_lib
 target_link_libraries(budget_lib
     PUBLIC
         nlohmann_json::nlohmann_json
-        SQLite::SQLite3
+        SQLite3::SQLite3
 )
 
 # Application
