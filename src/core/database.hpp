@@ -28,24 +28,25 @@ public:
 
 	void createTables();
 
-	void addBudget();
-	void editBudget();
+	void createBudget();
+	void updateBudget();
 	void deleteBudget();
-	void getBudgets();
+	void readBudgets();
 
-	void addCategory();
-	void editCategory();
+	void createCategory();
+	void updateCategory();
 	void deleteCategory();
-	std::vector<Category> getCategories();
+	std::vector<Category> readCategories();
 
-	void addTransaction();
-	void editTransaction();
+	void createTransaction();
+	void updateTransaction();
 	void deleteTransaction();
-	std::vector<Transaction> getTransactions(
+	std::vector<Transaction> readTransactions(
 		const TransactionFilter& filter = {}	
 	);
 
 
 private:
+	void execSQL(const char* sql);
 	sqlite3* db = nullptr;
 };
