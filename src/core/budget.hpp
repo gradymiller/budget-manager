@@ -37,11 +37,15 @@ public:
 
     // Returns all budget categories. Specific category elements are accessed
 	// through the respective category class.
-    std::vector<Category> getCategories() const;
+    std::unordered_map<int, Category> getCategories() const;
 
     // Returns all recorded transactions indexed by transaction ID. These are
 	// not in any specfic order even though the IDs increment as more are added
     std::unordered_map<int, Transaction> getTransactions() const;
+
+	Category getCategory(int category_id);
+
+	Transaction getTransaction(int txn_id);
 
     // Updates the budget's name.
     void setName(std::string n);
@@ -63,59 +67,38 @@ public:
 
     // Adds a new category to the budget. Everything is passed in as strings
 	// and is converted to an appropriate type.
-    void addCategory(const std::string& name,
+    Category addCategory(const std::string& name,
                      const std::string& type,
                      const std::string& limit);
 
     // Modifies a field of an existing category.
-    void editCategory(const std::string& category,
+    int editCategory(const std::string& category_id,
                       const std::string& field,
                       const std::string& value);
 
     // Removes a category from the budget. Transactions using the category that
 	// is to be deleted must be updated before this operation is possible.
-    void delCategory(const std::string& category);
-
-    // Returns the index of the requested category, or an error value if not
-	// found. This is mainly for internal use, but is exposed for use in the
-	// Transaction class.
-    int findCategory(const std::string& category);
+    int delCategory(const std::string& category_id);
 
     // Adds a transaction to the budget. Everything is read in as strings, then
 	// is converted to an appropriate type internally. The date and vendor
 	// arguments are optional, and can take in an empty string. The actual
 	// optional feature is implemented at a higher level.
-    void addTransaction(const std::string& amount,
-                        const std::string& category,
+    Transaction addTransaction(const std::string& amount,
+                        const std::string& category_id,
                         const std::string& type,
                         const std::string& date,
                         const std::string& vendor);
 
     // Modifies a field of an existing transaction.
-    void editTransaction(const std::string& id,
+	int editTransaction(const std::string& id,
                          const std::string& field,
                          const std::string& value);
 
     // Removes a transaction from the budget. Once the ID is deleted, the gap
 	// will not be filled with another transaction, the IDs will continue
 	// incrementing from the current spot.
-    void delTransaction(const std::string& id);
-
-    // Saves budget metadata to a json file.
-    void saveBudget();
-
-    // Saves all categories to the same json file as the budget metadata.
-    void saveCategories();
-
-    // Saves all transactions to a csv file that corresponds to the budget name
-	// and is labeled in the main json file to connect it to the appropriate
-	// budget metadata.
-    void saveTransactions();
-
-    // Loads the budget and all associated data from disk. The pieces are not
-	// separated as they are when saving since all data should be loaded into
-	// the budget class for everything to work properly.
-    void load();
+    int delTransaction(const std::string& id);
 
 private:
     // Identifier assigned to the next transaction that is created. This should

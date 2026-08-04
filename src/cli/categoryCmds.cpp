@@ -16,7 +16,9 @@ int categoryAdd(int argc, const char* const argv[]) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		budget.addCategory(argv[0], argv[1], argv[2]);
+		auto category = budget.addCategory(argv[0], argv[1], argv[2]);
+		auto category_id = db.createCategory(category);
+		std::cout << "Category ID: " << category_id << '\n';
 	});
 }
 
@@ -30,7 +32,8 @@ int categoryEdit(int argc, const char* const argv[]) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		budget.editCategory(argv[0], argv[1], argv[2]);
+		auto category_id = budget.editCategory(argv[0], argv[1], argv[2]);
+		db.updateCategory(budget.getCategory(category_id));
 	});
 }
 
@@ -44,25 +47,14 @@ int categoryDelete(int argc, const char* const argv[]) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		budget.delCategory(argv[0]);
+		auto category_id = budget.delCategory(argv[0]);
+		db.deleteCategory(category_id);
 	});
 }
 
 
 int categoryList() {
 	return runCommand([&]() {
-		Database db("budget-data.db");
-		Budget budget = db.loadBudget();
-
-		std::vector<Category> categories = budget.getCategories();
-
-		// Outputs a table-like format to stdout
-		for (const auto& category : categories) {
-			std::cout
-				<< "Name: " << category.getName()
-				<< ", Type: " << category.getType()
-				<< ", Limit: " << category.getLimit()
-				<< '\n';
-		}
+			std::cout << "NOTHING HERE RIGHT NOW" << '\n';
 	});
 }

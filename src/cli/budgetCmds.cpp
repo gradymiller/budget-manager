@@ -26,6 +26,8 @@ int budgetAdd(int argc, const char* const argv[]) {
         budget.setEndDate(argv[2]);
         budget.setLimit(argv[3]);
 
+		int budget_id = db.createBudget(budget);
+		std::cout << "Budget ID: " << budget_id << '\n';
     });
 }
 
@@ -58,6 +60,8 @@ int budgetEdit(int argc, const char* const argv[]) {
         } else {
             throw std::invalid_argument(field + " not known");
         }
+
+		db.updateBudget(budget);
     });
 }
 
@@ -65,7 +69,14 @@ int budgetDelete(int argc, const char* const argv[]) {
 
 	// This is a template runner
     return runCommand([&]() {
+		if (argc < 1) {
+			throw std::invalid_argument("Too few arguments");
+		}
 
+		int budget_id = std::stoi(argv[0]);
+
+		Database db("budget-data.db");
+		db.deleteBudget(budget_id);
     });
 }
 
@@ -74,6 +85,6 @@ int budgetList() {
 
 	// This is a template runner
     return runCommand([&]() {
-
+		std::cout << "NOTHING HERE RIGHT NOW" << '\n';
     });
 }

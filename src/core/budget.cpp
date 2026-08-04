@@ -56,6 +56,14 @@ std::unordered_map<int, Transaction> Budget::getTransactions() const {
 	return transactions;
 }
 
+Category Budget::getCategory(int category_id) {
+	return categories[category_id];
+}
+
+Transaction Budget::getTransaction(int txn_id) {
+	return transactions[txn_id];
+}
+
 // Budget names may contain only alphanumeric characters, underscores,
 // and hyphens. Separators are not allowed at the beginning or end.
 void Budget::setName(std::string n) {
@@ -122,7 +130,7 @@ void Budget::setLimit(std::string l) {
     this->limit = value;
 }
 
-void Budget::addCategory(const std::string& name,
+Category Budget::addCategory(const std::string& name,
 						 const std::string& type,
 						 const std::string& limit) {
 
@@ -146,74 +154,64 @@ void Budget::addCategory(const std::string& name,
 
     this->categories.push_back(category);
 	allocated += category.getLimit();
+	
+	return category;
 }
 
-void Budget::editCategory(const std::string& category,
+int Budget::editCategory(const std::string& category_id,
 						  const std::string& field,
 						  const std::string& value) {
-	
-	int index = findCategory(category);
 
-	if (index == -1) {
-		throw std::runtime_error("Category not previously saved");
-	}
+	int new_id = std::stoi(category_id);
 
 	if (field == "name") {
-		categories[index].setName(value);
+		categories[new_id].setName(value);
 
 	} else if (field == "type") {
-		categories[index].setType(value);
+		categories[new_id].setType(value);
 
 	} else if (field == "limit") {
-		double old_limit = categories[index].getLimit();
+		double old_limit = categories[new_id].getLimit();
 
 		categories[index].setLimit(value);
-		double new_limit = categories[index].getLimit();
+		double new_limit = categories[new_id].getLimit();
 		
 		// Verify the new limit does not exceed the overall budget limit before
 		// updating.
 		if ((allocated + (new_limit - old_limit)) > this->getLimit()) {
-			categories[index].setLimit(old_limit);
+			categories[new_id].setLimit(old_limit);
 			throw std::invalid_argument("New category limit exceeds remaining amount of the budget limit");		
 		}
 
-		allocated += categories[index].getLimit();
+		allocated += categories[new_id].getLimit();
 
 
 	} else {
 		throw std::invalid_argument("Invalid field. Cannot edit");
 	}
+
+	return new_id;
 }
 
-void Budget::delCategory(const std::string& category) {
-	int category_id = std::stoi(category);
+int Budget::delCategory(const std::string& category_id) {
+	int new_id = std::stoi(category_id);
 
 	// Transactions must be updated to new categories before a category can be
 	// deleted from the budget
 	for (const auto& [id, txn] : transactions) {
-		if (txn.getCategoryID() == category_id) {
+		if (txn.getCategoryID() == new_id) {
 			throw std::runtime_error("Cannot delete category that has transactions assigned to it. Change transaction categories first before removing the category");
 		}
 	}
 
 	// Uses swap and pop_back to prevent O(n) deletion due to shifting.
-	std::swap(categories[category_id], categories.back());
+	std::swap(categories[new_id], categories.back());
 	allocated -= categories.back().getLimit();
 	this->categories.pop_back();
 }
 
-// Primarily used within the budget class
-int Budget::findCategory(const std::string& category) {
-	for (size_t i = 0; i < categories.size(); i++) {
-		if (categories[i].getName() == category) {
-			return i;
-		}	
-	}
-	return -1;
-}
-
-void Budget::addTransaction(const std::string& amount,
-							const std::string& category,
+Transaction Budget::addTransaction(const std::string& amount,
+							const std::string& category_id,
 							const std::string& type,
 							const std::string& date,
 							const std::string& vendor) {
@@ -221,9 +219,9 @@ void Budget::addTransaction(const std::string& amount,
 	Transaction txn;
 	txn.setAmount(amount);
 
-	int category_id = std::stoi(category);
+	int new_id = std::stoi(category_id);
 
-	txn.setCategoryID(category_id);
+	txn.setCategoryID(new_id);
 	txn.setType(type);
 
 	// Optional input
@@ -236,16 +234,17 @@ void Budget::addTransaction(const std::string& amount,
 		txn.setVendor(vendor);
 	}
 
-	categories[category_id].addUsage(txn.getAmount()); 
+	categories[new_id].addUsage(txn.getAmount()); 
 
 	transactions.emplace(next_id, std::move(txn));	
 
 	// This is the only place that next_id is updated
 	next_id++;
 
+	return txn;
 }
 
-void Budget::editTransaction(const std::string& id,
+int Budget::editTransaction(const std::string& id,
 							 const std::string& field,
 							 const std::string& value) {
 
@@ -285,9 +284,10 @@ void Budget::editTransaction(const std::string& id,
 		throw std::invalid_argument("Invalid field inputted");
 	}
 
+	return new_id;
 }
 
-void Budget::delTransaction(const std::string& id) {
+int Budget::delTransaction(const std::string& id) {
 	int new_id = std::stoi(id);
 
 	double amt = transactions[new_id].getAmount();
@@ -299,4 +299,6 @@ void Budget::delTransaction(const std::string& id) {
 	}
 	
 	categories[transactions[new_id].getCategoryID()].delUsage(amt);	
+	
+	return new_id
 }

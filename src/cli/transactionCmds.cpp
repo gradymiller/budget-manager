@@ -40,13 +40,16 @@ int transactionAdd(int argc, const char* const* argv) {
 		Database db("budget-data.db");
 		Budget budget = db.loadBudget();
 		
-		budget.addTransaction(
+		auto txn = budget.addTransaction(
 			argv[0],
 			argv[1],
 			argv[2],
 			date,
 			vendor
 		);
+
+		auto txn_id = db.createTransaction(txn);
+		std::cout << "Transaction ID: " << txn_id << '\n';
 	});
 }
 
@@ -60,7 +63,8 @@ int transactionEdit(int argc, const char* const* argv) {
 		Database db("budget-data.db");
 		Budget budget = db.loadBudget();
 
-		budget.editTransaction(argv[0], argv[1], argv[2]);
+		auto txn_id = budget.editTransaction(argv[0], argv[1], argv[2]);
+		db.updateTransaction(budget.getTransaction(txn_id));
 	});
 }
 
@@ -74,32 +78,14 @@ int transactionDelete(int argc, const char* const* argv) {
 		Database db("budget-data.db");
 		Budget budget = db.loadBudget();
 
-		budget.delTransaction(argv[0]);
+		auto txn_id = budget.delTransaction(argv[0]);
+		db.deleteTransaction(txn_id);
 	});
 }
 
 
 int transactionList() {
 	return runCommand([&]() {
-		Database db("budget-data.db");
-		Budget budget = db.loadBudget();
-
-		auto transactions = budget.getTransactions();
-
-		std::cout << "ID, Amount, Category, Type, Date, Vendor\n";
-
-		// Table-like format, everything accessed from transaction class using
-		// getters or setters.
-		for (const auto& [id, txn] : transactions) {
-			std::cout
-				<< id << ", "
-				<< txn.getAmount() << ", "
-				<< txn.getCategoryID() << ", "
-				<< txn.getType() << ", "
-				<< (txn.getDate() ? dateToStr(*txn.getDate()) : "")
-				<< ", "
-				<< txn.getVendor().value_or("")
-				<< '\n';
-		}
+		std::cout << "NOTHING HERE RIGHT NOW" << '\n';
 	});
 }
