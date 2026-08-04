@@ -195,7 +195,26 @@ void Database::updateBudget(const Budget& budget) {
 
 
 void Database::deleteBudget(int budget_id) {
-    // TODO
+	const char* sql = R"(
+		DELETE FROM budgets
+		WHERE id = ?;
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_int(stmt, 1, budget_id);
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+        std::string error = sqlite3_errmsg(db);
+        sqlite3_finalize(stmt);
+        throw std::runtime_error(error);
+    }
+
+    sqlite3_finalize(stmt);
 }
 
 
@@ -321,7 +340,26 @@ void Database::updateCategory(const Category& category) {
 
 
 void Database::deleteCategory(int category_id) {
-    // TODO
+	const char* sql = R"(
+		DELETE FROM categories
+		WHERE id = ?;
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_int(stmt, 1, category_id);
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+        std::string error = sqlite3_errmsg(db);
+        sqlite3_finalize(stmt);
+        throw std::runtime_error(error);
+    }
+
+    sqlite3_finalize(stmt);
 }
 
 
@@ -477,7 +515,26 @@ void Database::updateTransaction(const Transaction& txn) {
 
 
 void Database::deleteTransaction(int txn_id) {
-    // TODO
+	const char* sql = R"(
+		DELETE FROM transactions
+		WHERE id = ?;
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_int(stmt, 1, txn_id);
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+        std::string error = sqlite3_errmsg(db);
+        sqlite3_finalize(stmt);
+        throw std::runtime_error(error);
+    }
+
+    sqlite3_finalize(stmt);
 }
 
 
