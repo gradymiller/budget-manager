@@ -151,6 +151,15 @@ void Database::setSetting(const std::string& key,
     sqlite3_finalize(stmt);
 }
 
+Budget Database::loadBudget() {
+	Budget budget;
+
+	// TODO: load budget here
+
+	return budget;
+}
+
+
 int Database::createBudget(const Budget& budget) {
 	const char* sql = R"(
 		INSERT INTO budgets 

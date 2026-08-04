@@ -77,11 +77,12 @@ int cmdCurrent() {
 
 		auto current = db.getSetting("current_budget");
 
-		if (!current) {
-			throw std::runtime_error("No current budget selected");
-		}
+		if (current.has_value()){
+			std::cout << current.value() << '\n';
 
-		std::cout << current << '\n';
+		} else {
+			throw std::runtime_error("No budget is selected");
+		}
 	});
 }
 
@@ -95,7 +96,7 @@ int cmdSwitch(int argc, const char* const* argv) {
 
 		db.setSetting(
 			"current_budget",
-			std::to_string(argv[0])
+			argv[0]
 		);
 	});
 }

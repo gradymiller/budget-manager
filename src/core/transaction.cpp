@@ -7,6 +7,10 @@
 
 #include "core/utils.hpp"
 
+int Transaction::getID() const {
+	return id;
+}
+
 double Transaction::getAmount() const {
     return amount;
 }

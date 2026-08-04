@@ -5,6 +5,8 @@
 #include <fstream>
 #include <stdexcept>
 
+#include "database.hpp"
+
 namespace fs = std::filesystem;
 
 fs::path setupFolder() {
