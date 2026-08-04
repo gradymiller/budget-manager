@@ -48,7 +48,7 @@ double Budget::getLimit() const {
     return this->limit;
 }
 
-std::vector<Category> Budget::getCategories() const {
+std::unordered_map<int, Category> Budget::getCategories() const {
 	return this->categories;
 }
 
@@ -138,10 +138,6 @@ Category Budget::addCategory(const std::string& name,
 		throw std::invalid_argument("New categories require a non-empty name, type and limit");
 	}
 
-	if (findCategory(name) != -1) {
-		throw std::runtime_error("Cannot create categories with the same name");
-	}
-
 	Category category;
 	category.setName(name);
 	category.setType(type);
@@ -152,7 +148,7 @@ Category Budget::addCategory(const std::string& name,
 		throw std::invalid_argument("Category limit goes over the remaining amount of the budget limit");	
 	}
 
-    this->categories.push_back(category);
+    this->categories[category.getID()] = category;
 	allocated += category.getLimit();
 	
 	return category;
@@ -173,7 +169,7 @@ int Budget::editCategory(const std::string& category_id,
 	} else if (field == "limit") {
 		double old_limit = categories[new_id].getLimit();
 
-		categories[index].setLimit(value);
+		categories[new_id].setLimit(value);
 		double new_limit = categories[new_id].getLimit();
 		
 		// Verify the new limit does not exceed the overall budget limit before
@@ -205,9 +201,10 @@ int Budget::delCategory(const std::string& category_id) {
 	}
 
 	// Uses swap and pop_back to prevent O(n) deletion due to shifting.
-	std::swap(categories[new_id], categories.back());
-	allocated -= categories.back().getLimit();
-	this->categories.pop_back();
+	allocated -= categories[new_id].getLimit();
+	categories.erase(new_id);
+
+	return new_id;
 }
 
 Transaction Budget::addTransaction(const std::string& amount,
@@ -300,5 +297,5 @@ int Budget::delTransaction(const std::string& id) {
 	
 	categories[transactions[new_id].getCategoryID()].delUsage(amt);	
 	
-	return new_id
+	return new_id;
 }

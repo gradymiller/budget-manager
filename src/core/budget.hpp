@@ -5,7 +5,6 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
 #include "core/category.hpp"
 #include "core/transaction.hpp"
@@ -129,7 +128,7 @@ private:
 
     // Categories defined for this budget. Invididual pieces of category
 	// metadata are accessed through the Category class.
-    std::vector<Category> categories;
+    std::unordered_map<int, Category> categories;
 
     // Transactions keyed by their unique identifier. Transactions should be
 	// interacted with using the Transaction class.
