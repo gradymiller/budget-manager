@@ -11,8 +11,8 @@ double Transaction::getAmount() const {
     return amount;
 }
 
-const std::string& Transaction::getCategory() const {
-    return category;
+int Transaction::getCategoryID() const {
+    return category_id;
 }
 
 const std::string& Transaction::getType() const {
@@ -44,8 +44,8 @@ void Transaction::setAmount(const std::string& amount) {
 	this->amount = value;
 }
 
-void Transaction::setCategory(const std::string& category) {
-	this->category = category;
+void Transaction::setCategoryID(int category_id) {
+	this->category_id = category_id;
 }
 
 void Transaction::setType(std::string type) {

@@ -132,7 +132,65 @@ int Database::createBudget(const Budget& budget) {
 
 
 void Database::updateBudget(const Budget& budget) {
-    // TODO
+	const char* sql = R"(
+		UPDATE budgets
+		SET
+			name = ?,
+			start_date = ?,
+			end_date = ?,
+			limit = ?
+		WHERE id = ?;
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_text(
+		stmt,
+		1,
+		budget.getName().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		2,
+		dateToStr(budget.getStartDate()).c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		3,
+		dateToStr(budget.getEndDate()).c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_double(
+		stmt,
+		4,
+		budget.getLimit()
+	);
+
+	sqlite3_bind_int(
+		stmt,
+		5,
+		budget.getID()
+	);
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		std::string error = sqlite3_errmsg(db);
+		sqlite3_finalize(stmt);
+		throw std::runtime_error(error);
+	}
+
+	sqlite3_finalize(stmt);
 }
 
 
@@ -195,7 +253,70 @@ int Database::createCategory(const Category& category) {
 
 
 void Database::updateCategory(const Category& category) {
-    // TODO
+	const char* sql = R"(
+		UPDATE categories
+		SET
+			budget_id = ?,
+			name = ?,
+			type = ?,
+			limit = ?,
+			usage = ?
+		WHERE id = ?;
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_int(
+		stmt,
+		1,
+		category.getBudgetID()
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		2,
+		category.getName().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		3,
+		category.getType().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_double(
+		stmt,
+		4,
+		category.getLimit()
+	);
+
+	sqlite3_bind_double(
+		stmt,
+		5,
+		category.getUsage()
+	);
+
+	sqlite3_bind_int(
+		stmt,
+		6,
+		category.getID()
+	);
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		std::string error = sqlite3_errmsg(db);
+		sqlite3_finalize(stmt);
+		throw std::runtime_error(error);
+	}
+
+	sqlite3_finalize(stmt);
 }
 
 
@@ -223,12 +344,10 @@ int Database::createTransaction(const Transaction& txn) {
 		txn.getAmount()
 	);
 
-	sqlite3_bind_text(
+	sqlite3_bind_int(
 		stmt,
 		2,
-		txn.getCategory().c_str(),
-		-1,
-		SQLITE_TRANSIENT
+		txn.getCategoryID()
 	);
 
 	sqlite3_bind_text(
@@ -278,7 +397,82 @@ int Database::createTransaction(const Transaction& txn) {
 
 
 void Database::updateTransaction(const Transaction& txn) {
-    // TODO
+	const char* sql = R"(
+		UPDATE transactions 
+		SET
+			amount = ?,
+			category_id = ?,
+			type = ?,
+			date = ?,
+			vendor = ?
+		WHERE id = ?;
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_double(
+		stmt,
+		1,
+		txn.getAmount()
+	);
+
+	sqlite3_bind_int(
+		stmt,
+		2,
+		txn.getCategoryID()
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		3,
+		txn.getType().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	if (txn.getDate()) {
+		sqlite3_bind_text(
+			stmt,
+			4,
+			dateToStr(*txn.getDate()).c_str(),
+			-1,
+			SQLITE_TRANSIENT
+		);
+
+	} else {
+		sqlite3_bind_null(stmt, 4);
+	}
+
+	if (txn.getVendor()) {
+		sqlite3_bind_text(
+			stmt,
+			5,
+			txn.getVendor()->c_str(),
+			-1,
+			SQLITE_TRANSIENT
+		);
+
+	} else {
+		sqlite3_bind_null(stmt, 5);
+	}
+
+	sqlite3_bind_int(
+		stmt,
+		6,
+		txn.getID()
+	);
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		std::string error = sqlite3_errmsg(db);
+		sqlite3_finalize(stmt);
+		throw std::runtime_error(error);
+	}
+
+	sqlite3_finalize(stmt);
 }
 
 

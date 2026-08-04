@@ -9,6 +9,9 @@ class Category {
 public:
 	Category() = default;
 
+	// Returns the category's id
+	int getID() const;
+
 	// Returns the id of the budget this category is bound to
 	int getBudgetID() const;
 
@@ -51,6 +54,7 @@ public:
 	void delUsage(double amt);
 
 private:
+	int id;
 	int budget_id;
 	std::string name;
 

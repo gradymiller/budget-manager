@@ -1,3 +1,4 @@
+// TODO: change categories to dictionary instead of list
 #include "core/budget.hpp"
 
 #include <algorithm>
@@ -22,6 +23,10 @@
 #include "core/utils.hpp"
 
 using json = nlohmann::json;
+
+int Budget::getID() const {
+	return this->id;
+}
 
 const std::string& Budget::getName() const {
     return this->name;
@@ -181,22 +186,18 @@ void Budget::editCategory(const std::string& category,
 }
 
 void Budget::delCategory(const std::string& category) {
-	int index = findCategory(category);
-
-	if (index == -1) {
-		throw std::runtime_error("Category not previously saved");
-	}
+	int category_id = std::stoi(category);
 
 	// Transactions must be updated to new categories before a category can be
 	// deleted from the budget
 	for (const auto& [id, txn] : transactions) {
-		if (txn.getCategory() == category) {
+		if (txn.getCategoryID() == category_id) {
 			throw std::runtime_error("Cannot delete category that has transactions assigned to it. Change transaction categories first before removing the category");
 		}
 	}
 
 	// Uses swap and pop_back to prevent O(n) deletion due to shifting.
-	std::swap(categories[index], categories.back());
+	std::swap(categories[category_id], categories.back());
 	allocated -= categories.back().getLimit();
 	this->categories.pop_back();
 }
@@ -220,12 +221,9 @@ void Budget::addTransaction(const std::string& amount,
 	Transaction txn;
 	txn.setAmount(amount);
 
-	int c_index = findCategory(category);
-	if (c_index == -1) {
-		throw std::invalid_argument("Transaction category cannot be found");
-	}
+	int category_id = std::stoi(category);
 
-	txn.setCategory(category);
+	txn.setCategoryID(category_id);
 	txn.setType(type);
 
 	// Optional input
@@ -238,7 +236,7 @@ void Budget::addTransaction(const std::string& amount,
 		txn.setVendor(vendor);
 	}
 
-	categories[c_index].addUsage(txn.getAmount()); 
+	categories[category_id].addUsage(txn.getAmount()); 
 
 	transactions.emplace(next_id, std::move(txn));	
 
@@ -260,22 +258,19 @@ void Budget::editTransaction(const std::string& id,
 
 	double old_amt = transactions[new_id].getAmount();	
 
-	int c_index = findCategory(transactions[new_id].getCategory());
-	if (c_index == -1) {
-		throw std::runtime_error("Transaction category not found, could not delete");
-	}
-
 	if (field == "amount") {
 		transactions[new_id].setAmount(value);
 
 		double new_amt = transactions[new_id].getAmount();
+
+		int c_index = transactions[new_id].getCategoryID();
 		
 		// Recalculate new category amount when transaction amount changes
 		categories[c_index].delUsage(old_amt);
 		categories[c_index].addUsage(new_amt);
 
 	} else if (field == "category") {
-		transactions[new_id].setCategory(value);
+		transactions[new_id].setCategoryID(std::stoi(value));
 
 	} else if (field == "type") {
 		transactions[new_id].setType(value);
@@ -297,224 +292,11 @@ void Budget::delTransaction(const std::string& id) {
 
 	double amt = transactions[new_id].getAmount();
 
-	int c_index = findCategory(transactions[new_id].getCategory());
-	if (c_index == -1) {
-		throw std::runtime_error("Transaction category not found, could not be deleted");
-	}
-
 	auto removed = transactions.erase(new_id);
 	
 	if (removed == 0) {
 		throw std::invalid_argument("Transaction not found");
 	}
 	
-	categories[c_index].delUsage(amt);	
-}
-
-// Preserve the current budget's fields. This does not update categories
-// to the json file even though the categories are nested within the
-// budget as a field.
-void Budget::saveBudget() {
-	
-	// Import the metadata.json file
-    json metadata;
-    std::ifstream in(PATH / "metadata.json");
-
-    if (!in.good()) {
-        throw std::runtime_error("Budget Manager has not been initialized");
-    }
-
-    in >> metadata;
-    in.close();
-
-	// Update the budget's fields here. When adding new fields to track, all
-	// that needs to be done for saving is to add a new entry like the ones
-	// below. The rest of the save function does not need to be touched.
-    metadata["budgets"][this->name]["start_date"] = dateToStr(*this->start_date);
-    metadata["budgets"][this->name]["end_date"] = dateToStr(*this->end_date);
-    metadata["budgets"][this->name]["limit"] = this->limit;
-	metadata["budgets"][this->name]["next_id"] = this->next_id;
-	metadata["budgets"][this->name]["allocated"] = this->allocated;
-
-	// Write back to the json file
-    std::ofstream out(PATH / "metadata.json");
-
-    if (!out.is_open()) {
-        throw std::runtime_error("Could not save metadata");
-    }
-
-    out << metadata.dump(4);
-    out.close();
-}
-
-// Only saves the state of the current budget's categories
-void Budget::saveCategories() {
-    std::ifstream current(PATH / "current");
-
-    if (!current.is_open()) {
-        throw std::runtime_error("No current budget selected");
-    }
-
-    std::string currentBudget;
-    std::getline(current, currentBudget);
-    current.close();
-
-
-    // Load metadata.json
-    json metadata;
-    std::ifstream in(PATH / "metadata.json");
-
-    if (!in.good()) {
-        throw std::runtime_error("Budget Manager has not been initialized");
-    }
-
-    in >> metadata;
-    in.close();
-
-
-    // Convert categories to JSON
-	// To add new category metadata just add a new entry to push_back()
-    json categories_json = json::array();
-
-    for (const auto& category : categories) {
-        categories_json.push_back({
-            {"name", category.getName()},
-            {"type", category.getType()},
-            {"limit", category.getLimit()},
-			{"usage", category.getUsage()}
-        });
-    }
-
-
-    // Save categories to the current budget
-    metadata["budgets"][currentBudget]["categories"] = categories_json;
-
-
-    // Write metadata back
-    std::ofstream out(PATH / "metadata.json");
-
-    if (!out.is_open()) {
-        throw std::runtime_error("Could not save metadata");
-    }
-
-    out << metadata.dump(4);
-    out.close();
-}
-
-// Only saves the state of transactions for the current budget.
-void Budget::saveTransactions() {
-	// Save transactions
-	std::ofstream csv(PATH / (this->name + ".csv"));
-
-	if (!csv.is_open()) {
-		throw std::runtime_error("Could not open file to save transactions");
-	}
-
-	// Write a header. This can be changed if new data is to be saved.
-	csv << "ID,Amount,Category,Type,Date,Vendor\n";
-
-	// Write each transaction to the csv file
-	for (const auto& [id, txn] : transactions) {
-		csv << id << ","
-			<< txn.getAmount() << ","
-			<< txn.getCategory() << ","
-			<< txn.getType() << ","
-			<< (txn.getDate() ? dateToStr(*txn.getDate()) : "") << ","
-			<< txn.getVendor().value_or("") << '\n';
-	}
-
-	csv.close();	
-}
-
-
-void Budget::load() {
-	
-	// Find and load the current budget
-    std::ifstream current(PATH / "current");
-
-    if (!current.is_open()) {
-        throw std::runtime_error("No current budget selected");
-    }
-
-    std::getline(current, name);
-    current.close();
-
-    json metadata;
-
-    std::ifstream in(PATH / "metadata.json");
-
-    if (!in.is_open()) {
-        throw std::runtime_error("Budget Manager has not been initialized");
-    }
-
-    in >> metadata;
-    in.close();
-
-
-    if (!metadata["budgets"].contains(name)) {
-        throw std::invalid_argument("Budget does not exist");
-    }
-
-
-    json budget = metadata["budgets"][name];
-
-
-    // Load in the budget's metadata
-    setStartDate(budget["start_date"].get<std::string>());
-    setEndDate(budget["end_date"].get<std::string>());
-    limit = budget["limit"].get<double>();
-	next_id = budget["next_id"].get<int>();
-	allocated = budget["allocated"].get<double>();
-
-
-    // Load in the budget's categories and their fields
-    categories.clear();
-
-    for (const auto& category_json : budget["categories"]) {
-        Category category;
-
-        category.setName(category_json["name"].get<std::string>());
-        category.setType(category_json["type"].get<std::string>());
-        category.setLimit(std::to_string(category_json["limit"].get<double>()));
-		category.addUsage(category_json["usage"].get<double>());
-
-        categories.push_back(category);
-    }
-
-	// Load in the budget's transactions from the separate csv
-	std::ifstream csv(PATH / (name + ".csv"));
-
-	std::string line;
-	std::getline(csv, line);
-
-	while (std::getline(csv, line)) {
-		std::stringstream ss(line);
-
-		std::string id;
-		std::string amount;
-		std::string category;
-		std::string type;
-		std::string date;
-		std::string vendor;
-
-		std::getline(ss, id, ',');
-		std::getline(ss, amount, ',');
-		std::getline(ss, category, ',');
-		std::getline(ss, type, ',');
-		std::getline(ss, date, ',');
-		std::getline(ss, vendor);
-
-		Transaction txn;
-		txn.setAmount(amount);
-		txn.setCategory(category);
-		txn.setType(type);
-
-		if (!date.empty())
-			txn.setDate(date);
-
-		if (!vendor.empty())
-			txn.setVendor(vendor);
-
-		transactions.emplace(std::stoi(id), std::move(txn));
-	}
+	categories[transactions[new_id].getCategoryID()].delUsage(amt);	
 }

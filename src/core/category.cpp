@@ -4,6 +4,10 @@
 #include <stdexcept>
 #include <string>
 
+int Category::getID() const {
+	return id;
+}
+
 int Category::getBudgetID() const {
 	return budget_id;
 }

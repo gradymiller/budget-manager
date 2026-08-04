@@ -1,3 +1,4 @@
+// TODO: Set budget_id and validate
 #pragma once
 
 #include <chrono>
@@ -17,6 +18,9 @@ public:
     // Constructs an empty budget where everything is accessed through setters
 	// and getters.
     Budget() = default;
+
+	// Returns the budget's id
+	int getID() const;
 
     // Returns the budget's name.
     const std::string& getName() const;
@@ -118,6 +122,7 @@ private:
 	// always be one ahead of the highest transaction ID saved so far. This
 	// value is saved to the json metadata file and is loaded in for previously
 	// made budgets.
+	int id;
     int next_id = 0;
 
     // Running totals used for reporting.

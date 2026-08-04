@@ -11,12 +11,15 @@ class Transaction {
 public:
     Transaction() = default;
 
+	// Return the id
+	int getID() const;
+
 	// Return the transaction value
     double getAmount() const;
 
 	// Return the category, validated in budget class to be only currently
 	// available categories.
-    const std::string& getCategory() const;
+    int getCategoryID() const;
 
 	// Limited to `expense` and `income` stored as strings
 	const std::string& getType() const;
@@ -33,7 +36,7 @@ public:
     void setAmount(const std::string& amount);
 
 	// Stores a string of the name of the category, not the category itself
-    void setCategory(const std::string& category);
+    void setCategoryID(int category_id);
 
 	// A string of `expense` or `income`
     void setType(std::string type);
@@ -46,8 +49,9 @@ public:
     void setVendor(const std::string& vendor);
 
 private:
+	int id;
     double amount = 0.0;
-    std::string category;
+    int category_id;
 	std::string type = "expense";
 
 	std::optional<std::chrono::system_clock::time_point> date{};
