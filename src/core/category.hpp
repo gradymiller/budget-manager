@@ -1,3 +1,4 @@
+// TODO: Setter and validation for budget_id
 #pragma once
 
 #include <string>
@@ -7,6 +8,9 @@
 class Category {
 public:
 	Category() = default;
+
+	// Returns the id of the budget this category is bound to
+	int getBudgetID() const;
 
 	// Returns the category's name.
 	const std::string& getName() const;
@@ -47,6 +51,7 @@ public:
 	void delUsage(double amt);
 
 private:
+	int budget_id;
 	std::string name;
 
 	// This is not an enum class for the sake of converting to string output.

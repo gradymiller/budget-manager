@@ -4,6 +4,11 @@
 #include <stdexcept>
 #include <string>
 
+#include "core/budget.hpp"
+#include "core/category.hpp"
+#include "core/transaction.hpp"
+#include "core/utils.hpp"
+
 
 Database::Database(const std::string& filename) {
     if (sqlite3_open(filename.c_str(), &db) != SQLITE_OK) {
@@ -13,6 +18,8 @@ Database::Database(const std::string& filename) {
 
         throw std::runtime_error("Database error: " + error);
     }
+
+	execSQL("PRAGMA foreign_keys = ON;");
 }
 
 Database::~Database() {
@@ -75,58 +82,207 @@ void Database::createTables() {
 }
 
 
-void Database::createBudget() {
+int Database::createBudget(const Budget& budget) {
+	const char* sql = R"(
+		INSERT INTO budgets 
+		(name, start_date, end_date)
+		VALUES (?, ?, ?);
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_text(
+		stmt,
+		1,
+		budget.getName().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		2,
+		dateToStr(budget.getStartDate()).c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		3,
+		dateToStr(budget.getEndDate()).c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+	
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		std::string error = sqlite3_errmsg(db);
+		sqlite3_finalize(stmt);
+		throw std::runtime_error(error);
+	}
+
+	sqlite3_finalize(stmt);
+
+	return sqlite3_last_insert_rowid(db);
+}
+
+
+void Database::updateBudget(const Budget& budget) {
     // TODO
 }
 
 
-void Database::updateBudget() {
+void Database::deleteBudget(int budget_id) {
     // TODO
 }
 
 
-void Database::deleteBudget() {
+int Database::createCategory(const Category& category) {
+	const char* sql = R"(
+		INSERT INTO categories
+		(budget_id, name, type, limit)
+		VALUES (?, ?, ?, ?);
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_int(
+		stmt,
+		1,
+		category.getBudgetID()
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		2,
+		category.getName().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		3,
+		category.getType().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_double(
+		stmt,
+		4,
+		category.getLimit()
+	);
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		std::string error = sqlite3_errmsg(db);
+		sqlite3_finalize(stmt);
+		throw std::runtime_error(error);
+	}
+
+	sqlite3_finalize(stmt);
+
+	return sqlite3_last_insert_rowid(db);
+}
+
+
+void Database::updateCategory(const Category& category) {
     // TODO
 }
 
 
-void Database::readBudgets() {
+void Database::deleteCategory(int category_id) {
     // TODO
 }
 
 
-void Database::createCategory() {
+int Database::createTransaction(const Transaction& txn) {
+	const char* sql = R"(
+		INSERT INTO transactions
+		(amount, category_id, type, date, vendor)
+		VALUES (?, ?, ?, ?, ?);
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_double(
+		stmt,
+		1,
+		txn.getAmount()
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		2,
+		txn.getCategory().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_text(
+		stmt,
+		3,
+		txn.getType().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	if (txn.getDate()) {
+		sqlite3_bind_text(
+			stmt,
+			4,
+			dateToStr(*txn.getDate()).c_str(),
+			-1,
+			SQLITE_TRANSIENT
+		);
+
+	} else {
+		sqlite3_bind_null(stmt, 4);
+	}
+
+	if (txn.getVendor()) {
+		sqlite3_bind_text(
+			stmt,
+			5,
+			txn.getVendor()->c_str(),
+			-1,
+			SQLITE_TRANSIENT
+		);
+
+	} else {
+		sqlite3_bind_null(stmt, 5);
+	}
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		std::string error = sqlite3_errmsg(db);
+		sqlite3_finalize(stmt);
+		throw std::runtime_error(error);
+	}
+
+	sqlite3_finalize(stmt);
+
+	return sqlite3_last_insert_rowid(db);
+}
+
+
+void Database::updateTransaction(const Transaction& txn) {
     // TODO
 }
 
 
-void Database::updateCategory() {
-    // TODO
-}
-
-
-void Database::deleteCategory() {
-    // TODO
-}
-
-
-std::vector<Category> Database::readCategories() {
-    // TODO: query categories
-    return {};
-}
-
-
-void Database::createTransaction() {
-    // TODO
-}
-
-
-void Database::updateTransaction() {
-    // TODO
-}
-
-
-void Database::deleteTransaction() {
+void Database::deleteTransaction(int txn_id) {
     // TODO
 }
 

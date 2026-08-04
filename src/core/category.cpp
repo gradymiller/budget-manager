@@ -4,6 +4,10 @@
 #include <stdexcept>
 #include <string>
 
+int Category::getBudgetID() const {
+	return budget_id;
+}
+
 const std::string& Category::getName() const {
 	return name;
 }
