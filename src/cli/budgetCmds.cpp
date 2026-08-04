@@ -28,7 +28,6 @@ int budgetAdd(int argc, const char* const argv[]) {
         budget.setEndDate(argv[2]);
         budget.setLimit(argv[3]);
 
-        budget.saveBudget();
     });
 }
 
@@ -40,8 +39,6 @@ int budgetEdit(int argc, const char* const argv[]) {
 			throw std::invalid_argument("Too few arguments");
 		}
         Budget budget;
-
-        budget.load();
 
         std::string field = argv[0];
         std::string value = argv[1];
@@ -72,8 +69,6 @@ int budgetEdit(int argc, const char* const argv[]) {
         } else {
             throw std::invalid_argument(field + " not known");
         }
-
-        budget.saveBudget();
     });
 }
 

@@ -37,7 +37,6 @@ int transactionAdd(int argc, const char* const* argv) {
 		}
 
 		Budget budget;
-		budget.load();
 		
 		budget.addTransaction(
 			argv[0],
@@ -46,10 +45,6 @@ int transactionAdd(int argc, const char* const* argv) {
 			date,
 			vendor
 		);
-
-		budget.saveTransactions();
-		budget.saveBudget();
-		budget.saveCategories();
 	});
 }
 
@@ -61,13 +56,8 @@ int transactionEdit(int argc, const char* const* argv) {
 		}
 
 		Budget budget;
-		budget.load();
 
 		budget.editTransaction(argv[0], argv[1], argv[2]);
-
-		budget.saveTransactions();
-		budget.saveBudget();
-		budget.saveCategories();
 	});
 }
 
@@ -79,13 +69,8 @@ int transactionDelete(int argc, const char* const* argv) {
 		}
 
 		Budget budget;
-		budget.load();
 
 		budget.delTransaction(argv[0]);
-
-		budget.saveTransactions();
-		budget.saveBudget();
-		budget.saveCategories();
 	});
 }
 
@@ -93,7 +78,6 @@ int transactionDelete(int argc, const char* const* argv) {
 int transactionList() {
 	return runCommand([&]() {
 		Budget budget;
-		budget.load();
 
 		auto transactions = budget.getTransactions();
 
@@ -105,7 +89,7 @@ int transactionList() {
 			std::cout
 				<< id << ", "
 				<< txn.getAmount() << ", "
-				<< txn.getCategory() << ", "
+				<< txn.getCategoryID() << ", "
 				<< txn.getType() << ", "
 				<< (txn.getDate() ? dateToStr(*txn.getDate()) : "")
 				<< ", "

@@ -80,8 +80,6 @@ TEST_F(LifecycleEdgeCaseTest, TransactionPersistsAfterReload)
 
 
     Budget budget;
-    budget.load();
-
 
     auto transactions = budget.getTransactions();
 
@@ -110,7 +108,6 @@ TEST_F(LifecycleEdgeCaseTest, MultipleTransactionsHaveUniqueIDs)
 
 
     Budget budget;
-    budget.load();
 
 
     auto transactions = budget.getTransactions();
@@ -148,8 +145,6 @@ TEST_F(LifecycleEdgeCaseTest, DeleteTransactionOnlyDeletesTarget)
 
 
     Budget budget;
-    budget.load();
-
 
     EXPECT_EQ(
         budget.getTransactions().size(),
@@ -197,8 +192,6 @@ TEST_F(LifecycleEdgeCaseTest, BudgetsHaveSeparateTransactions)
 
 
     Budget budget;
-    budget.load();
-
 
     EXPECT_EQ(
         budget.getTransactions().size(),
@@ -303,8 +296,6 @@ TEST_F(LifecycleEdgeCaseTest, RenamingBudgetPreservesTransactions)
 
 
     Budget budget;
-    budget.load();
-
 
     EXPECT_EQ(
         budget.getTransactions().size(),
