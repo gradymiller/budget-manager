@@ -5,10 +5,12 @@
 #include "cli/cmdTemplate.hpp"
 #include "core/budget.hpp"
 #include "core/category.hpp"
+#include "core/database.hpp"
 
 int categoryAdd(int argc, const char* const argv[]) {
 	return runCommand([&]() {
-		Budget budget;
+		Database db("budget-data.db");
+		Budget budget = db.loadBudget();
 
 		if (argc < 3) {
 			throw std::invalid_argument("Too few arguments");
@@ -21,7 +23,8 @@ int categoryAdd(int argc, const char* const argv[]) {
 
 int categoryEdit(int argc, const char* const argv[]) {
 	return runCommand([&]() {
-		Budget budget;
+		Database db("budget-data.db");
+		Budget budget = db.loadBudget();
 
 		if (argc < 3) {
 			throw std::invalid_argument("Too few arguments");
@@ -34,7 +37,8 @@ int categoryEdit(int argc, const char* const argv[]) {
 
 int categoryDelete(int argc, const char* const argv[]) {
 	return runCommand([&]() {
-		Budget budget;
+		Database db("budget-data.db");
+		Budget budget = db.loadBudget();
 
 		if (argc < 1) {
 			throw std::invalid_argument("Too few arguments");
@@ -47,7 +51,8 @@ int categoryDelete(int argc, const char* const argv[]) {
 
 int categoryList() {
 	return runCommand([&]() {
-		Budget budget;
+		Database db("budget-data.db");
+		Budget budget = db.loadBudget();
 
 		std::vector<Category> categories = budget.getCategories();
 

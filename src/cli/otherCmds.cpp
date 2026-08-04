@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 
 #include "cli/cmdTemplate.hpp"
+#include "core/database.hpp"
 #include "core/init.hpp"
 #include "core/path.hpp"
 
@@ -63,10 +64,8 @@ int cmdInit() {
 		std::filesystem::path dir = setupFolder();
 		std::cout << "Data saved at: " << dir << "\n";
 
-		// Utility function
+		// Inits database
 		createFiles(dir);
-		
-		std::ofstream file(PATH / "current");
 
 		// TODO: Add rest of setup functions here
 	});
@@ -74,10 +73,15 @@ int cmdInit() {
 
 int cmdCurrent() {
 	return runCommand([&]() {
-		std::ifstream file(PATH / "current");
-		std::string val;
-		std::getline(file, val);
-		std::cout << "Current budget: " << val << '\n';
+		Database db("budget.db");
+
+		auto current = db.getSetting("current_budget");
+
+		if (!current) {
+			throw std::runtime_error("No current budget selected");
+		}
+
+		std::cout << current << '\n';
 	});
 }
 
@@ -87,28 +91,11 @@ int cmdSwitch(int argc, const char* const* argv) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		std::ifstream in(PATH / "metadata.json");
+		Database db("budget.db");
 
-		if (!in.good()) {
-			throw std::runtime_error("Budget Manager has not been initialized");
-		}
-
-		json metadata;
-		in >> metadata;
-
-		std::string name = argv[0];
-
-		// Metadata file is source of truth
-		if (!metadata["budgets"].contains(name)) {
-			throw std::invalid_argument("Budget does not exist");
-		}
-
-		std::ofstream file(PATH / "current");
-
-		if (!file.good()) {
-			throw std::runtime_error("Could not set current budget");
-		}
-
-		file << name;
+		db.setSetting(
+			"current_budget",
+			std::to_string(argv[0])
+		);
 	});
 }

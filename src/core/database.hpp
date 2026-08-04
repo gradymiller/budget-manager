@@ -28,9 +28,11 @@ public:
 
     void createTables();
 
+	std::optional<std::string> getSetting(const std::string& key);
+	void setSetting(const std::string& key, const std::string& value);
 
     // Complete budget loading
-    Budget readBudget(int budgetId);
+    Budget loadBudget();
 
 
     // Budget persistence

@@ -27,20 +27,6 @@ void createFiles(fs::path dir) {
         );
     }
 
-    // Create a file to store budget metadata and state
-    fs::path metadata_path = dir / "metadata.json";
-
-    // Only create it if it doesn't already exist
-    if (!fs::exists(metadata_path)) {
-        std::ofstream metadata_file(metadata_path);
-
-        if (!metadata_file) {
-            throw std::runtime_error("Failed to create metadata.json\n");
-        }
-
-        // Write valid empty JSON
-        metadata_file << "{}\n";
-
-        metadata_file.close();
-    }
+	Database db("budget-data.db");
+	db.createTables();
 }

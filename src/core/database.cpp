@@ -75,12 +75,81 @@ void Database::createTables() {
 				REFERENCES categories(id)
 		);
 	)";
+
+	const char* sql4 = R"(
+		CREATE TABLE IF NOT EXISTS settings (
+			key TEXT PRIMARY KEY,
+			value TEXT NOT NULL
+		);
+	)";
 	
 	execSQL(sql1);
 	execSQL(sql2);
 	execSQL(sql3);
+	execSQL(sql4);
 }
 
+std::optional<std::string> Database::getSetting(const std::string& key)
+{
+    const char* sql = R"(
+        SELECT value
+        FROM settings
+        WHERE key = ?;
+    )";
+
+    sqlite3_stmt* stmt = nullptr;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        throw std::runtime_error(sqlite3_errmsg(db));
+    }
+
+    sqlite3_bind_text(
+        stmt,
+        1,
+        key.c_str(),
+        -1,
+        SQLITE_TRANSIENT
+    );
+
+    std::optional<std::string> result;
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        const unsigned char* text = sqlite3_column_text(stmt, 0);
+        result = std::string(reinterpret_cast<const char*>(text));
+    }
+
+    sqlite3_finalize(stmt);
+
+    return result;
+}
+
+void Database::setSetting(const std::string& key,
+                          const std::string& value)
+{
+    const char* sql = R"(
+        INSERT INTO settings(key, value)
+        VALUES(?, ?)
+        ON CONFLICT(key)
+        DO UPDATE SET value = excluded.value;
+    )";
+
+    sqlite3_stmt* stmt = nullptr;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        throw std::runtime_error(sqlite3_errmsg(db));
+    }
+
+    sqlite3_bind_text(stmt, 1, key.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, value.c_str(), -1, SQLITE_TRANSIENT);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        std::string error = sqlite3_errmsg(db);
+        sqlite3_finalize(stmt);
+        throw std::runtime_error(error);
+    }
+
+    sqlite3_finalize(stmt);
+}
 
 int Database::createBudget(const Budget& budget) {
 	const char* sql = R"(
