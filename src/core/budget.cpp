@@ -1,6 +1,7 @@
 // TODO: change categories to dictionary instead of list
 #include "core/budget.hpp"
 
+#include <iostream>
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -221,8 +222,8 @@ Transaction Budget::addTransaction(const std::string& amount,
 	txn.setAmount(amount);
 
 	int new_id = std::stoi(category_id);
-
 	txn.setCategoryID(new_id);
+
 	txn.setType(type);
 
 
@@ -243,7 +244,7 @@ Transaction Budget::addTransaction(const std::string& amount,
 	// This is the only place that next_id is updated
 	next_id++;
 
-	return transactions[next_id--];
+	return transactions[next_id - 1];
 }
 
 int Budget::editTransaction(const std::string& id,

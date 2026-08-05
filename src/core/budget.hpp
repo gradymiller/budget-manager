@@ -110,7 +110,7 @@ private:
 	// value is saved to the json metadata file and is loaded in for previously
 	// made budgets.
 	int id;
-    int next_id = 0;
+    int next_id = 1;
 
     // Running totals used for reporting.
 	// TODO: Implement these, only category totals are working as of now
