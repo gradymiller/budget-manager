@@ -28,6 +28,11 @@ double Category::getUsage() const {
 	return usage;
 }
 
+
+void setID(int id) {
+	this->id = id;
+}
+
 // Category names may contain only alphanumeric characters, underscores,
 // and hyphens. Separators are not allowed at the beginning or end.
 void Category::setName(const std::string& name) {

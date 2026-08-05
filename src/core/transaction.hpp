@@ -32,6 +32,8 @@ public:
 	// std::optional allows for the value to be empty
     const std::optional<std::string>& getVendor() const;
 
+	void setID(int id);
+
 	// Can be any valid decimal
     void setAmount(const std::string& amount);
 

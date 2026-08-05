@@ -27,6 +27,8 @@ public:
 	// Returns the amount used for the category.
 	double getUsage() const;
 
+	void setID(int id);
+
 	// Rename the category.
 	void setName(const std::string& name);
 

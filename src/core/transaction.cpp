@@ -31,6 +31,10 @@ const std::optional<std::string>& Transaction::getVendor() const {
     return vendor;
 }
 
+void setID(int id) {
+	this->id = id;
+}
+
 void Transaction::setAmount(const std::string& amount) {
 	double value;
 

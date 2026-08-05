@@ -64,9 +64,13 @@ Transaction Budget::getTransaction(int txn_id) {
 	return transactions[txn_id];
 }
 
+void setID(int id) {
+	this->id = id;
+}
+
 // Budget names may contain only alphanumeric characters, underscores,
 // and hyphens. Separators are not allowed at the beginning or end.
-void Budget::setName(std::string n) {
+void Budget::setName(const std::string& n) {
 	if (n.empty()) {
 		throw std::invalid_argument("Name cannot be empty");
 	}
@@ -113,7 +117,7 @@ void Budget::setEndDate(const std::string& ed) {
 	this->end_date = parsed_date;
 }
 
-void Budget::setLimit(std::string l) {
+void Budget::setLimit(const std::string& l) {
 	double value;
 
 	size_t pos;

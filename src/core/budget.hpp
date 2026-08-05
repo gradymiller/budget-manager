@@ -46,8 +46,10 @@ public:
 
 	Transaction getTransaction(int txn_id);
 
+	void setID(int id);
+
     // Updates the budget's name.
-    void setName(std::string n);
+    void setName(const std::string& n);
 
     // Sets the budget's start date from a string representation. The start
 	// date must be before the currently set end date, otherwise an error will
@@ -62,7 +64,7 @@ public:
     // Updates the overall spending limit for the specified date range. If this
 	// is lowered after categories have been added, you may have to resize the
 	// category limits first as they cannot exceed the overall limit.
-    void setLimit(std::string l);
+    void setLimit(const std::string& l);
 
     // Adds a new category to the budget. Everything is passed in as strings
 	// and is converted to an appropriate type.
