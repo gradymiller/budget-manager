@@ -30,8 +30,7 @@ public:
     // Returns the budget's configured end date.
     std::chrono::system_clock::time_point getEndDate() const;
 
-    // Returns the overall spending limit. This is usually the combined total
-	// of all your paychecks for a month.
+	// Calculated from category limits, this is not a persistent value
     double getLimit() const;
 
     // Returns all budget categories. Specific category elements are accessed
@@ -60,11 +59,6 @@ public:
 	// must be after the currently set start date, otherwise an error will be
 	// thrown.
     void setEndDate(const std::string& ed);
-
-    // Updates the overall spending limit for the specified date range. If this
-	// is lowered after categories have been added, you may have to resize the
-	// category limits first as they cannot exceed the overall limit.
-    void setLimit(const std::string& l);
 
     // Adds a new category to the budget. Everything is passed in as strings
 	// and is converted to an appropriate type.
@@ -122,15 +116,6 @@ private:
     std::string name;
     std::optional<std::chrono::system_clock::time_point> start_date;
     std::optional<std::chrono::system_clock::time_point> end_date;
-
-    // This is the total of all category limits for the budget. For a complete
-	// budget, this value should equal the overall budget limit.
-    double allocated = 0;
-
-	// The overall limit for the current budget. This is mainly used to
-	// restrict the category limits from exceeding the amount of money coming
-	// in for the span of the budget.
-    double limit = 0.0;
 
     // Categories defined for this budget. Invididual pieces of category
 	// metadata are accessed through the Category class.

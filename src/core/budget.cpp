@@ -45,7 +45,13 @@ std::chrono::system_clock::time_point Budget::getEndDate() const {
 }
 
 double Budget::getLimit() const {
-    return this->limit;
+	double total;
+
+	for (const auto& [id, category] : categories) {
+        total += category.getLimit();
+    }
+
+    return total;
 }
 
 std::unordered_map<int, Category> Budget::getCategories() const {
@@ -117,23 +123,6 @@ void Budget::setEndDate(const std::string& ed) {
 	this->end_date = parsed_date;
 }
 
-void Budget::setLimit(const std::string& l) {
-	double value;
-
-	size_t pos;
-	value = std::stod(l, &pos);
-
-	if (pos != l.size()) {
-		throw std::invalid_argument("Limit must be a number");	
-	}
-
-	if (value <= 0) {
-		throw std::invalid_argument("Limit must be greater than 0");
-	}
-
-    this->limit = value;
-}
-
 Category Budget::addCategory(const std::string& name,
 						 const std::string& type,
 						 const std::string& limit) {
@@ -147,14 +136,7 @@ Category Budget::addCategory(const std::string& name,
 	category.setType(type);
 	category.setLimit(limit);
 
-	// Prevent category allocations from exceeding the overall budget limit.
-	if ((allocated + category.getLimit()) > getLimit()) {
-		throw std::invalid_argument("Category limit goes over the remaining amount of the budget limit");	
-	}
-
     this->categories[category.getID()] = category;
-	allocated += category.getLimit();
-	
 	return category;
 }
 
@@ -175,16 +157,6 @@ int Budget::editCategory(const std::string& category_id,
 
 		categories[new_id].setLimit(value);
 		double new_limit = categories[new_id].getLimit();
-		
-		// Verify the new limit does not exceed the overall budget limit before
-		// updating.
-		if ((allocated + (new_limit - old_limit)) > this->getLimit()) {
-			categories[new_id].setLimit(old_limit);
-			throw std::invalid_argument("New category limit exceeds remaining amount of the budget limit");		
-		}
-
-		allocated += categories[new_id].getLimit();
-
 
 	} else {
 		throw std::invalid_argument("Invalid field. Cannot edit");
@@ -205,7 +177,6 @@ int Budget::delCategory(const std::string& category_id) {
 	}
 
 	// Uses swap and pop_back to prevent O(n) deletion due to shifting.
-	allocated -= categories[new_id].getLimit();
 	categories.erase(new_id);
 
 	return new_id;

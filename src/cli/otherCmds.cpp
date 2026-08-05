@@ -33,7 +33,7 @@ Commands:
   use | switch <budget_name>    Change active budget
 
   b[udget]
-    add <name> <start_date> <end_date> <limit>
+    add <name> <start_date> <end_date>
     edit <field> <new_value>
     delete <budget>
     list

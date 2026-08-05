@@ -15,7 +15,7 @@ int budgetAdd(int argc, const char* const argv[]) {
 
 	// This is a template runner
     return runCommand([&]() {
-		if (argc < 4) {
+		if (argc < 3) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
@@ -26,7 +26,6 @@ int budgetAdd(int argc, const char* const argv[]) {
         budget.setName(argv[0]);
         budget.setStartDate(argv[1]);
         budget.setEndDate(argv[2]);
-        budget.setLimit(argv[3]);
 
 		int budget_id = db.createBudget(budget);
 		db.setSetting("current_budget", std::to_string(budget_id));
@@ -57,9 +56,6 @@ int budgetEdit(int argc, const char* const argv[]) {
 
         } else if (field == "end_date") {
             budget.setEndDate(value);
-
-        } else if (field == "limit") {
-            budget.setLimit(value);
 
         } else {
             throw std::invalid_argument(field + " not known");

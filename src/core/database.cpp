@@ -46,7 +46,6 @@ void Database::createTables() {
 			name TEXT NOT NULL,
 			start_date TEXT NOT NULL,
 			end_date TEXT NOT NULL,
-			budget_limit REAL NOT NULL
 		);
 	)";
 
@@ -169,7 +168,7 @@ Budget Database::loadBudget() {
 
     // Load budget metadata
     const char* budgetSQL = R"(
-        SELECT name, start_date, end_date, budget_limit
+        SELECT name, start_date, end_date 
         FROM budgets
         WHERE id = ?;
     )";
@@ -192,9 +191,6 @@ Budget Database::loadBudget() {
 
     budget.setEndDate(
         reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
-
-    budget.setLimit(
-        std::to_string(sqlite3_column_double(stmt, 3)));
 
     sqlite3_finalize(stmt);
 
@@ -289,7 +285,7 @@ Budget Database::loadBudget() {
 int Database::createBudget(const Budget& budget) {
 	const char* sql = R"(
 		INSERT INTO budgets 
-		(name, start_date, end_date, budget_limit)
+		(name, start_date, end_date)
 		VALUES (?, ?, ?, ?);
 	)";
 
@@ -322,12 +318,6 @@ int Database::createBudget(const Budget& budget) {
 		-1,
 		SQLITE_TRANSIENT
 	);
-
-	sqlite3_bind_double(
-		stmt,
-		4,
-		budget.getLimit()
-	);
 	
 	if (sqlite3_step(stmt) != SQLITE_DONE) {
 		std::string error = sqlite3_errmsg(db);
@@ -348,7 +338,6 @@ void Database::updateBudget(const Budget& budget) {
 			name = ?,
 			start_date = ?,
 			end_date = ?,
-			budget_limit = ?
 		WHERE id = ?;
 	)";
 
@@ -382,15 +371,9 @@ void Database::updateBudget(const Budget& budget) {
 		SQLITE_TRANSIENT
 	);
 
-	sqlite3_bind_double(
-		stmt,
-		4,
-		budget.getLimit()
-	);
-
 	sqlite3_bind_int(
 		stmt,
-		5,
+		4,
 		budget.getID()
 	);
 
