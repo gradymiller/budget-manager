@@ -225,6 +225,7 @@ Transaction Budget::addTransaction(const std::string& amount,
 	txn.setCategoryID(new_id);
 	txn.setType(type);
 
+
 	// Optional input
 	if (!date.empty()) {
 		txn.setDate(date);
@@ -242,7 +243,7 @@ Transaction Budget::addTransaction(const std::string& amount,
 	// This is the only place that next_id is updated
 	next_id++;
 
-	return txn;
+	return transactions[next_id--];
 }
 
 int Budget::editTransaction(const std::string& id,
