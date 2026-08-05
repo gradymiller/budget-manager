@@ -39,7 +39,7 @@ Commands:
     list
 	
   t[ransaction]
-    add <amount> <category> <type> [--date <YYYY-MM-DD>] [--vendor <vendor>]
+    add <amount> <category_id> <type> [--date <YYYY-MM-DD>] [--vendor <vendor>]
     edit <id> <field> <new_value>
     delete <id>
     list

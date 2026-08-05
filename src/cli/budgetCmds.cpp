@@ -20,7 +20,8 @@ int budgetAdd(int argc, const char* const argv[]) {
 		}
 
 		Database db(PATH / "budget-data.db");
-		Budget budget = db.loadBudget();
+
+		Budget budget;
 
         budget.setName(argv[0]);
         budget.setStartDate(argv[1]);
@@ -28,6 +29,8 @@ int budgetAdd(int argc, const char* const argv[]) {
         budget.setLimit(argv[3]);
 
 		int budget_id = db.createBudget(budget);
+		db.setSetting("current_budget", std::to_string(budget_id));
+
 		std::cout << "Budget ID: " << budget_id << '\n';
     });
 }

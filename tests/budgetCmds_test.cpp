@@ -1,20 +1,20 @@
-#include <gtest/gtest.h>
 #include <filesystem>
+#include <gtest/gtest.h>
 
 #include "cli/budgetCmds.hpp"
-#include "core/path.hpp"
 #include "cli/otherCmds.hpp"
+#include "core/database.hpp"
+#include "core/path.hpp"
 
+namespace fs = std::filesystem;
 
 class BudgetCmdsTest : public ::testing::Test {
 protected:
     void SetUp() override {
-		try {
-			cmdInit();
-			const char* cleanupArgs[] = {"TEST"};
-			budgetDelete(1, cleanupArgs);
+        // Start every test with a completely fresh database.
+        fs::remove(PATH / "budget-data.db");
 
-		} catch (...) {}
+        ASSERT_EQ(cmdInit(), 0);
 
         const char* argv[] = {
             "TEST",
@@ -24,12 +24,17 @@ protected:
         };
 
         ASSERT_EQ(budgetAdd(4, argv), 0);
-		ASSERT_EQ(cmdSwitch(4, argv), 0);
     }
 
     void TearDown() override {
-        const char* argv[] = {"TEST"};
-        budgetDelete(1, argv);
+        Database db(PATH / "budget-data.db");
+
+        auto current = db.getSetting("current_budget");
+        if (current) {
+            db.deleteBudget(std::stoi(*current));
+        }
+
+        fs::remove(PATH / "budget-data.db");
     }
 };
 
@@ -126,14 +131,12 @@ TEST_F(BudgetCmdsTest, BudgetEditSuccess) {
 
     EXPECT_EQ(budgetEdit(2, args1), 0);
 
-
     const char* args2[] = {
         "end_date",
         "2027-04-04"
     };
 
     EXPECT_EQ(budgetEdit(2, args2), 0);
-
 
     const char* args3[] = {
         "limit",

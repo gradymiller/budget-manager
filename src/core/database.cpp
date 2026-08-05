@@ -46,7 +46,7 @@ void Database::createTables() {
 			name TEXT NOT NULL,
 			start_date TEXT NOT NULL,
 			end_date TEXT NOT NULL,
-			limit REAL NOT NULL
+			budget_limit REAL NOT NULL
 		);
 	)";
 
@@ -56,7 +56,7 @@ void Database::createTables() {
 			budget_id INTEGER NOT NULL,
 			name TEXT NOT NULL,
 			type TEXT NOT NULL,
-			limit REAL NOT NULL,
+			category_limit REAL NOT NULL,
 			usage REAL NOT NULL,
 
 			FOREIGN KEY(budget_id)
@@ -156,7 +156,7 @@ void Database::setSetting(const std::string& key,
 Budget Database::loadBudget() {
     auto current = getSetting("current_budget");
 
-    if (!current) {
+    if (!current || current->empty()) {
         throw std::runtime_error("No current budget selected.");
     }
 
@@ -169,7 +169,7 @@ Budget Database::loadBudget() {
 
     // Load budget metadata
     const char* budgetSQL = R"(
-        SELECT name, start_date, end_date, limit
+        SELECT name, start_date, end_date, budget_limit
         FROM budgets
         WHERE id = ?;
     )";
@@ -204,7 +204,7 @@ Budget Database::loadBudget() {
                budget_id,
                name,
                type,
-               limit,
+               category_limit,
                usage
         FROM categories
         WHERE budget_id = ?;
@@ -342,7 +342,7 @@ void Database::updateBudget(const Budget& budget) {
 			name = ?,
 			start_date = ?,
 			end_date = ?,
-			limit = ?
+			budget_limit = ?
 		WHERE id = ?;
 	)";
 
@@ -425,7 +425,7 @@ void Database::deleteBudget(int budget_id) {
 int Database::createCategory(const Category& category) {
 	const char* sql = R"(
 		INSERT INTO categories
-		(budget_id, name, type, limit)
+		(budget_id, name, type, category_limit)
 		VALUES (?, ?, ?, ?);
 	)";
 
@@ -482,7 +482,7 @@ void Database::updateCategory(const Category& category) {
 			budget_id = ?,
 			name = ?,
 			type = ?,
-			limit = ?,
+			category_limit = ?,
 			usage = ?
 		WHERE id = ?;
 	)";
