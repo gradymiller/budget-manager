@@ -4,6 +4,7 @@
 #include "cli/cmdTemplate.hpp"
 #include "core/budget.hpp"
 #include "core/database.hpp"
+#include "core/path.hpp"
 #include "core/transaction.hpp"
 #include "core/utils.hpp"
 
@@ -37,7 +38,7 @@ int transactionAdd(int argc, const char* const* argv) {
 			}
 		}
 
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 		
 		auto txn = budget.addTransaction(
@@ -60,7 +61,7 @@ int transactionEdit(int argc, const char* const* argv) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 
 		auto txn_id = budget.editTransaction(argv[0], argv[1], argv[2]);
@@ -75,7 +76,7 @@ int transactionDelete(int argc, const char* const* argv) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 
 		auto txn_id = budget.delTransaction(argv[0]);

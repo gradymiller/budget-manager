@@ -6,10 +6,11 @@
 #include "core/budget.hpp"
 #include "core/category.hpp"
 #include "core/database.hpp"
+#include "core/path.hpp"
 
 int categoryAdd(int argc, const char* const argv[]) {
 	return runCommand([&]() {
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 
 		if (argc < 3) {
@@ -25,7 +26,7 @@ int categoryAdd(int argc, const char* const argv[]) {
 
 int categoryEdit(int argc, const char* const argv[]) {
 	return runCommand([&]() {
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 
 		if (argc < 3) {
@@ -40,7 +41,7 @@ int categoryEdit(int argc, const char* const argv[]) {
 
 int categoryDelete(int argc, const char* const argv[]) {
 	return runCommand([&]() {
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 
 		if (argc < 1) {

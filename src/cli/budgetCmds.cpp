@@ -6,6 +6,7 @@
 #include "cli/cmdTemplate.hpp"
 #include "core/budget.hpp"
 #include "core/database.hpp"
+#include "core/path.hpp"
 
 namespace fs = std::filesystem;
 
@@ -18,7 +19,7 @@ int budgetAdd(int argc, const char* const argv[]) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 
         budget.setName(argv[0]);
@@ -39,7 +40,7 @@ int budgetEdit(int argc, const char* const argv[]) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 
         std::string field = argv[0];
@@ -75,7 +76,7 @@ int budgetDelete(int argc, const char* const argv[]) {
 
 		int budget_id = std::stoi(argv[0]);
 
-		Database db("budget-data.db");
+		Database db(PATH / "budget-data.db");
 		db.deleteBudget(budget_id);
     });
 }

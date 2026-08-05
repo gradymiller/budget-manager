@@ -29,6 +29,6 @@ void createFiles(fs::path dir) {
         );
     }
 
-	Database db("budget-data.db");
+	Database db(dir / "budget-data.db");
 	db.createTables();
 }

@@ -73,7 +73,7 @@ int cmdInit() {
 
 int cmdCurrent() {
 	return runCommand([&]() {
-		Database db("budget.db");
+		Database db(PATH / "budget-data.db");
 
 		auto current = db.getSetting("current_budget");
 
@@ -92,7 +92,7 @@ int cmdSwitch(int argc, const char* const* argv) {
 			throw std::invalid_argument("Too few arguments");
 		}
 
-		Database db("budget.db");
+		Database db(PATH / "budget-data.db");
 
 		db.setSetting(
 			"current_budget",
