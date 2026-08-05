@@ -1,49 +1,42 @@
+#include <filesystem>
 #include <gtest/gtest.h>
 
 #include "cli/budgetCmds.hpp"
 #include "cli/categoryCmds.hpp"
 #include "cli/otherCmds.hpp"
+#include "core/database.hpp"
+#include "core/path.hpp"
+
+namespace fs = std::filesystem;
+
 
 class CategoryCmdsTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-		try {
-			cmdInit();
-			const char* cleanup[] = {"TEST"};
-			budgetDelete(1, cleanup);
 
-		} catch (...) {}
-		
-        const char* argv1[] = {
+protected:
+
+    void SetUp() override {
+        fs::remove(PATH / "budget-data.db");
+
+        ASSERT_EQ(cmdInit(), 0);
+
+        const char* argv[] = {
             "TEST",
             "2026-01-01",
             "2026-08-02",
             "1000"
         };
 
-        budgetAdd(4, argv1);
-
-        const char* argv2[] = {"TEST"};
-        cmdSwitch(1, argv2);
+        ASSERT_EQ(budgetAdd(4, argv), 0);
     }
 
+
     void TearDown() override {
-        const char* argv[] = {"TEST"};
-        budgetDelete(1, argv);
+        fs::remove(PATH / "budget-data.db");
     }
 };
 
-const char* const* categoryHelper() {
-    static const char* argv[] = {
-        "test-category",
-        "expense",
-        "100"
-    };
 
-    return argv;
-}
-
-TEST_F(CategoryCmdsTest, categoryAddSuccess) {
+TEST_F(CategoryCmdsTest, CategoryAddSuccess) {
     const char* argv[] = {
         "add-success-category",
         "expense",
@@ -53,7 +46,8 @@ TEST_F(CategoryCmdsTest, categoryAddSuccess) {
     EXPECT_EQ(categoryAdd(3, argv), 0);
 }
 
-TEST_F(CategoryCmdsTest, categoryAddRejectInvalidName) {
+
+TEST_F(CategoryCmdsTest, CategoryAddRejectInvalidName) {
     const char* argv[] = {
         "-invalid-category",
         "expense",
@@ -63,7 +57,8 @@ TEST_F(CategoryCmdsTest, categoryAddRejectInvalidName) {
     EXPECT_EQ(categoryAdd(3, argv), 1);
 }
 
-TEST_F(CategoryCmdsTest, categoryAddRejectInvalidType) {
+
+TEST_F(CategoryCmdsTest, CategoryAddRejectInvalidType) {
     const char* argv[] = {
         "invalid-type-category",
         "idk",
@@ -73,7 +68,8 @@ TEST_F(CategoryCmdsTest, categoryAddRejectInvalidType) {
     EXPECT_EQ(categoryAdd(3, argv), 1);
 }
 
-TEST_F(CategoryCmdsTest, categoryAddRejectInvalidLimit) {
+
+TEST_F(CategoryCmdsTest, CategoryAddRejectInvalidLimit) {
     const char* argv[] = {
         "invalid-limit-category",
         "expense",
@@ -83,17 +79,19 @@ TEST_F(CategoryCmdsTest, categoryAddRejectInvalidLimit) {
     EXPECT_EQ(categoryAdd(3, argv), 1);
 }
 
-TEST_F(CategoryCmdsTest, categoryEditSuccess) {
+
+TEST_F(CategoryCmdsTest, CategoryEditSuccess) {
     const char* argv[] = {
         "edit-success-category",
         "expense",
         "100"
     };
 
-    EXPECT_EQ(categoryAdd(3, argv), 0);
+    ASSERT_EQ(categoryAdd(3, argv), 0);
+
 
     const char* args[] = {
-        "edit-success-category",
+        "1",
         "name",
         "edited-category"
     };
@@ -101,17 +99,19 @@ TEST_F(CategoryCmdsTest, categoryEditSuccess) {
     EXPECT_EQ(categoryEdit(3, args), 0);
 }
 
-TEST_F(CategoryCmdsTest, categoryEditRejectInvalidCategoryName) {
+
+TEST_F(CategoryCmdsTest, CategoryEditRejectInvalidCategoryName) {
     const char* argv[] = {
         "invalid-edit-category",
         "expense",
         "100"
     };
 
-    EXPECT_EQ(categoryAdd(3, argv), 0);
+    ASSERT_EQ(categoryAdd(3, argv), 0);
+
 
     const char* args[] = {
-        "invalid-edit-category",
+        "1",
         "name",
         "@@@a"
     };
@@ -119,17 +119,19 @@ TEST_F(CategoryCmdsTest, categoryEditRejectInvalidCategoryName) {
     EXPECT_EQ(categoryEdit(3, args), 1);
 }
 
-TEST_F(CategoryCmdsTest, categoryEditRejectInvalidCategoryType) {
+
+TEST_F(CategoryCmdsTest, CategoryEditRejectInvalidCategoryType) {
     const char* argv[] = {
         "invalid-type-edit-category",
         "expense",
         "100"
     };
 
-    EXPECT_EQ(categoryAdd(3, argv), 0);
+    ASSERT_EQ(categoryAdd(3, argv), 0);
+
 
     const char* args[] = {
-        "invalid-type-edit-category",
+        "1",
         "type",
         "failure"
     };
@@ -137,46 +139,51 @@ TEST_F(CategoryCmdsTest, categoryEditRejectInvalidCategoryType) {
     EXPECT_EQ(categoryEdit(3, args), 1);
 }
 
-TEST_F(CategoryCmdsTest, categoryDeleteSuccess) {
+
+TEST_F(CategoryCmdsTest, CategoryDeleteSuccess) {
     const char* argv[] = {
         "delete-success-category",
         "expense",
         "100"
     };
 
-    EXPECT_EQ(categoryAdd(3, argv), 0);
+    ASSERT_EQ(categoryAdd(3, argv), 0);
+
 
     const char* args[] = {
-        "delete-success-category"
+        "1"
     };
 
     EXPECT_EQ(categoryDelete(1, args), 0);
 }
 
-TEST_F(CategoryCmdsTest, categoryDeleteRejectInvalidCategory) {
+
+TEST_F(CategoryCmdsTest, CategoryDeleteRejectInvalidCategory) {
     const char* argv[] = {
         "delete-invalid-category",
         "expense",
         "100"
     };
 
-    EXPECT_EQ(categoryAdd(3, argv), 0);
+    ASSERT_EQ(categoryAdd(3, argv), 0);
+
 
     const char* args[] = {
-        "category-does-not-exist"
+        "999"
     };
 
     EXPECT_EQ(categoryDelete(1, args), 1);
 }
 
-TEST_F(CategoryCmdsTest, categoryListSuccess) {
+
+TEST_F(CategoryCmdsTest, CategoryListSuccess) {
     const char* argv[] = {
         "list-category",
         "expense",
         "100"
     };
 
-    EXPECT_EQ(categoryAdd(3, argv), 0);
+    ASSERT_EQ(categoryAdd(3, argv), 0);
 
     EXPECT_EQ(categoryList(), 0);
 }

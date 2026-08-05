@@ -289,8 +289,8 @@ Budget Database::loadBudget() {
 int Database::createBudget(const Budget& budget) {
 	const char* sql = R"(
 		INSERT INTO budgets 
-		(name, start_date, end_date)
-		VALUES (?, ?, ?);
+		(name, start_date, end_date, budget_limit)
+		VALUES (?, ?, ?, ?);
 	)";
 
 	sqlite3_stmt* stmt = nullptr;
@@ -321,6 +321,12 @@ int Database::createBudget(const Budget& budget) {
 		dateToStr(budget.getEndDate()).c_str(),
 		-1,
 		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_double(
+		stmt,
+		4,
+		budget.getLimit()
 	);
 	
 	if (sqlite3_step(stmt) != SQLITE_DONE) {
@@ -425,8 +431,8 @@ void Database::deleteBudget(int budget_id) {
 int Database::createCategory(const Category& category) {
 	const char* sql = R"(
 		INSERT INTO categories
-		(budget_id, name, type, category_limit)
-		VALUES (?, ?, ?, ?);
+		(budget_id, name, type, category_limit, usage)
+		VALUES (?, ?, ?, ?, 0);
 	)";
 
 	sqlite3_stmt* stmt = nullptr;

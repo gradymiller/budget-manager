@@ -1,31 +1,35 @@
+#include <filesystem>
 #include <gtest/gtest.h>
 
 #include "cli/budgetCmds.hpp"
 #include "cli/transactionCmds.hpp"
 #include "cli/categoryCmds.hpp"
 #include "cli/otherCmds.hpp"
+#include "core/database.hpp"
+#include "core/path.hpp"
+
+namespace fs = std::filesystem;
+
 
 class TransactionCmdsTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-		cmdInit();
-		const char* cleanup[] = {"TEST"};
-		budgetDelete(1, cleanup);
 
-        // Create fresh test budget
-        const char* argv1[] = {
+protected:
+
+    void SetUp() override {
+        fs::remove(PATH / "budget-data.db");
+
+        ASSERT_EQ(cmdInit(), 0);
+
+        const char* argv[] = {
             "TEST",
             "2026-01-01",
             "2026-08-02",
             "100000"
         };
 
-		ASSERT_EQ(budgetAdd(4, argv1), 0);
+        ASSERT_EQ(budgetAdd(4, argv), 0);
 
-        const char* argv2[] = {"TEST"};
-        ASSERT_EQ(cmdSwitch(1, argv2), 0);
 
-        // Add category needed for transactions
         const char* categoryArgs[] = {
             "test-category",
             "expense",
@@ -35,32 +39,33 @@ protected:
         ASSERT_EQ(categoryAdd(3, categoryArgs), 0);
     }
 
+
     void TearDown() override {
-        const char* argv[] = {"TEST"};
-        budgetDelete(1, argv);
+        fs::remove(PATH / "budget-data.db");
     }
 };
+
 
 const char* const* transactionHelper() {
     static const char* argv[] = {
         "50",
-        "test-category",
+        "1",
         "expense"
     };
 
     return argv;
 }
 
-TEST_F(TransactionCmdsTest, transactionAddSuccess) {
-    const char* const* argv = transactionHelper();
 
-    EXPECT_EQ(transactionAdd(3, argv), 0);
+TEST_F(TransactionCmdsTest, TransactionAddSuccess) {
+    EXPECT_EQ(transactionAdd(3, transactionHelper()), 0);
 }
 
-TEST_F(TransactionCmdsTest, transactionAddSuccessWithDate) {
+
+TEST_F(TransactionCmdsTest, TransactionAddSuccessWithDate) {
     const char* argv[] = {
         "50",
-        "test-category",
+        "1",
         "expense",
         "--date",
         "2026-02-01"
@@ -69,10 +74,11 @@ TEST_F(TransactionCmdsTest, transactionAddSuccessWithDate) {
     EXPECT_EQ(transactionAdd(5, argv), 0);
 }
 
-TEST_F(TransactionCmdsTest, transactionAddSuccessWithVendor) {
+
+TEST_F(TransactionCmdsTest, TransactionAddSuccessWithVendor) {
     const char* argv[] = {
         "50",
-        "test-category",
+        "1",
         "expense",
         "--vendor",
         "Walmart"
@@ -81,43 +87,45 @@ TEST_F(TransactionCmdsTest, transactionAddSuccessWithVendor) {
     EXPECT_EQ(transactionAdd(5, argv), 0);
 }
 
-TEST_F(TransactionCmdsTest, transactionAddRejectInvalidAmount) {
+
+TEST_F(TransactionCmdsTest, TransactionAddRejectInvalidAmount) {
     const char* argv[] = {
         "abc",
-        "test-category",
+        "1",
         "expense"
     };
 
     EXPECT_EQ(transactionAdd(3, argv), 1);
 }
 
-TEST_F(TransactionCmdsTest, transactionAddRejectInvalidCategory) {
+
+TEST_F(TransactionCmdsTest, TransactionAddRejectInvalidCategory) {
     const char* argv[] = {
         "50",
-        "invalid-category",
+        "999",
         "expense"
     };
 
     EXPECT_EQ(transactionAdd(3, argv), 1);
 }
 
-TEST_F(TransactionCmdsTest, transactionAddRejectInvalidType) {
+
+TEST_F(TransactionCmdsTest, TransactionAddRejectInvalidType) {
     const char* argv[] = {
         "50",
-        "test-category",
+        "1",
         "failure"
     };
 
     EXPECT_EQ(transactionAdd(3, argv), 1);
 }
 
-TEST_F(TransactionCmdsTest, transactionEditSuccess) {
-    const char* const* argv = transactionHelper();
 
-    EXPECT_EQ(transactionAdd(3, argv), 0);
+TEST_F(TransactionCmdsTest, TransactionEditSuccess) {
+    ASSERT_EQ(transactionAdd(3, transactionHelper()), 0);
 
     const char* args[] = {
-        "0",
+        "1",
         "amount",
         "100"
     };
@@ -125,7 +133,8 @@ TEST_F(TransactionCmdsTest, transactionEditSuccess) {
     EXPECT_EQ(transactionEdit(3, args), 0);
 }
 
-TEST_F(TransactionCmdsTest, transactionEditRejectInvalidID) {
+
+TEST_F(TransactionCmdsTest, TransactionEditRejectInvalidID) {
     const char* args[] = {
         "999",
         "amount",
@@ -135,13 +144,12 @@ TEST_F(TransactionCmdsTest, transactionEditRejectInvalidID) {
     EXPECT_EQ(transactionEdit(3, args), 1);
 }
 
-TEST_F(TransactionCmdsTest, transactionEditRejectInvalidField) {
-    const char* const* argv = transactionHelper();
 
-    EXPECT_EQ(transactionAdd(3, argv), 0);
+TEST_F(TransactionCmdsTest, TransactionEditRejectInvalidField) {
+    ASSERT_EQ(transactionAdd(3, transactionHelper()), 0);
 
     const char* args[] = {
-        "0",
+        "1",
         "invalid",
         "100"
     };
@@ -149,13 +157,12 @@ TEST_F(TransactionCmdsTest, transactionEditRejectInvalidField) {
     EXPECT_EQ(transactionEdit(3, args), 1);
 }
 
-TEST_F(TransactionCmdsTest, transactionEditRejectInvalidValue) {
-    const char* const* argv = transactionHelper();
 
-    EXPECT_EQ(transactionAdd(3, argv), 0);
+TEST_F(TransactionCmdsTest, TransactionEditRejectInvalidValue) {
+    ASSERT_EQ(transactionAdd(3, transactionHelper()), 0);
 
     const char* args[] = {
-        "0",
+        "1",
         "amount",
         "abc"
     };
@@ -163,19 +170,19 @@ TEST_F(TransactionCmdsTest, transactionEditRejectInvalidValue) {
     EXPECT_EQ(transactionEdit(3, args), 1);
 }
 
-TEST_F(TransactionCmdsTest, transactionDeleteSuccess) {
-    const char* const* argv = transactionHelper();
 
-    EXPECT_EQ(transactionAdd(3, argv), 0);
+TEST_F(TransactionCmdsTest, TransactionDeleteSuccess) {
+    ASSERT_EQ(transactionAdd(3, transactionHelper()), 0);
 
     const char* args[] = {
-        "0"
+        "1"
     };
 
     EXPECT_EQ(transactionDelete(1, args), 0);
 }
 
-TEST_F(TransactionCmdsTest, transactionDeleteRejectInvalidTransaction) {
+
+TEST_F(TransactionCmdsTest, TransactionDeleteRejectInvalidTransaction) {
     const char* args[] = {
         "999"
     };
@@ -183,10 +190,9 @@ TEST_F(TransactionCmdsTest, transactionDeleteRejectInvalidTransaction) {
     EXPECT_EQ(transactionDelete(1, args), 1);
 }
 
-TEST_F(TransactionCmdsTest, transactionListSuccess) {
-    const char* const* argv = transactionHelper();
 
-    EXPECT_EQ(transactionAdd(3, argv), 0);
+TEST_F(TransactionCmdsTest, TransactionListSuccess) {
+    ASSERT_EQ(transactionAdd(3, transactionHelper()), 0);
 
     EXPECT_EQ(transactionList(), 0);
 }
