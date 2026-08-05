@@ -127,7 +127,7 @@ TEST_F(TransactionCmdsTest, TransactionEditSuccess) {
     const char* args[] = {
         "1",
         "amount",
-        "100"
+        "25"
     };
 
     EXPECT_EQ(transactionEdit(3, args), 0);
@@ -138,7 +138,7 @@ TEST_F(TransactionCmdsTest, TransactionEditRejectInvalidID) {
     const char* args[] = {
         "999",
         "amount",
-        "100"
+        "25"
     };
 
     EXPECT_EQ(transactionEdit(3, args), 1);
@@ -151,7 +151,7 @@ TEST_F(TransactionCmdsTest, TransactionEditRejectInvalidField) {
     const char* args[] = {
         "1",
         "invalid",
-        "100"
+        "25"
     };
 
     EXPECT_EQ(transactionEdit(3, args), 1);

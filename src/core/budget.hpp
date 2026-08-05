@@ -103,6 +103,7 @@ public:
 
 	void addCategory(const Category&);
 	void addTransaction(const Transaction&);
+	double getUsage();
 
 private:
     // Identifier assigned to the next transaction that is created. This should

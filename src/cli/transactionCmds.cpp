@@ -50,6 +50,8 @@ int transactionAdd(int argc, const char* const* argv) {
 		);
 
 		auto txn_id = db.createTransaction(txn);
+		db.updateCategory(budget.getCategory(txn.getCategoryID()));
+
 		std::cout << "Transaction ID: " << txn_id << '\n';
 	});
 }
@@ -65,7 +67,11 @@ int transactionEdit(int argc, const char* const* argv) {
 		Budget budget = db.loadBudget();
 
 		auto txn_id = budget.editTransaction(argv[0], argv[1], argv[2]);
-		db.updateTransaction(budget.getTransaction(txn_id));
+
+		Transaction txn = budget.getTransaction(txn_id);
+		db.updateTransaction(txn);
+
+		db.updateCategory(budget.getCategory(txn.getCategoryID()));
 	});
 }
 
@@ -81,6 +87,9 @@ int transactionDelete(int argc, const char* const* argv) {
 
 		auto txn_id = budget.delTransaction(argv[0]);
 		db.deleteTransaction(txn_id);
+
+		Transaction txn = budget.getTransaction(txn_id);
+		db.updateCategory(budget.getCategory(txn.getCategoryID()));
 	});
 }
 

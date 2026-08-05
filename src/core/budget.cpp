@@ -1,7 +1,6 @@
 // TODO: change categories to dictionary instead of list
 #include "core/budget.hpp"
 
-#include <iostream>
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -323,4 +322,9 @@ void Budget::addCategory(const Category& category) {
 void Budget::addTransaction(const Transaction& txn) {
 	int id = txn.getID();
 	this->transactions[id] = txn;
+}
+
+
+double Budget::getUsage() {
+	return categories[1].getUsage();
 }
