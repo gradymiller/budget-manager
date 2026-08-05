@@ -45,7 +45,8 @@ void Database::createTables() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL,
 			start_date TEXT NOT NULL,
-			end_date TEXT NOT NULL
+			end_date TEXT NOT NULL,
+			limit REAL NOT NULL
 		);
 	)";
 
@@ -56,6 +57,7 @@ void Database::createTables() {
 			name TEXT NOT NULL,
 			type TEXT NOT NULL,
 			limit REAL NOT NULL,
+			usage REAL NOT NULL,
 
 			FOREIGN KEY(budget_id)
 				REFERENCES budgets(id)
@@ -152,13 +154,137 @@ void Database::setSetting(const std::string& key,
 }
 
 Budget Database::loadBudget() {
-	Budget budget;
+    auto current = getSetting("current_budget");
 
-	// TODO: load budget here
+    if (!current) {
+        throw std::runtime_error("No current budget selected.");
+    }
 
-	return budget;
+    int budget_id = std::stoi(*current);
+
+    Budget budget;
+    budget.setID(budget_id);
+
+    sqlite3_stmt* stmt = nullptr;
+
+    // Load budget metadata
+    const char* budgetSQL = R"(
+        SELECT name, start_date, end_date, limit
+        FROM budgets
+        WHERE id = ?;
+    )";
+
+    if (sqlite3_prepare_v2(db, budgetSQL, -1, &stmt, nullptr) != SQLITE_OK)
+        throw std::runtime_error(sqlite3_errmsg(db));
+
+    sqlite3_bind_int(stmt, 1, budget_id);
+
+    if (sqlite3_step(stmt) != SQLITE_ROW) {
+        sqlite3_finalize(stmt);
+        throw std::runtime_error("Current budget not found.");
+    }
+
+    budget.setName(
+        reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
+
+    budget.setStartDate(
+        reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+
+    budget.setEndDate(
+        reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+
+    budget.setLimit(
+        std::to_string(sqlite3_column_double(stmt, 3)));
+
+    sqlite3_finalize(stmt);
+
+    // Load categories
+    const char* categorySQL = R"(
+        SELECT id,
+               budget_id,
+               name,
+               type,
+               limit,
+               usage
+        FROM categories
+        WHERE budget_id = ?;
+    )";
+
+    if (sqlite3_prepare_v2(db, categorySQL, -1, &stmt, nullptr) != SQLITE_OK)
+        throw std::runtime_error(sqlite3_errmsg(db));
+
+    sqlite3_bind_int(stmt, 1, budget_id);
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        Category category;
+
+        category.setID(sqlite3_column_int(stmt, 0));
+        category.setBudgetID(sqlite3_column_int(stmt, 1));
+
+        category.setName(
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+
+        category.setType(
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+
+        category.setLimit(sqlite3_column_double(stmt, 4));
+
+        category.addUsage(sqlite3_column_double(stmt, 5));
+
+        budget.addCategory(category);
+    }
+
+    sqlite3_finalize(stmt);
+
+    // Load transactions
+    const char* transactionSQL = R"(
+        SELECT t.id,
+               t.amount,
+               t.category_id,
+               t.type,
+               t.date,
+               t.vendor
+        FROM transactions t
+        JOIN categories c
+            ON c.id = t.category_id
+        WHERE c.budget_id = ?;
+    )";
+
+    if (sqlite3_prepare_v2(db, transactionSQL, -1, &stmt, nullptr) != SQLITE_OK)
+        throw std::runtime_error(sqlite3_errmsg(db));
+
+    sqlite3_bind_int(stmt, 1, budget_id);
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        Transaction txn;
+
+        txn.setID(sqlite3_column_int(stmt, 0));
+
+        txn.setAmount(
+            std::to_string(sqlite3_column_double(stmt, 1)));
+
+        txn.setCategoryID(sqlite3_column_int(stmt, 2));
+
+        txn.setType(
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+
+        if (sqlite3_column_type(stmt, 4) != SQLITE_NULL) {
+            txn.setDate(
+                reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
+        }
+
+        if (sqlite3_column_type(stmt, 5) != SQLITE_NULL) {
+            txn.setVendor(
+                reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5)));
+        }
+
+        budget.addTransaction(txn);
+    }
+
+    sqlite3_finalize(stmt);
+
+    return budget;
 }
-
 
 int Database::createBudget(const Budget& budget) {
 	const char* sql = R"(

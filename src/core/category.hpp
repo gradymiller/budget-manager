@@ -29,6 +29,8 @@ public:
 
 	void setID(int id);
 
+	void setBudgetID(int budget_id);
+
 	// Rename the category.
 	void setName(const std::string& name);
 

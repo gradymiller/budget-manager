@@ -64,7 +64,7 @@ Transaction Budget::getTransaction(int txn_id) {
 	return transactions[txn_id];
 }
 
-void setID(int id) {
+void Budget::setID(int id) {
 	this->id = id;
 }
 
@@ -302,4 +302,23 @@ int Budget::delTransaction(const std::string& id) {
 	categories[transactions[new_id].getCategoryID()].delUsage(amt);	
 	
 	return new_id;
+}
+
+
+
+
+
+// TODO: Clean this up
+void Budget::addCategory(const Category& category) {
+	int id = category.getID();
+	this->categories[id] = category;
+}
+
+
+// TODO: cleanup up usage of these duplicates
+// TODO: could change cli access to create classes then use this version
+// instead of full string version
+void Budget::addTransaction(const Transaction& txn) {
+	int id = txn.getID();
+	this->transactions[id] = txn;
 }

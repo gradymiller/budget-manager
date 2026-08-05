@@ -29,8 +29,12 @@ double Category::getUsage() const {
 }
 
 
-void setID(int id) {
+void Category::setID(int id) {
 	this->id = id;
+}
+
+void Category::setBudgetID(int budget_id) {
+	this->budget_id = budget_id;
 }
 
 // Category names may contain only alphanumeric characters, underscores,

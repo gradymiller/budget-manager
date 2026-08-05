@@ -101,6 +101,9 @@ public:
 	// incrementing from the current spot.
     int delTransaction(const std::string& id);
 
+	void addCategory(const Category&);
+	void addTransaction(const Transaction&);
+
 private:
     // Identifier assigned to the next transaction that is created. This should
 	// always be one ahead of the highest transaction ID saved so far. This

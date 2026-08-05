@@ -31,7 +31,7 @@ const std::optional<std::string>& Transaction::getVendor() const {
     return vendor;
 }
 
-void setID(int id) {
+void Transaction::setID(int id) {
 	this->id = id;
 }
 
