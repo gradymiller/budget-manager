@@ -66,6 +66,17 @@ int categoryDelete(int argc, const char* const argv[]) {
 
 int categoryList() {
     return runCommand([&]() {
-			std::cout << "NOTHING HERE RIGHT NOW\n";
+		Database db(PATH / "budget-data.db");
+		std::vector<Category> categories = db.readCategories();
+
+		std::cout << "ID, Budget ID, Name, Type, Limit, Usage\n";
+		for (auto category : categories) {
+			std::cout << category.getID() << ", "
+					  << category.getBudgetID() << ", "
+					  << category.getName() << ", "
+					  << category.getType() << ", "
+					  << category.getLimit() << ", "
+					  << category.getUsage() << '\n';
+		}
     });
 }

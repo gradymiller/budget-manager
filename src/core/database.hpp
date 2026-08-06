@@ -39,12 +39,14 @@ public:
     int createBudget(const Budget& budget);
     void updateBudget(const Budget& budget);
     void deleteBudget(int budget_id);
+	std::vector<Budget> readBudgets();
 
 
     // Category persistence
     int createCategory(const Category& category);
     void updateCategory(const Category& category);
     void deleteCategory(int category_id);
+	std::vector<Category> readCategories();
 
 
     // Transaction persistence

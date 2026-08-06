@@ -80,11 +80,19 @@ int budgetDelete(int argc, const char* const argv[]) {
     });
 }
 
-// TODO: Print out the budget metadata along with the names
 int budgetList() {
 
 	// This is a template runner
     return runCommand([&]() {
-		std::cout << "NOTHING HERE RIGHT NOW" << '\n';
+		Database db(PATH / "budget-data.db");
+		std::vector<Budget> budgets = db.readBudgets();
+
+		std::cout << "ID, Name, Start Date, End Date\n";
+		for (auto budget : budgets) {
+			std::cout << budget.getID() << ", "
+					  << budget.getName() << ", "
+					  << budget.getStartDate() << ", "
+					  << budget.getEndDate() << '\n';
+		}
     });
 }

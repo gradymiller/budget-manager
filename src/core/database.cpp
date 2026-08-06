@@ -410,6 +410,42 @@ void Database::deleteBudget(int budget_id) {
     sqlite3_finalize(stmt);
 }
 
+std::vector<Budget> Database::readBudgets() {
+    const char* sql = R"(
+        SELECT id,
+               name,
+			   start_date,
+			   end_date
+        FROM budgets 
+    )";
+
+    sqlite3_stmt* stmt = nullptr;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        throw std::runtime_error(sqlite3_errmsg(db));
+    }
+
+    std::vector<Budget> budgets;
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+		Budget budget;
+
+        budget.setID(sqlite3_column_int(stmt, 0));
+        budget.setName(
+			reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+        budget.setStartDate(
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        budget.setEndDate(
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+
+        budgets.push_back(std::move(budget));
+    }
+
+    sqlite3_finalize(stmt);
+
+    return budgets;
+}
+
 
 int Database::createCategory(const Category& category) {
 	const char* sql = R"(
@@ -555,6 +591,56 @@ void Database::deleteCategory(int category_id) {
     sqlite3_finalize(stmt);
 }
 
+
+std::vector<Category> Database::readCategories() {
+    auto current = getSetting("current_budget");
+
+    if (!current || current->empty()) {
+        throw std::runtime_error("No current budget selected.");
+    }
+
+    int budget_id = std::stoi(*current);
+
+    const char* sql = R"(
+        SELECT id,
+               budget_id,
+               name,
+               type,
+               category_limit,
+               usage
+        FROM categories
+        WHERE budget_id = ?;
+    )";
+
+    sqlite3_stmt* stmt = nullptr;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        throw std::runtime_error(sqlite3_errmsg(db));
+    }
+
+    sqlite3_bind_int(stmt, 1, budget_id);
+
+    std::vector<Category> categories;
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        Category category;
+
+        category.setID(sqlite3_column_int(stmt, 0));
+        category.setBudgetID(sqlite3_column_int(stmt, 1));
+        category.setName(
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        category.setType(
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+        category.setLimit(sqlite3_column_double(stmt, 4));
+        category.addUsage(sqlite3_column_double(stmt, 5));
+
+        categories.push_back(std::move(category));
+    }
+
+    sqlite3_finalize(stmt);
+
+    return categories;
+}
 
 int Database::createTransaction(const Transaction& txn) {
 	const char* sql = R"(
