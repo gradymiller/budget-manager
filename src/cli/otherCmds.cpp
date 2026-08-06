@@ -93,10 +93,22 @@ int cmdSwitch(int argc, const char* const* argv) {
 		}
 
 		Database db(PATH / "budget-data.db");
+		std::vector<Budget> budgets = db.readBudgets();
 
-		db.setSetting(
-			"current_budget",
-			argv[0]
-		);
+		int curr_id = std::stoi(argv[0]);
+
+		bool found = false;
+		for (auto budget : budgets) {
+			if (curr_id == budget.getID()) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			throw std::runtime_error("Invalid budget ID, cannot switch");
+		}
+
+		db.setSetting("current_budget", argv[0]);
 	});
 }
