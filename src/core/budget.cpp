@@ -63,11 +63,23 @@ std::unordered_map<int, Transaction> Budget::getTransactions() const {
 }
 
 Category Budget::getCategory(int category_id) {
-	return categories.at(category_id);
+	auto it = categories.find(category_id);
+
+	if (it == categories.end()) {
+		throw std::invalid_argument("Category not found");
+	}
+
+	return it->second;
 }
 
 Transaction Budget::getTransaction(int txn_id) {
-	return transactions.at(txn_id);
+	auto it = transactions.find(txn_id);
+
+	if (it == transactions.end()) {
+		throw std::invalid_argument("Transaction not found");
+	}
+
+	return it->second;
 }
 
 void Budget::setID(int id) {
@@ -175,7 +187,7 @@ int Budget::delCategory(const std::string& category_id) {
 
 	// Uses swap and pop_back to prevent O(n) deletion due to shifting.
 	if (categories.erase(new_id) == 0) {
-		throw std::runtime_error("No category found to be deleted");
+		throw std::invalid_argument("No category found");
 	}
 	return new_id;
 }
@@ -261,8 +273,13 @@ int Budget::editTransaction(const std::string& id,
 int Budget::delTransaction(const std::string& id) {
 	int new_id = std::stoi(id);
 
-	double amt = transactions[new_id].getAmount();
+	auto it = transactions.find(new_id);
 
+	if (it == transactions.end()) {
+		throw std::invalid_argument("Transaction not found");
+	}
+
+	double amt = it->second.getAmount();
 	auto removed = transactions.erase(new_id);
 	
 	if (removed == 0) {
