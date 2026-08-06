@@ -174,8 +174,9 @@ int Budget::delCategory(const std::string& category_id) {
 	}
 
 	// Uses swap and pop_back to prevent O(n) deletion due to shifting.
-	categories.erase(new_id);
-
+	if (categories.erase(new_id) == 0) {
+		throw std::runtime_error("No category found to be deleted");
+	}
 	return new_id;
 }
 
