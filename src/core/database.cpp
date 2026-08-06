@@ -45,7 +45,7 @@ void Database::createTables() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL,
 			start_date TEXT NOT NULL,
-			end_date TEXT NOT NULL,
+			end_date TEXT NOT NULL
 		);
 	)";
 
@@ -286,7 +286,7 @@ int Database::createBudget(const Budget& budget) {
 	const char* sql = R"(
 		INSERT INTO budgets 
 		(name, start_date, end_date)
-		VALUES (?, ?, ?, ?);
+		VALUES (?, ?, ?);
 	)";
 
 	sqlite3_stmt* stmt = nullptr;
@@ -337,7 +337,7 @@ void Database::updateBudget(const Budget& budget) {
 		SET
 			name = ?,
 			start_date = ?,
-			end_date = ?,
+			end_date = ?
 		WHERE id = ?;
 	)";
 

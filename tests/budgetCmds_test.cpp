@@ -63,18 +63,6 @@ TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidName2) {
 }
 
 
-TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidLimit) {
-    const char* argv[] = {
-        "TEST2",
-        "2026-02-02",
-        "2026-12-31",
-        "abc"
-    };
-
-    EXPECT_EQ(budgetAdd(4, argv), 1);
-}
-
-
 TEST_F(BudgetCmdsTest, BudgetAddRejectInvalidStartDate1) {
     const char* argv[] = {
         "TEST2",
@@ -137,13 +125,6 @@ TEST_F(BudgetCmdsTest, BudgetEditSuccess) {
     };
 
     EXPECT_EQ(budgetEdit(2, args2), 0);
-
-    const char* args3[] = {
-        "limit",
-        "12345.55"
-    };
-
-    EXPECT_EQ(budgetEdit(2, args3), 0);
 }
 
 

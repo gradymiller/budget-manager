@@ -45,7 +45,7 @@ std::chrono::system_clock::time_point Budget::getEndDate() const {
 }
 
 double Budget::getLimit() const {
-	double total;
+	double total = 0;
 
 	for (const auto& [id, category] : categories) {
         total += category.getLimit();
@@ -63,11 +63,11 @@ std::unordered_map<int, Transaction> Budget::getTransactions() const {
 }
 
 Category Budget::getCategory(int category_id) {
-	return categories[category_id];
+	return categories.at(category_id);
 }
 
 Transaction Budget::getTransaction(int txn_id) {
-	return transactions[txn_id];
+	return transactions.at(txn_id);
 }
 
 void Budget::setID(int id) {
@@ -153,10 +153,7 @@ int Budget::editCategory(const std::string& category_id,
 		categories[new_id].setType(value);
 
 	} else if (field == "limit") {
-		double old_limit = categories[new_id].getLimit();
-
 		categories[new_id].setLimit(value);
-		double new_limit = categories[new_id].getLimit();
 
 	} else {
 		throw std::invalid_argument("Invalid field. Cannot edit");
