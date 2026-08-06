@@ -271,29 +271,27 @@ int Budget::editTransaction(const std::string& id,
 }
 
 int Budget::delTransaction(const std::string& id) {
-	int new_id = std::stoi(id);
+    int new_id = std::stoi(id);
 
-	auto it = transactions.find(new_id);
+    auto it = transactions.find(new_id);
+    if (it == transactions.end()) {
+        throw std::invalid_argument("Transaction not found");
+    }
 
-	if (it == transactions.end()) {
-		throw std::invalid_argument("Transaction not found");
-	}
+    double amt = it->second.getAmount();
+    int category_id = it->second.getCategoryID();
 
-	double amt = it->second.getAmount();
-	auto removed = transactions.erase(new_id);
-	
-	if (removed == 0) {
-		throw std::invalid_argument("Transaction not found");
-	}
-	
-	categories[transactions[new_id].getCategoryID()].delUsage(amt);	
-	
-	return new_id;
+    auto cat_it = categories.find(category_id);
+    if (cat_it == categories.end()) {
+        throw std::runtime_error("Transaction references missing category");
+    }
+
+    cat_it->second.delUsage(amt);
+
+    transactions.erase(it);
+
+    return new_id;
 }
-
-
-
-
 
 // TODO: Clean this up
 void Budget::addCategory(const Category& category) {

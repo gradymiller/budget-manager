@@ -85,11 +85,12 @@ int transactionDelete(int argc, const char* const* argv) {
 		Database db(PATH / "budget-data.db");
 		Budget budget = db.loadBudget();
 
-		auto txn_id = budget.delTransaction(argv[0]);
-		db.deleteTransaction(txn_id);
+		Transaction txn = budget.getTransaction(std::stoi(argv[0]));
+		int category_id = txn.getCategoryID();
 
-		Transaction txn = budget.getTransaction(txn_id);
-		db.updateCategory(budget.getCategory(txn.getCategoryID()));
+		budget.delTransaction(argv[0]);
+		db.deleteTransaction(txn.getID());
+		db.updateCategory(budget.getCategory(category_id));
 	});
 }
 
