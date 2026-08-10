@@ -82,26 +82,22 @@ void Transaction::setDate(const std::string& date) {
 // Contrains to alphanumeric characters. Hyphens and dashes are allowed as long
 // as they are not at the beginning or end of the string.
 void Transaction::setVendor(const std::string& vendor) {
-	if (vendor.empty()) {
-		throw std::invalid_argument("Vendor name cannot be empty");
-	}
-	
-	for (size_t i=0; i < vendor.size(); i++) {
-		char c = vendor[i];
+    if (vendor.empty()) {
+        throw std::invalid_argument("Vendor name cannot be empty");
+    }
 
-		if (c == '_' || c == '-') {
-			if (i == 0 || i == vendor.size() - 1) {
-				std::ostringstream msg;
-				msg << "'" << c << "' cannot be at the beginning or end of the vendor name";
-				throw std::invalid_argument(msg.str());
-			}
+    for (size_t i = 0; i < vendor.size(); i++) {
+        char c = vendor[i];
 
-		} else if (!std::isalnum(static_cast<unsigned char>(c))) {
-				std::ostringstream msg;
-				msg << "'" << c << "' is not a valid character";
-				throw std::invalid_argument(msg.str());
-		}
-	}
+        if (c == '_' || c == '-') {
+            if (i == 0 || i == vendor.size() - 1) {
+                std::ostringstream msg;
+                msg << "'" << c
+                    << "' cannot be at the beginning or end of the vendor name";
+                throw std::invalid_argument(msg.str());
+            }
+        }
+    }
 
     this->vendor = std::move(vendor);
 }
