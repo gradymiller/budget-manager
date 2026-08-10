@@ -91,7 +91,7 @@ TEST_F(CategoryCmdsTest, CategoryEditSuccess) {
 
 
     const char* args[] = {
-        "1",
+        "2",
         "name",
         "edited-category"
     };
@@ -151,7 +151,7 @@ TEST_F(CategoryCmdsTest, CategoryDeleteSuccess) {
 
 
     const char* args[] = {
-        "1"
+        "2"
     };
 
     EXPECT_EQ(categoryDelete(1, args), 0);

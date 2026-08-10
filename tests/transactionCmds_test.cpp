@@ -49,7 +49,7 @@ protected:
 const char* const* transactionHelper() {
     static const char* argv[] = {
         "50",
-        "1",
+        "2",
         "expense"
     };
 

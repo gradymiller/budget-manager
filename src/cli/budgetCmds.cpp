@@ -30,6 +30,12 @@ int budgetAdd(int argc, const char* const argv[]) {
 		int budget_id = db.createBudget(budget);
 		db.setSetting("current_budget", std::to_string(budget_id));
 
+		// Add the unassigned category
+		Category category = budget.addCategory("unassigned", "other", "0");
+		category.setBudgetID(budget_id);
+		int category_id = db.createCategory(category);
+		category.setID(category_id);
+
 		std::cout << "Budget ID: " << budget_id << '\n';
     });
 }

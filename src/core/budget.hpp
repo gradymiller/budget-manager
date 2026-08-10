@@ -121,6 +121,7 @@ private:
 	// metadata are accessed through the Category class.
     std::unordered_map<int, Category> categories;
 
+
     // Transactions keyed by their unique identifier. Transactions should be
 	// interacted with using the Transaction class.
     std::unordered_map<int, Transaction> transactions;

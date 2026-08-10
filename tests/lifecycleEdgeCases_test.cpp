@@ -142,7 +142,7 @@ TEST_F(LifecycleEdgeCaseTest, BudgetsHaveSeparateTransactions)
 
     const char* txn[] = {
         "100",
-        "1",
+        "2",
         "expense"
     };
 

@@ -158,6 +158,10 @@ int Budget::editCategory(const std::string& category_id,
 
 	int new_id = std::stoi(category_id);
 
+	if (new_id == 1) {
+		throw std::runtime_error("Cannot edit the unassigned category");
+	}
+
 	if (field == "name") {
 		categories[new_id].setName(value);
 
@@ -176,6 +180,10 @@ int Budget::editCategory(const std::string& category_id,
 
 int Budget::delCategory(const std::string& category_id) {
 	int new_id = std::stoi(category_id);
+
+	if (new_id == 1) {
+		throw std::runtime_error("Cannot delete the unassigned category");
+	}
 
 	// Transactions must be updated to new categories before a category can be
 	// deleted from the budget
@@ -217,7 +225,9 @@ Transaction Budget::addTransaction(const std::string& amount,
 		txn.setVendor(vendor);
 	}
 
-	categories[new_id].addUsage(txn.getAmount()); 
+	if (txn.getCategoryID() != 1) {
+		categories[new_id].addUsage(txn.getAmount()); 
+	}
 
 	transactions.emplace(next_id, std::move(txn));	
 
@@ -252,7 +262,17 @@ int Budget::editTransaction(const std::string& id,
 		categories[c_index].addUsage(new_amt);
 
 	} else if (field == "category") {
+		int c_id = transactions[new_id].getCategoryID();
 		transactions[new_id].setCategoryID(std::stoi(value));
+		int new_c_id = transactions[new_id].getCategoryID();
+		
+		if (c_id == 1) {
+			categories[new_c_id].addUsage(transactions[new_id].getAmount());
+
+		} else {
+			categories[c_id].delUsage(transactions[new_id].getAmount());
+			categories[new_c_id].addUsage(transactions[new_id].getAmount());
+		}
 
 	} else if (field == "type") {
 		transactions[new_id].setType(value);
@@ -286,7 +306,9 @@ int Budget::delTransaction(const std::string& id) {
         throw std::runtime_error("Transaction references missing category");
     }
 
-    cat_it->second.delUsage(amt);
+	if (cat_it->second.getID() != 1) {
+		cat_it->second.delUsage(amt);
+	}
 
     transactions.erase(it);
 

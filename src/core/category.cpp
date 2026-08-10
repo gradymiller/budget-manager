@@ -68,8 +68,8 @@ void Category::setType(std::string type) {
 	});
 
 	// Income and Expense are the only two valid category types
-	if (type != "income" && type != "expense") {
-		throw std::invalid_argument("Transaction type must be `income` or `expense`");
+	if (type != "income" && type != "expense" && type != "other") {
+		throw std::invalid_argument("Transaction type must be `income` or `expense` or `other`");
 
 	} else {
 		this->type = type;
@@ -86,8 +86,8 @@ void Category::setLimit(const std::string& limit) {
 		throw std::invalid_argument("Category limit must be a number");
 	}
 
-	if (value <= 0) {
-		throw std::invalid_argument("Category limit must be greater than 0");
+	if (value < 0) {
+		throw std::invalid_argument("Category limit must be greater than or equal to 0");
 	}
 
 	this->limit = value;
@@ -95,8 +95,8 @@ void Category::setLimit(const std::string& limit) {
 
 // Alternative version that can take in a different type
 void Category::setLimit(double limit) {
-	if (limit <= 0) {
-		throw std::invalid_argument("Category limit must be greater than 0");
+	if (limit < 0) {
+		throw std::invalid_argument("Category limit must be greater than or equal to 0");
 	}
 
 	this->limit = limit;
