@@ -890,10 +890,26 @@ void Database::deleteTransaction(int txn_id) {
     sqlite3_finalize(stmt);
 }
 
+void Database::readTransactions() {
+    const char* sql = R"(
+        SELECT id, category_id, amount, type, date, vendor
+        FROM transactions
+    )";
 
-std::vector<Transaction> Database::readTransactions(
-	const TransactionFilter& filter) {
-    // TODO: build SELECT query using filter
-    return {};
+    sqlite3_stmt* stmt = nullptr;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        throw std::runtime_error(sqlite3_errmsg(db));
+    }
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+		std::cout << sqlite3_column_int(stmt, 0) << ", ";
+		std::cout << sqlite3_column_int(stmt, 1) << ", ";
+		std::cout << sqlite3_column_double(stmt, 2) << ", ";
+		std::cout << sqlite3_column_text(stmt, 3) << ", ";
+		std::cout << sqlite3_column_text(stmt, 4) << ", ";
+        std::cout << sqlite3_column_text(stmt, 5) << '\n';
+	}
+
+    sqlite3_finalize(stmt);
 }
-

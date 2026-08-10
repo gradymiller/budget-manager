@@ -54,9 +54,7 @@ public:
     void updateTransaction(const Transaction& txn);
     void deleteTransaction(int txn_id);
 
-    std::vector<Transaction> readTransactions(
-        const TransactionFilter& filter = {}
-    );
+    void readTransactions();
 
 
 private:

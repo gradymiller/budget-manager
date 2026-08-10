@@ -94,9 +94,9 @@ int transactionDelete(int argc, const char* const* argv) {
 	});
 }
 
-
 int transactionList() {
-	return runCommand([&]() {
-		std::cout << "NOTHING HERE RIGHT NOW" << '\n';
-	});
+    return runCommand([&]() {
+        Database db(PATH / "budget-data.db");
+        db.readTransactions();
+    });
 }
