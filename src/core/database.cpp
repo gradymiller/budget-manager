@@ -902,13 +902,15 @@ void Database::readTransactions() {
         throw std::runtime_error(sqlite3_errmsg(db));
     }
 
+	std::cout << "id, category_id, amount, type, date, vendor\n";
+
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-		std::cout << sqlite3_column_int(stmt, 0) << ", ";
-		std::cout << sqlite3_column_int(stmt, 1) << ", ";
-		std::cout << sqlite3_column_double(stmt, 2) << ", ";
-		std::cout << sqlite3_column_text(stmt, 3) << ", ";
-		std::cout << sqlite3_column_text(stmt, 4) << ", ";
-        std::cout << sqlite3_column_text(stmt, 5) << '\n';
+		std::cout << sqlite3_column_int(stmt, 0) << ", "
+				  << sqlite3_column_int(stmt, 1) << ", "
+				  << sqlite3_column_double(stmt, 2) << ", "
+				  << sqlite3_column_text(stmt, 3) << ", "
+				  << sqlite3_column_text(stmt, 4) << ", "
+				  << sqlite3_column_text(stmt, 5) << '\n';
 	}
 
     sqlite3_finalize(stmt);
