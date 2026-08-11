@@ -226,7 +226,12 @@ Transaction Budget::addTransaction(const std::string& amount,
 	}
 
 	if (txn.getCategoryID() != 1) {
-		categories[new_id].addUsage(txn.getAmount()); 
+		if (txn.getType() == categories[new_id].getType()) {
+			categories[new_id].addUsage(txn.getAmount()); 
+
+		} else {
+			categories[new_id].delUsage(txn.getAmount());
+		}
 	}
 
 	transactions.emplace(next_id, std::move(txn));	
@@ -251,27 +256,43 @@ int Budget::editTransaction(const std::string& id,
 	double old_amt = transactions[new_id].getAmount();	
 
 	if (field == "amount") {
-		transactions[new_id].setAmount(value);
+		it->second.setAmount(value);
 
-		double new_amt = transactions[new_id].getAmount();
+		double new_amt = it->second.getAmount();
 
-		int c_index = transactions[new_id].getCategoryID();
+		int c_index = it->second.getCategoryID();
 		
 		// Recalculate new category amount when transaction amount changes
-		categories[c_index].delUsage(old_amt);
-		categories[c_index].addUsage(new_amt);
+		if (it->second.getType() == categories[c_index].getType()) {
+			categories[c_index].delUsage(old_amt);
+			categories[c_index].addUsage(new_amt);
+
+		} else {
+			categories[c_index].delUsage(new_amt);
+			categories[c_index].addUsage(old_amt);
+		}
 
 	} else if (field == "category") {
 		int c_id = transactions[new_id].getCategoryID();
 		transactions[new_id].setCategoryID(std::stoi(value));
 		int new_c_id = transactions[new_id].getCategoryID();
 		
-		if (c_id == 1) {
-			categories[new_c_id].addUsage(transactions[new_id].getAmount());
+		if (c_id != 1) {
+			if (categories[c_id].getType() == transactions[new_id].getType()) {
+				categories[c_id].delUsage(transactions[new_id].getAmount());
 
-		} else {
-			categories[c_id].delUsage(transactions[new_id].getAmount());
-			categories[new_c_id].addUsage(transactions[new_id].getAmount());
+			} else {
+				categories[c_id].addUsage(transactions[new_id].getAmount());
+			}
+		}
+
+		if (new_c_id != 1) {
+			if (categories[new_c_id].getType() == transactions[new_id].getType()) {
+				categories[new_c_id].addUsage(transactions[new_id].getAmount());
+
+			} else {
+				categories[new_c_id].delUsage(transactions[new_id].getAmount());
+			}
 		}
 
 	} else if (field == "type") {
@@ -307,7 +328,12 @@ int Budget::delTransaction(const std::string& id) {
     }
 
 	if (cat_it->second.getID() != 1) {
-		cat_it->second.delUsage(amt);
+		if (cat_it->second.getType() == it->second.getType()) {
+			cat_it->second.delUsage(amt);
+
+		} else {
+			cat_it->second.addUsage(amt);
+		}
 	}
 
     transactions.erase(it);
