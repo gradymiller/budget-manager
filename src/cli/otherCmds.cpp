@@ -61,11 +61,11 @@ int cmdVersion() {
 
 int cmdInit() {
 	return runCommand([&]() {
-		std::filesystem::path dir = setupFolder();
-		std::cout << "Data saved at: " << dir << "\n";
+		setupFolder();
+		std::cout << "Data saved at: " << PATH << "\n";
 
 		// Inits database
-		createFiles(dir);
+		createFiles();
 
 		// TODO: Add rest of setup functions here
 	});

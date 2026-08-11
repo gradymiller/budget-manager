@@ -6,29 +6,27 @@
 #include <stdexcept>
 
 #include "database.hpp"
+#include "path.hpp"
 
 namespace fs = std::filesystem;
 
-fs::path setupFolder() {
+void setupFolder() {
 	const char* home = std::getenv("HOME");
 
 	if (!home) {
 		throw std::runtime_error("Failed to find HOME envvar\n");
 	}
 
-	fs::path dir = fs::path(home) / ".local/share/budget-manager";
-	fs::create_directories(dir);
-	
-	return dir;
+	fs::create_directories(PATH);
 }
 
-void createFiles(fs::path dir) {
-    if (!fs::exists(dir) || !fs::is_directory(dir)) {
+void createFiles() {
+    if (!fs::exists(PATH) || !fs::is_directory(PATH)) {
         throw std::runtime_error(
             "There is no valid directory to create config files in\n"
         );
     }
 
-	Database db(dir / "budget-data.db");
+	Database db(PATH / "budget-data.db");
 	db.createTables();
 }
