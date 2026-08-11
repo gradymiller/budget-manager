@@ -3,8 +3,13 @@
 #include <cstdlib>
 #include <filesystem>
 
-// This is the main path used throughout the program
-// TODO: Make this editable from a config file
-inline std::filesystem::path PATH =
-    std::filesystem::path(std::getenv("HOME")) /
-    ".local/share/budget-manager";
+const std::filesystem::path PATH = [] {
+    const char* test_path = std::getenv("BMCLI_TEST_PATH");
+
+    if (test_path != nullptr) {
+        return std::filesystem::path(test_path);
+    }
+
+    return std::filesystem::path(std::getenv("HOME")) /
+           ".local/share/budget-manager";
+}();
