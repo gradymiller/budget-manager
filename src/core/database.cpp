@@ -9,6 +9,7 @@
 #include "core/transaction.hpp"
 #include "core/utils.hpp"
 
+#include "path.hpp"
 
 Database::Database(const std::string& filename) {
     if (sqlite3_open(filename.c_str(), &db) != SQLITE_OK) {
@@ -894,6 +895,7 @@ void Database::readTransactions() {
     const char* sql = R"(
         SELECT id, category_id, amount, type, date, vendor
         FROM transactions
+        ORDER BY id ASC
     )";
 
     sqlite3_stmt* stmt = nullptr;
@@ -902,16 +904,23 @@ void Database::readTransactions() {
         throw std::runtime_error(sqlite3_errmsg(db));
     }
 
-	std::cout << "id, category_id, amount, type, date, vendor\n";
+    std::cout << "id, category_id, amount, type, date, vendor\n";
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-		std::cout << sqlite3_column_int(stmt, 0) << ", "
-				  << sqlite3_column_int(stmt, 1) << ", "
-				  << sqlite3_column_double(stmt, 2) << ", "
-				  << sqlite3_column_text(stmt, 3) << ", "
-				  << sqlite3_column_text(stmt, 4) << ", "
-				  << sqlite3_column_text(stmt, 5) << '\n';
-	}
+        const char* date =
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+
+        const char* vendor =
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
+
+        std::cout
+            << sqlite3_column_int(stmt, 0) << ", "
+            << sqlite3_column_int(stmt, 1) << ", "
+            << sqlite3_column_double(stmt, 2) << ", "
+            << sqlite3_column_text(stmt, 3) << ", "
+            << (date ? date : "N/A") << ", "
+            << (vendor ? vendor : "N/A") << '\n';
+    }
 
     sqlite3_finalize(stmt);
 }
