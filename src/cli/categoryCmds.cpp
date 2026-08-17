@@ -10,14 +10,17 @@
 int categoryAdd(int argc, const char* const argv[]) {
     return runCommand([&]() {
         if (argc < 3) {
-            throw std::invalid_argument(
-                "Too few arguments");
-        }
+            throw std::invalid_argument("Too few arguments");}
 
         Database db(PATH / "budget-data.db");
         Budget budget = db.loadBudget();
 
-        Category category = budget.addCategory(argv[0], argv[1], argv[2]);
+		std::string preset = "true"
+		if (argc == 5 && argv[3] == "--preset") {
+			preset = argv[4];
+		}
+
+        Category category = budget.addCategory(argv[0], argv[1], argv[2], preset);
 
         // Associate the category with the current budget.
         category.setBudgetID(budget.getID());
@@ -35,9 +38,7 @@ int categoryAdd(int argc, const char* const argv[]) {
 int categoryEdit(int argc, const char* const argv[]) {
     return runCommand([&]() {
         if (argc < 3) {
-            throw std::invalid_argument(
-                "Too few arguments");
-        }
+            throw std::invalid_argument("Too few arguments");}
 
         Database db(PATH / "budget-data.db");
         Budget budget = db.loadBudget();

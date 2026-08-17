@@ -45,7 +45,7 @@ Commands:
     list
 
   c[ategory]
-    add <category_name> <type> <limit>
+    add <category_name> <type> <limit> [--preset <true|false>]
     edit <category_name> <field> <new_value>
     delete <category_name>
     list
