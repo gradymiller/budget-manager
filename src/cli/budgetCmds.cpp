@@ -1,3 +1,5 @@
+// TODO: Convert unassigned category to global
+// TODO: Add Database::presetCategories()
 #include <filesystem>
 #include <fstream>
 #include <iostream>
