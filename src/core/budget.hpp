@@ -64,7 +64,8 @@ public:
 	// and is converted to an appropriate type.
     Category addCategory(const std::string& name,
                      const std::string& type,
-                     const std::string& limit);
+					 const std::string& limit,
+                     const std::string& preset);
 
     // Modifies a field of an existing category.
     int editCategory(const std::string& category_id,

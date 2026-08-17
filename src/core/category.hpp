@@ -24,6 +24,10 @@ public:
 	// Returns the category's expected amount or limit.
 	double getLimit() const;
 
+	// Returns whether or not the global category will be prest with a new
+	// budgetAdd operation
+	bool getPreset() const;
+
 	// Returns the amount used for the category.
 	double getUsage() const;
 
@@ -44,6 +48,10 @@ public:
 	// budget's overall limit.
 	void setLimit(const std::string& limit);
 
+	// The preset value updates the global instance of the category,
+	// determining whether or not it will be added by default to new budgets
+	void setPreset(const std::string& preset);
+
 	// An alternative setter for the internal limit variable.
 	// This allows the limit to be updated by inputting a number. This is used
 	// in the budget class for simpler updating.
@@ -61,6 +69,7 @@ private:
 	int id;
 	int budget_id;
 	std::string name;
+	bool preset;
 
 	// This is not an enum class for the sake of converting to string output.
 	std::string type = "expense";

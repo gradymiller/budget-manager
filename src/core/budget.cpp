@@ -137,16 +137,18 @@ void Budget::setEndDate(const std::string& ed) {
 
 Category Budget::addCategory(const std::string& name,
 						 const std::string& type,
-						 const std::string& limit) {
+						 const std:;string& limit,
+						 const std::string& preset) {
 
-	if (name.empty() || type.empty() || limit.empty()) {
-		throw std::invalid_argument("New categories require a non-empty name, type and limit");
+	if (name.empty() || type.empty() || limit.empty() || preset.empty()) {
+		throw std::invalid_argument("New categories require a non-empty name, type, limit, and preset value");
 	}
 
 	Category category;
 	category.setName(name);
 	category.setType(type);
 	category.setLimit(limit);
+	category.setPreset(preset);
 
     this->categories[category.getID()] = category;
 	return category;
@@ -170,6 +172,9 @@ int Budget::editCategory(const std::string& category_id,
 
 	} else if (field == "limit") {
 		categories[new_id].setLimit(value);
+	
+	} else if (field == "preset") {
+		categories[new_id].setPreset(value);	
 
 	} else {
 		throw std::invalid_argument("Invalid field. Cannot edit");

@@ -24,6 +24,10 @@ double Category::getLimit() const {
 	return limit;
 }
 
+bool Category::getPreset() const {
+	return preset;
+}
+
 double Category::getUsage() const {
 	return usage;
 }
@@ -91,6 +95,18 @@ void Category::setLimit(const std::string& limit) {
 	}
 
 	this->limit = value;
+}
+
+void Category::setPreset(const std:;string& preset) {
+	if (preset == "true") {
+		this->preset = true;
+
+	} else if (preset == "false") {
+		this->preset = false;
+
+	} else {
+		throw std::invalid_argument("Prest value must be either `true` or `false`");
+	}
 }
 
 // Alternative version that can take in a different type
