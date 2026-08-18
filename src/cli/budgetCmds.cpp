@@ -36,9 +36,9 @@ int budgetAdd(int argc, const char* const argv[]) {
 		auto categories = db.readPresets();
 		for (Category c : categories) {
 			budget.addCategory(c);
-			category.setBudgetID(budget_id);
-			int category_id = db.createCategory(category);
-			category.setID(category_id);
+			c.setBudgetID(budget_id);
+			int category_id = db.createCategory(c);
+			c.setID(category_id);
 		}
 
 		std::cout << "Budget ID: " << budget_id << '\n';
