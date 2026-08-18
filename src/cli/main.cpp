@@ -1,5 +1,3 @@
-// TODO: Save config options on machine, for default budget
-
 #include <iostream>
 #include <string>
 
