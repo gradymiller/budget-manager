@@ -607,11 +607,12 @@ int Database::createCategory(const Category& category) {
         INSERT INTO budget_categories (
             budget_id,
             global_category_id,
+			name,
             type,
             category_limit,
             usage
         )
-        VALUES (?, ?, ?, ?, 0);
+        VALUES (?, ?, ?, ?, ?, 0);
     )";
 
     if (sqlite3_prepare_v2(db, categorySql, -1, &stmt, nullptr) != SQLITE_OK) {
@@ -621,15 +622,25 @@ int Database::createCategory(const Category& category) {
     sqlite3_bind_int(stmt, 1, category.getBudgetID());
     sqlite3_bind_int(stmt, 2, globalCategoryID);
 
+	sqlite3_bind_text(
+		stmt,
+		3,
+		category.getName().c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
     sqlite3_bind_text(
-        stmt, 3,
+        stmt,
+		4,
         category.getType().c_str(),
         -1,
         SQLITE_TRANSIENT
     );
 
     sqlite3_bind_double(
-        stmt, 4,
+        stmt,
+		5,
         category.getLimit()
     );
 
