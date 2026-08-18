@@ -68,6 +68,7 @@ public:
 private:
 	int id;
 	int budget_id;
+	int global_category_id;
 	std::string name;
 	bool preset;
 

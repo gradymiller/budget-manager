@@ -48,6 +48,8 @@ public:
     void deleteCategory(int category_id);
 	std::vector<Category> readCategories();
 
+	std::vector<Category> readPresets();
+
 
     // Transaction persistence
     int createTransaction(const Transaction& txn);

@@ -97,7 +97,7 @@ void Category::setLimit(const std::string& limit) {
 	this->limit = value;
 }
 
-void Category::setPreset(const std:;string& preset) {
+void Category::setPreset(const std::string& preset) {
 	if (preset == "true") {
 		this->preset = true;
 

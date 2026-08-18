@@ -1,12 +1,13 @@
 // TODO: Convert unassigned category to global
-// TODO: Add Database::presetCategories()
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "cli/cmdTemplate.hpp"
 #include "core/budget.hpp"
+#include "core/category.hpp"
 #include "core/database.hpp"
 #include "core/path.hpp"
 
@@ -33,10 +34,19 @@ int budgetAdd(int argc, const char* const argv[]) {
 		db.setSetting("current_budget", std::to_string(budget_id));
 
 		// Add the unassigned category
-		Category category = budget.addCategory("unassigned", "other", "0");
+		Category category = budget.addCategory("unassigned", "other", "0", "true");
 		category.setBudgetID(budget_id);
 		int category_id = db.createCategory(category);
 		category.setID(category_id);
+
+		// Add default categories
+		auto categories = db.readPresets();
+		for (Category c : categories) {
+			budget.addCategory(c);
+			category.setBudgetID(budget_id);
+			int category_id = db.createCategory(category);
+			category.setID(category_id);
+		}
 
 		std::cout << "Budget ID: " << budget_id << '\n';
     });

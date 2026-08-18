@@ -137,7 +137,7 @@ void Budget::setEndDate(const std::string& ed) {
 
 Category Budget::addCategory(const std::string& name,
 						 const std::string& type,
-						 const std:;string& limit,
+						 const std::string& limit,
 						 const std::string& preset) {
 
 	if (name.empty() || type.empty() || limit.empty() || preset.empty()) {

@@ -15,8 +15,8 @@ int categoryAdd(int argc, const char* const argv[]) {
         Database db(PATH / "budget-data.db");
         Budget budget = db.loadBudget();
 
-		std::string preset = "true"
-		if (argc == 5 && argv[3] == "--preset") {
+		std::string preset = "true";
+		if (argc == 5 && std::string(argv[3]) == "--preset") {
 			preset = argv[4];
 		}
 
