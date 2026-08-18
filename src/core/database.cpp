@@ -1,5 +1,3 @@
-// TODO: add presetcategories()
-// TODO: Add global category table, reference current category table with gobal cat IDs
 // TODO: save a vendor table that links global category, update vendor cat assignment based most recent transaction with that vendor's category, limit holds most recent edit/add from category
 #include "database.hpp"
 
@@ -54,6 +52,16 @@ void Database::createTables() {
 	)";
 
 	const char* sql2 = R"(
+		CREATE TABLE IF NOT EXISTS global_categories (
+			id INTEGER PRIMARY KEY,
+			name TEXT NOT NULL UNIQUE,
+			type TEXT NOT NULL,
+			default_limit REAL NOT NULL DEFAULT 0,
+			preset INTEGER NOT NULL DEFAULT 1
+		);
+	)";
+
+	const char* sql3 = R"(
 		CREATE TABLE IF NOT EXISTS budget_categories (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			budget_id INTEGER NOT NULL,
@@ -64,11 +72,14 @@ void Database::createTables() {
 			usage REAL NOT NULL DEFAULT 0,
 
 			FOREIGN KEY(budget_id)
-				REFERENCES budgets(id)
+				REFERENCES budgets(id),
+
+			FOREIGN KEY(global_category_id)
+				REFERENCES global_categories(id)
 		);
 	)";
 
-	const char* sql3 = R"(
+	const char* sql4 = R"(
 		CREATE TABLE IF NOT EXISTS transactions (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			amount REAL NOT NULL,
@@ -82,28 +93,26 @@ void Database::createTables() {
 		);
 	)";
 
-	const char* sql4 = R"(
+	const char* sql5 = R"(
 		CREATE TABLE IF NOT EXISTS settings (
 			key TEXT PRIMARY KEY,
 			value TEXT NOT NULL
 		);
 	)";
 
-	const char* sql5 = R"(
-		CREATE TABLE IF NOT EXISTS global_categories (
-			id INTEGER PRIMARY KEY,
-			name TEXT NOT NULL UNIQUE,
-			type TEXT NOT NULL,
-			default_limit REAL NOT NULL DEFAULT 0,
-			preset INTEGER NOT NULL DEFAULT 1
-		);
+	const char* sql6 = R"(
+		INSERT OR IGNORE INTO global_categories
+			(name, type, default_limit, preset)
+		VALUES
+			('unassigned', 'other', 0, 1);
 	)";
-	
+
 	execSQL(sql1);
 	execSQL(sql2);
 	execSQL(sql3);
 	execSQL(sql4);
 	execSQL(sql5);
+	execSQL(sql6);
 }
 
 std::optional<std::string> Database::getSetting(const std::string& key)

@@ -1,5 +1,4 @@
 // TODO: Expand this with database, encryption, etc.
-// TODO: Use PATH so the default folder location can be configurable
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>

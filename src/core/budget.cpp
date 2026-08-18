@@ -1,4 +1,3 @@
-// TODO: change categories to dictionary instead of list
 #include "core/budget.hpp"
 
 #include <algorithm>

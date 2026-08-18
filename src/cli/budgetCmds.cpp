@@ -1,4 +1,3 @@
-// TODO: Convert unassigned category to global
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -33,13 +32,7 @@ int budgetAdd(int argc, const char* const argv[]) {
 		int budget_id = db.createBudget(budget);
 		db.setSetting("current_budget", std::to_string(budget_id));
 
-		// Add the unassigned category
-		Category category = budget.addCategory("unassigned", "other", "0", "true");
-		category.setBudgetID(budget_id);
-		int category_id = db.createCategory(category);
-		category.setID(category_id);
-
-		// Add default categories
+		// Add default categories (including unassigned category)
 		auto categories = db.readPresets();
 		for (Category c : categories) {
 			budget.addCategory(c);
