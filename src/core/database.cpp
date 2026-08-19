@@ -1,4 +1,3 @@
-// TODO: save a vendor table that links global category, update vendor cat assignment based most recent transaction with that vendor's category, limit holds most recent edit/add from category
 #include "database.hpp"
 
 #include <iostream>

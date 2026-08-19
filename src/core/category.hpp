@@ -1,4 +1,3 @@
-// TODO: Setter and validation for budget_id
 #pragma once
 
 #include <string>

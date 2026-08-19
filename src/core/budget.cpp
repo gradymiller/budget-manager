@@ -345,23 +345,31 @@ int Budget::delTransaction(const std::string& id) {
     return new_id;
 }
 
-// TODO: Clean this up
+// Usd for loading categories instead of creating them
 void Budget::addCategory(const Category& category) {
 	int id = category.getID();
 	this->categories[id] = category;
 }
 
-
-// TODO: cleanup up usage of these duplicates
-// TODO: could change cli access to create classes then use this version
-// instead of full string version
-// TODO: causes a bug because it does not update usage, refactor to everything
-// inputting by class to prevent this issue
+// Used for loading txns instead of creating them
 void Budget::addTransaction(const Transaction& txn) {
 	int id = txn.getID();
-	this->transactions[id] = txn;
-}
+	int category_id = txn.getCategoryID();
 
+	if (category_id != 1) {
+		if (txn.getType() == categories[category_id].getType()) {
+			categories[category_id].addUsage(txn.getAmount());
+		} else {
+			categories[category_id].delUsage(txn.getAmount());
+		}
+	}
+
+	transactions[id] = txn;
+
+	if (id >= next_id) {
+		next_id = id + 1;
+	}
+}
 
 double Budget::getUsage() {
 	return categories[1].getUsage();
