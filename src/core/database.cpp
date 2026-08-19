@@ -842,7 +842,7 @@ std::vector<Category> Database::readCategories() {
                budget_id,
                name,
                type,
-               default_limit,
+               category_limit,
                usage
         FROM budget_categories
         WHERE budget_id = ?;
