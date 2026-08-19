@@ -52,7 +52,7 @@ public:
 
 
     // Transaction persistence
-    int createTransaction(const Transaction& txn);
+    int createTransaction(const Transaction& txn, int budget_id);
     void updateTransaction(const Transaction& txn);
     void deleteTransaction(int txn_id);
 
@@ -61,6 +61,9 @@ public:
 
 private:
     void execSQL(const char* sql);
+
+	std::optional<int> getVendorCategory(const std::string& vendor);
+	void setVendorCategory(const std::string& vendor, int global_category_id);
 
     sqlite3* db = nullptr;
 };

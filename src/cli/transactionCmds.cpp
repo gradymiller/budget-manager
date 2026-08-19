@@ -49,7 +49,7 @@ int transactionAdd(int argc, const char* const* argv) {
 			vendor
 		);
 
-		auto txn_id = db.createTransaction(txn);
+		auto txn_id = db.createTransaction(txn, budget.getID());
 		db.updateCategory(budget.getCategory(txn.getCategoryID()));
 
 		std::cout << "Transaction ID: " << txn_id << '\n';

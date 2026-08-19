@@ -2,6 +2,7 @@
 #include "database.hpp"
 
 #include <iostream>
+#include <optional>
 #include <stdexcept>
 #include <string>
 
@@ -101,11 +102,23 @@ void Database::createTables() {
 	)";
 
 	const char* sql6 = R"(
+		CREATE TABLE IF NOT EXISTS vendors (
+			id INTEGER PRIMARY KEY,
+			name TEXT NOT NULL UNIQUE,
+			global_category_id INTEGER NOT NULL,
+
+			FOREIGN KEY(global_category_id)
+				REFERENCES global_categories(id)
+		);
+	)";
+	
+	const char* sql7 = R"(
 		INSERT OR IGNORE INTO global_categories
 			(name, type, default_limit, preset)
 		VALUES
 			('unassigned', 'other', 0, 1);
 	)";
+
 
 	execSQL(sql1);
 	execSQL(sql2);
@@ -113,6 +126,7 @@ void Database::createTables() {
 	execSQL(sql4);
 	execSQL(sql5);
 	execSQL(sql6);
+	execSQL(sql7);
 }
 
 std::optional<std::string> Database::getSetting(const std::string& key)
@@ -924,7 +938,68 @@ std::vector<Category> Database::readPresets() {
 	return categories;
 }
 
-int Database::createTransaction(const Transaction& txn) {
+int Database::createTransaction(const Transaction& txn, int budget_id) {
+	// Start with the category that was given to the transaction.
+	// This will normally be `unassigned` for automatically imported
+	// transactions.
+	int category_id = txn.getCategoryID();
+
+	// If the transaction has a vendor, check whether we have
+	// previously learned a category for that vendor.
+	// Don't reassign vendor if the category has been manually assigned already
+	if (txn.getVendor() && category_id == 1) {
+		auto global_category_id =
+			getVendorCategory(*txn.getVendor());
+
+		// A vendor category was found.
+		if (global_category_id) {
+			// The vendor table stores a global category ID, but
+			// transactions need the category ID belonging to the
+			// current budget. Find that budget-specific category.
+			const char* cSql = R"(
+				SELECT id
+				FROM budget_categories
+				WHERE budget_id = ?
+				AND global_category_id = ?;
+			)";
+
+			sqlite3_stmt* cStmt = nullptr;
+
+			if (sqlite3_prepare_v2(
+					db,
+					cSql,
+					-1,
+					&cStmt,
+					nullptr
+				) != SQLITE_OK) {
+				throw std::runtime_error(sqlite3_errmsg(db));
+			}
+
+			// Find the category with this global category ID
+			// that belongs to the current budget.
+			sqlite3_bind_int(
+				cStmt,
+				1,
+				budget_id
+			);
+
+			sqlite3_bind_int(
+				cStmt,
+				2,
+				*global_category_id
+			);
+
+			// If the category exists in this budget, use its
+			// budget-specific ID for the transaction.
+			if (sqlite3_step(cStmt) == SQLITE_ROW) {
+				category_id = sqlite3_column_int(cStmt, 0);
+			}
+
+			sqlite3_finalize(cStmt);
+		}
+	}
+
+	// Insert the transaction using the category we determined above.
 	const char* sql = R"(
 		INSERT INTO transactions
 		(amount, category_id, type, date, vendor)
@@ -933,7 +1008,13 @@ int Database::createTransaction(const Transaction& txn) {
 
 	sqlite3_stmt* stmt = nullptr;
 
-	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+	if (sqlite3_prepare_v2(
+			db,
+			sql,
+			-1,
+			&stmt,
+			nullptr
+		) != SQLITE_OK) {
 		throw std::runtime_error(sqlite3_errmsg(db));
 	}
 
@@ -943,10 +1024,12 @@ int Database::createTransaction(const Transaction& txn) {
 		txn.getAmount()
 	);
 
+	// Use category_id rather than txn.getCategoryID(), since the
+	// vendor lookup above may have changed the category.
 	sqlite3_bind_int(
 		stmt,
 		2,
-		txn.getCategoryID()
+		category_id
 	);
 
 	sqlite3_bind_text(
@@ -957,19 +1040,22 @@ int Database::createTransaction(const Transaction& txn) {
 		SQLITE_TRANSIENT
 	);
 
+	// Date is optional.
 	if (txn.getDate()) {
+		std::string date = dateToStr(*txn.getDate());
+
 		sqlite3_bind_text(
 			stmt,
 			4,
-			dateToStr(*txn.getDate()).c_str(),
+			date.c_str(),
 			-1,
 			SQLITE_TRANSIENT
 		);
-
 	} else {
 		sqlite3_bind_null(stmt, 4);
 	}
 
+	// Vendor is optional.
 	if (txn.getVendor()) {
 		sqlite3_bind_text(
 			stmt,
@@ -978,7 +1064,6 @@ int Database::createTransaction(const Transaction& txn) {
 			-1,
 			SQLITE_TRANSIENT
 		);
-
 	} else {
 		sqlite3_bind_null(stmt, 5);
 	}
@@ -993,7 +1078,6 @@ int Database::createTransaction(const Transaction& txn) {
 
 	return sqlite3_last_insert_rowid(db);
 }
-
 
 void Database::updateTransaction(const Transaction& txn) {
 	const char* sql = R"(
@@ -1130,4 +1214,75 @@ void Database::readTransactions() {
     }
 
     sqlite3_finalize(stmt);
+}
+
+void Database::setVendorCategory(const std::string& vendor, int global_category_id) {
+	const char* sql = R"(
+		INSERT INTO vendors (
+			name,
+			global_category_id
+		)
+		VALUES (?, ?)
+		ON CONFLICT(name) DO UPDATE SET
+			global_category_id = excluded.global_category_id;
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_text(
+		stmt,
+		1,
+		vendor.c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	sqlite3_bind_int(
+		stmt,
+		2,
+		global_category_id
+	);
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		std::string error = sqlite3_errmsg(db);
+		sqlite3_finalize(stmt);
+		throw std::runtime_error(error);
+	}
+
+	sqlite3_finalize(stmt);
+}
+
+std::optional<int> Database::getVendorCategory(const std::string& vendor) {
+	const char* sql = R"(
+		SELECT global_category_id
+		FROM vendors
+		WHERE name = ?;
+	)";
+
+	sqlite3_stmt* stmt = nullptr;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		throw std::runtime_error(sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_text(
+		stmt,
+		1,
+		vendor.c_str(),
+		-1,
+		SQLITE_TRANSIENT
+	);
+
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		int category_id = sqlite3_column_int(stmt, 0);
+		sqlite3_finalize(stmt);
+		return category_id;
+	}
+
+	sqlite3_finalize(stmt);
+	return std::nullopt;
 }
