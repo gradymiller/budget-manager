@@ -1228,7 +1228,7 @@ void Database::readTransactions() {
     const char* sql = R"(
         SELECT id, category_id, amount, type, date, vendor
         FROM transactions
-        ORDER BY id ASC
+		ORDER BY date DESC, id DESC;
     )";
 
     sqlite3_stmt* stmt = nullptr;
