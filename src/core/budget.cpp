@@ -355,6 +355,8 @@ void Budget::addCategory(const Category& category) {
 // TODO: cleanup up usage of these duplicates
 // TODO: could change cli access to create classes then use this version
 // instead of full string version
+// TODO: causes a bug because it does not update usage, refactor to everything
+// inputting by class to prevent this issue
 void Budget::addTransaction(const Transaction& txn) {
 	int id = txn.getID();
 	this->transactions[id] = txn;
