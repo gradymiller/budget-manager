@@ -1081,7 +1081,7 @@ int Database::createTransaction(const Transaction& txn, int budget_id) {
 
 void Database::updateTransaction(const Transaction& txn) {
 	const char* sql = R"(
-		UPDATE transactions 
+		UPDATE transactions
 		SET
 			amount = ?,
 			category_id = ?,
@@ -1118,14 +1118,15 @@ void Database::updateTransaction(const Transaction& txn) {
 	);
 
 	if (txn.getDate()) {
+		std::string date = dateToStr(*txn.getDate());
+
 		sqlite3_bind_text(
 			stmt,
 			4,
-			dateToStr(*txn.getDate()).c_str(),
+			date.c_str(),
 			-1,
 			SQLITE_TRANSIENT
 		);
-
 	} else {
 		sqlite3_bind_null(stmt, 4);
 	}
@@ -1138,7 +1139,6 @@ void Database::updateTransaction(const Transaction& txn) {
 			-1,
 			SQLITE_TRANSIENT
 		);
-
 	} else {
 		sqlite3_bind_null(stmt, 5);
 	}
@@ -1156,8 +1156,50 @@ void Database::updateTransaction(const Transaction& txn) {
 	}
 
 	sqlite3_finalize(stmt);
-}
 
+
+	// If this transaction has a vendor, remember the category
+	// that the user just assigned to it.
+	if (txn.getVendor()) {
+		const char* cSql = R"(
+			SELECT global_category_id
+			FROM budget_categories
+			WHERE id = ?;
+		)";
+
+		sqlite3_stmt* cStmt = nullptr;
+
+		if (sqlite3_prepare_v2(
+				db,
+				cSql,
+				-1,
+				&cStmt,
+				nullptr
+			) != SQLITE_OK) {
+			throw std::runtime_error(sqlite3_errmsg(db));
+		}
+
+		sqlite3_bind_int(
+			cStmt,
+			1,
+			txn.getCategoryID()
+		);
+
+		if (sqlite3_step(cStmt) == SQLITE_ROW) {
+			int global_category_id =
+				sqlite3_column_int(cStmt, 0);
+
+			// Replace the vendor's previous category with
+			// the category that was most recently assigned.
+			setVendorCategory(
+				*txn.getVendor(),
+				global_category_id
+			);
+		}
+
+		sqlite3_finalize(cStmt);
+	}
+}
 
 void Database::deleteTransaction(int txn_id) {
 	const char* sql = R"(
