@@ -4,6 +4,7 @@
 #include "cli/budgetCmds.hpp"
 #include "cli/categoryCmds.hpp"
 #include "cli/otherCmds.hpp"
+#include "cli/reportingCmds.hpp"
 #include "cli/transactionCmds.hpp"
 #include "core/utils.hpp"
 
@@ -31,7 +32,12 @@ int dispatch(int argc, char** argv) {
 	} else if (arg1 == "current") {
 		return cmdCurrent();
 
-	} 
+	} else if (arg1 == "status") {
+		return cmdStatus();
+
+	} else if (arg1 == "report") {
+		return cmdReport();
+	}
 
 	std::string arg2 = argv[2];
 

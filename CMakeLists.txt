@@ -47,6 +47,7 @@ add_library(budget_lib
     src/cli/transactionCmds.cpp
     src/cli/categoryCmds.cpp
     src/cli/otherCmds.cpp
+    src/cli/reportingCmds.cpp
     src/core/utils.cpp
     src/core/init.cpp
     src/core/budget.cpp

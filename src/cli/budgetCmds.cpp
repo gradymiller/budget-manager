@@ -9,6 +9,7 @@
 #include "core/category.hpp"
 #include "core/database.hpp"
 #include "core/path.hpp"
+#include "core/utils.hpp"
 
 namespace fs = std::filesystem;
 
@@ -102,8 +103,8 @@ int budgetList() {
 		for (auto budget : budgets) {
 			std::cout << budget.getID() << ", "
 					  << budget.getName() << ", "
-					  << budget.getStartDate() << ", "
-					  << budget.getEndDate() << '\n';
+					  << dateToStr(budget.getStartDate()) << ", "
+					  << dateToStr(budget.getEndDate()) << '\n';
 		}
     });
 }
