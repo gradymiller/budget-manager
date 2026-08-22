@@ -48,7 +48,7 @@ int cmdStatus() {
 		auto limit = budget.getLimit();
 		auto usage = budget.getUsage();
 
-		json status = {
+		json data = {
 			{"name", name},
 			{"start_date", dateToStr(start)},
 			{"end_date", dateToStr(end)},
@@ -60,13 +60,13 @@ int cmdStatus() {
 		fs::create_directories(PATH / "reports");
 
 		// Open the output file
-		std::ofstream file(PATH / "reports/report.json");
+		std::ofstream file(PATH / "reports/status.json");
 
 		if (!file) {
-			throw std::runtime_error("Could not open report.json");
+			throw std::runtime_error("Could not open status.json");
 		}
 
-		file << status.dump(4);
+		file << data.dump(4);
 
 		double time_percent =
 			std::chrono::duration<double>(now - start).count() /
@@ -96,5 +96,45 @@ int cmdStatus() {
 
 int cmdReport() {
 	return runCommand([&]() {
+		Database db(PATH / "budget-data.db");
+		Budget budget = db.loadBudget();
+
+		json data = json::array();
+
+		for (const auto& [id, category] : budget.getCategories()) {
+			auto name = category.getName();
+			auto limit = category.getLimit();
+			auto usage = category.getUsage();
+
+			
+			double usage_percent = 0.0;
+			if (limit != 0) {
+				usage_percent = (usage / limit) * 100.0;
+			}
+			
+			data.push_back({
+				{"name", name},
+				{"limit", limit},
+				{"usage", usage}
+			});	
+
+			std::cout << std::fixed << std::setprecision(2);
+			std::cout << "=== Categories ===\n\n";
+			std::cout << name << '\n';
+			std::cout << "Limit: " << limit << '\n';
+			std::cout << "Usage: " << usage << '\n';
+			std::cout << progressBar(usage_percent) << " " << usage_percent <<"%\n\n";
+		}
+
+		fs::create_directories(PATH / "reports");
+
+		// Open the output file
+		std::ofstream file(PATH / "reports/report.json");
+
+		if (!file) {
+			throw std::runtime_error("Could not open report.json");
+		}
+
+		file << data.dump(4);
 	});
 }
