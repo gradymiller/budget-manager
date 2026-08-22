@@ -101,6 +101,8 @@ int cmdReport() {
 
 		json data = json::array();
 
+		std::cout << std::fixed << std::setprecision(2);
+		std::cout << "=== Categories ===\n\n";
 		for (const auto& [id, category] : budget.getCategories()) {
 			auto name = category.getName();
 			auto limit = category.getLimit();
@@ -118,8 +120,6 @@ int cmdReport() {
 				{"usage", usage}
 			});	
 
-			std::cout << std::fixed << std::setprecision(2);
-			std::cout << "=== Categories ===\n\n";
 			std::cout << name << '\n';
 			std::cout << "Limit: " << limit << '\n';
 			std::cout << "Usage: " << usage << '\n';
